@@ -822,7 +822,7 @@
                 billingAddress: '89, Agege Motor Road, Lagos',
                 shippingAddress: '23, Subuola Street, Dopemu, Agege, Lagos',
                 orderNote: 'Please call before delivery.',
-                shipmentMethod: 'waybill',
+                shipmentMethod: 'waybill', // pickup, stockpile, waybill
                 itemsList: [
                     {
                         name: 'Luxury Leather Handbag',
@@ -840,6 +840,9 @@
                 status: 'Pending Confirmation'
             }
         ];
+
+        // Daily Revenue Goods Purchased Simulation Data (Cleared history for October 2026)
+        const sampleDailySales = {};
 
         // State Initialization
         let products = JSON.parse(localStorage.getItem('fv_products')) || initialProducts;
@@ -969,6 +972,7 @@
                 const primaryImage = (p.images && p.images.length > 0) ? p.images[0] : (p.image || 'https://via.placeholder.com/300');
                 const photoCount = p.images ? p.images.length : (p.image ? 1 : 0);
 
+                // Build volume discount badges including 15 qty
                 const volumeBadges = [];
                 if(p.disc5) volumeBadges.push(`5+: ₦${Number(p.disc5).toLocaleString()}`);
                 if(p.disc10) volumeBadges.push(`10+: ₦${Number(p.disc10).toLocaleString()}`);
@@ -978,6 +982,7 @@
                 if(p.disc50) volumeBadges.push(`50+: ₦${Number(p.disc50).toLocaleString()}`);
                 if(p.disc100) volumeBadges.push(`100+: ₦${Number(p.disc100).toLocaleString()}`);
 
+                // Social shares icons map
                 const shareIconsMap = {
                     'WhatsApp': '<i class="fa-brands fa-whatsapp text-green-600" title="WhatsApp"></i>',
                     'TikTok': '<i class="fa-brands fa-tiktok text-gray-900" title="TikTok"></i>',
@@ -1011,12 +1016,14 @@
                         
                         <p class="text-xs text-gray-500">SKU: ${p.sku || 'N/A'}</p>
 
+                        <!-- Tags Display -->
                         ${p.tags && p.tags.length > 0 ? `
                             <div class="flex flex-wrap gap-1">
                                 ${p.tags.map(t => `<span class="bg-amber-100 text-amber-800 text-[10px] font-bold px-2 py-0.5 rounded-full">${t}</span>`).join('')}
                             </div>
                         ` : ''}
 
+                        <!-- Pricing & Specs -->
                         <div class="text-xs space-y-1 text-gray-700 bg-gray-50 p-2.5 rounded border">
                             <p><strong>Single Price:</strong> ${p.priceSingle ? '₦' + Number(p.priceSingle).toLocaleString() : 'Optional / Not set'}</p>
                             ${p.color ? `<p><strong>Color:</strong> ${p.color}${p.colorPrice ? '(₦' + Number(p.colorPrice).toLocaleString() + ', Qty: ' + (p.colorQty || 0) + ')' : ''}</p>` : ''}
@@ -1033,6 +1040,7 @@
                             ` : ''}
                         </div>
 
+                        <!-- Related Products Display Badge -->
                         ${p.relatedProducts && p.relatedProducts.length > 0 ? `
                             <div class="bg-amber-50/80 p-2 rounded border border-amber-200 text-[11px] space-y-1">
                                 <span class="font-bold text-brandNavy flex items-center space-x-1">
@@ -1045,6 +1053,7 @@
                             </div>
                         ` : ''}
 
+                        <!-- Shipping Notes & Shares -->
                         <div class="bg-emerald-50/60 p-2 rounded border border-emerald-200 text-[11px] space-y-1 text-emerald-900">
                             <p><i class="fa-solid fa-truck-fast"></i> <strong>Lagos:</strong> ${p.shippingLagos || 'within Lagos 24 hours'}</p>
                             <p><i class="fa-solid fa-plane"></i> <strong>Outside Lagos:</strong> ${p.shippingOutside || 'outside Lagos 3-5days'}</p>
@@ -1074,18 +1083,21 @@
             `}).join('');
         }
 
+        // Product Modal Handlers (Add or Edit Product)
         function openProductModal(editId = null) {
             const modal = document.getElementById('product-modal');
             const form = document.getElementById('product-form');
             const title = document.getElementById('modal-title');
             const relatedSelect = document.getElementById('p-related');
 
+            // Populate related products dropdown from existing catalog
             relatedSelect.innerHTML = products
                 .filter(p => editId ? p.id !== editId : true)
                 .map(p => `<option value="${p.name}">${p.name} (${p.category})</option>`)
                 .join('');
 
             if (editId) {
+                // EDIT MODE
                 const prod = products.find(p => p.id === editId);
                 if (!prod) return;
 
@@ -1121,11 +1133,13 @@
                 document.getElementById('p-disc-50').value = prod.disc50 || '';
                 document.getElementById('p-disc-100').value = prod.disc100 || '';
 
+                // Pre-select image inputs
                 for (let i = 1; i <= 10; i++) {
                     const imgVal = (prod.images && prod.images[i - 1]) ? prod.images[i - 1] : '';
                     document.getElementById(`p-img-${i}`).value = imgVal;
                 }
 
+                // Pre-select shares
                 const shares = prod.shares || [];
                 document.getElementById('share-whatsapp').checked = shares.includes('WhatsApp');
                 document.getElementById('share-tiktok').checked = shares.includes('TikTok');
@@ -1133,12 +1147,14 @@
                 document.getElementById('share-facebook').checked = shares.includes('Facebook');
                 document.getElementById('share-telegram').checked = shares.includes('Telegram');
 
+                // Pre-select related products
                 const related = prod.relatedProducts || [];
                 Array.from(relatedSelect.options).forEach(option => {
                     option.selected = related.includes(option.value);
                 });
 
             } else {
+                // ADD NEW MODE
                 title.innerText = '+ Add New Product';
                 form.reset();
                 document.getElementById('p-id').value = '';
@@ -1158,18 +1174,22 @@
 
             const editId = document.getElementById('p-id').value;
 
+            // Collect filled images from the 10 slots
             const uploadedImages = [];
             for (let i = 1; i <= 10; i++) {
                 const imgVal = document.getElementById(`p-img-${i}`).value.trim();
                 if (imgVal) uploadedImages.push(imgVal);
             }
 
+            // Extract selected related products
             const relatedSelect = document.getElementById('p-related');
             const selectedRelated = Array.from(relatedSelect.selectedOptions).map(opt => opt.value);
 
+            // Extract tags
             const tagsInput = document.getElementById('p-tags').value;
             const tagsArray = tagsInput ? tagsInput.split(',').map(t => t.trim()).filter(t => t !== '') : [];
 
+            // Extract shares options
             const shares = [];
             if(document.getElementById('share-whatsapp').checked) shares.push('WhatsApp');
             if(document.getElementById('share-tiktok').checked) shares.push('TikTok');
@@ -1212,9 +1232,11 @@
             };
 
             if (editId) {
+                // Update existing
                 const index = products.findIndex(p => p.id === Number(editId));
                 if (index !== -1) products[index] = prodData;
             } else {
+                // Insert new
                 products.push(prodData);
             }
 
@@ -1233,6 +1255,7 @@
             }
         }
 
+        // Order Handlers
         function renderOrders() {
             const container = document.getElementById('orders-list');
             if (orders.length === 0) {
@@ -1291,6 +1314,7 @@
             }
 
             content.innerHTML = `
+                <!-- Order Number & Status -->
                 <div class="flex justify-between items-center bg-brandNavy text-white p-3 rounded-xl">
                     <div>
                         <span class="text-[10px] text-gray-300 uppercase font-bold">Order Number</span>
@@ -1302,6 +1326,7 @@
                     </div>
                 </div>
 
+                <!-- Billing & Shipping Details -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div class="bg-gray-50 p-3.5 rounded-xl border space-y-1.5">
                         <h4 class="font-bold text-brandNavy text-xs uppercase flex items-center space-x-1 border-b pb-1">
@@ -1324,6 +1349,7 @@
                     </div>
                 </div>
 
+                <!-- Order Note (Optional) -->
                 ${order.orderNote ? `
                     <div class="bg-amber-50 p-3 rounded-xl border border-amber-200 text-xs space-y-1">
                         <h5 class="font-bold text-brandNavy uppercase flex items-center space-x-1">
@@ -1338,6 +1364,7 @@
                     </div>
                 `}
 
+                <!-- Items Purchased -->
                 <div class="space-y-2">
                     <h4 class="font-bold text-brandNavy text-xs uppercase flex items-center space-x-1">
                         <i class="fa-solid fa-bag-shopping text-brandGold"></i>
@@ -1348,6 +1375,7 @@
                     </div>
                 </div>
 
+                <!-- Proof of Payment & Total -->
                 <div class="bg-blue-50/70 p-4 rounded-xl border border-blue-200 flex flex-wrap justify-between items-center gap-3">
                     <div>
                         <span class="text-xs text-gray-500 uppercase font-semibold">Total Order Amount</span>
@@ -1385,6 +1413,7 @@
             }
         }
 
+        // Low Stock Handler
         function renderLowStock() {
             const container = document.getElementById('low-stock-list');
             const lowItems = products.filter(p => p.qty <= 5);
@@ -1406,60 +1435,35 @@
             `).join('');
         }
 
+        // Calendar & Daily Goods Purchased Handler (Dynamic accurate days for current year and month)
         function renderCalendar() {
             const grid = document.getElementById('calendar-grid');
             grid.innerHTML = '';
             
             const now = new Date();
             const year = now.getFullYear();
-            const month = now.getMonth();
+            const month = now.getMonth(); // 0-indexed current month
             
             const firstDayIndex = new Date(year, month, 1).getDay();
             const totalDays = new Date(year, month + 1, 0).getDate();
 
+            // Display current month & year in header label
             const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
             const monthLabel = document.getElementById('revenue-month-label');
             if (monthLabel) {
                 monthLabel.innerText = `Month: ${monthNames[month]} ${year}`;
             }
 
+            // Render offset blank cells for the starting day of the week
             for (let i = 0; i < firstDayIndex; i++) {
                 grid.innerHTML += `<div class="border rounded-lg p-2 min-h-[65px] bg-transparent border-transparent"></div>`;
             }
 
-            // Sync with orders stored in localStorage for the revenue calendar
-            const allOrders = JSON.parse(localStorage.getItem('fv_orders')) || [];
-            
             for (let i = 1; i <= totalDays; i++) {
-                // Find orders matching this day
-                const dayOrders = allOrders.filter(o => {
-                    if (o.day && o.day === i) return true;
-                    return false;
-                });
-
-                // Extract all items purchased from those orders
-                let dayItems = [];
-                dayOrders.forEach(ord => {
-                    if (ord.itemsList) {
-                        ord.itemsList.forEach(it => {
-                            dayItems.push({
-                                name: it.name,
-                                qty: it.qty,
-                                price: it.price,
-                                total: it.total,
-                                orderId: ord.id
-                            });
-                        });
-                    }
-                });
-
+                const dayItems = sampleDailySales[i] || [];
                 const hasSales = dayItems.length > 0;
                 const dayTotal = hasSales ? dayItems.reduce((acc, item) => acc + item.total, 0) : 0;
                 
-                // Store in window map for modal preview
-                window._daySalesMap = window._daySalesMap || {};
-                window._daySalesMap[i] = dayItems;
-
                 grid.innerHTML += `
                     <div onclick="openDayRevenueModal(${i})" class="border rounded-lg p-2 min-h-[65px] flex flex-col justify-between cursor-pointer transition hover:border-brandGold hover:shadow-md ${hasSales ? 'bg-green-50/80 border-green-300' : 'bg-gray-50 hover:bg-gray-100'}">
                         <div class="flex justify-between items-center">
@@ -1483,7 +1487,7 @@
             const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
             dateTitle.innerText = `${monthNames[now.getMonth()]} ${dayNum}, ${now.getFullYear()} - Daily Goods Purchased`;
 
-            const dayItems = (window._daySalesMap && window._daySalesMap[dayNum]) ? window._daySalesMap[dayNum] : [];
+            const dayItems = sampleDailySales[dayNum] || [];
 
             if (dayItems.length === 0) {
                 totalEl.innerText = '₦ 0';
