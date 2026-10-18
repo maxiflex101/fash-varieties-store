@@ -63,28 +63,38 @@
                 </button>
             </div>
 
-            <!-- Header Action Icons -->
-            <div class="flex items-center gap-5">
-                <!-- User Account -->
-                <button onclick="handleUserIconClick()" class="flex items-center gap-1 hover:text-fashGold transition-colors" title="Account">
-                    <i class="fa-regular fa-user text-xl"></i>
-                    <span id="navUserStatus" class="hidden lg:inline text-xs font-medium">Login</span>
+            <!-- Header Action Buttons & Icons -->
+            <div class="flex items-center gap-2 md:gap-3">
+                <!-- Home Button -->
+                <button onclick="switchView('home')" class="hidden xl:flex items-center gap-1.5 text-xs font-semibold hover:text-fashGold transition-colors bg-fashNavyDark px-3 py-2 rounded-lg border border-fashGold/30" title="Home">
+                    <i class="fa-solid fa-house text-fashGold"></i> Home
                 </button>
 
-                <!-- Wishlist -->
-                <button onclick="switchView('wishlist')" class="relative hover:text-fashGold transition-colors" title="Wishlist">
-                    <i class="fa-regular fa-heart text-xl"></i>
+                <!-- Shop Button -->
+                <button onclick="scrollToProducts()" class="hidden xl:flex items-center gap-1.5 text-xs font-semibold hover:text-fashGold transition-colors bg-fashNavyDark px-3 py-2 rounded-lg border border-fashGold/30" title="Shop">
+                    <i class="fa-solid fa-store text-fashGold"></i> Shop
+                </button>
+
+                <!-- Wishlist Button -->
+                <button onclick="switchView('wishlist')" class="relative flex items-center gap-1.5 text-xs font-semibold hover:text-fashGold transition-colors bg-fashNavyDark px-3 py-2 rounded-lg border border-fashGold/30" title="Wishlist">
+                    <i class="fa-regular fa-heart text-fashGold"></i> <span class="hidden lg:inline">Wishlist</span>
                     <span id="wishlistCount" class="absolute -top-2 -right-2 bg-fashGold text-fashNavy text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">0</span>
                 </button>
 
-                <!-- Cart -->
-                <button onclick="switchView('cart')" class="relative hover:text-fashGold transition-colors" title="Shopping Cart">
-                    <i class="fa-solid fa-cart-shopping text-xl"></i>
+                <!-- Cart Button -->
+                <button onclick="switchView('cart')" class="relative flex items-center gap-1.5 text-xs font-semibold hover:text-fashGold transition-colors bg-fashNavyDark px-3 py-2 rounded-lg border border-fashGold/30" title="Shopping Cart">
+                    <i class="fa-solid fa-cart-shopping text-fashGold"></i> <span class="hidden lg:inline">Cart</span>
                     <span id="cartCount" class="absolute -top-2 -right-2 bg-fashGold text-fashNavy text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">0</span>
                 </button>
 
+                <!-- Login Button -->
+                <button onclick="handleUserIconClick()" class="flex items-center gap-1.5 text-xs font-semibold hover:bg-white hover:text-fashNavy transition-colors bg-fashGold text-fashNavy px-3.5 py-2 rounded-lg shadow-md" title="Login / Account">
+                    <i class="fa-regular fa-user"></i>
+                    <span id="navUserStatus">Login</span>
+                </button>
+
                 <!-- Hamburger Menu -->
-                <button onclick="toggleSidebarMenu()" class="hover:text-fashGold text-2xl transition-colors focus:outline-none" title="Menu">
+                <button onclick="toggleSidebarMenu()" class="hover:text-fashGold text-2xl transition-colors focus:outline-none ml-1" title="Menu">
                     <i class="fa-solid fa-bars"></i>
                 </button>
             </div>
@@ -442,6 +452,24 @@
                             Proceed to Checkout
                         </button>
                     </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ================= F. WISHLIST VIEW ================= -->
+        <section id="wishlistView" class="hidden space-y-6">
+            <h2 class="text-2xl font-bold text-fashNavy border-l-4 border-fashGold pl-3">My Wishlist</h2>
+
+            <div class="bg-white p-6 rounded-2xl shadow-lg border border-gray-200 space-y-6">
+                <div id="wishlistGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                    <!-- Populated dynamically -->
+                </div>
+
+                <div id="emptyWishlistMessage" class="hidden text-center py-8 space-y-3">
+                    <i class="fa-regular fa-heart text-4xl text-gray-300"></i>
+                    <p class="text-gray-500 font-medium">Your wishlist is currently empty.</p>
+                    <button onclick="switchView('home')" class="bg-fashNavy text-fashGold font-bold px-5 py-2 rounded-xl text-xs uppercase">Start Shopping</button>
                 </div>
             </div>
         </section>
@@ -1206,6 +1234,8 @@
             document.getElementById('cartView').classList.add('hidden');
             document.getElementById('checkoutView').classList.add('hidden');
             document.getElementById('accountView').classList.add('hidden');
+            const wishlistElem = document.getElementById('wishlistView');
+            if (wishlistElem) wishlistElem.classList.add('hidden');
 
             if (viewName === 'home') document.getElementById('homeView').classList.remove('hidden');
             if (viewName === 'detail') document.getElementById('productDetailView').classList.remove('hidden');
@@ -1220,6 +1250,10 @@
             if (viewName === 'account') {
                 renderCustomerOrders();
                 document.getElementById('accountView').classList.remove('hidden');
+            }
+            if (viewName === 'wishlist') {
+                renderWishlist();
+                if (wishlistElem) wishlistElem.classList.remove('hidden');
             }
 
             window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1750,6 +1784,46 @@
             } else {
                 alert('Product is already in your wishlist.');
             }
+        }
+
+        function renderWishlist() {
+            const grid = document.getElementById('wishlistGrid');
+            const emptyMsg = document.getElementById('emptyWishlistMessage');
+            
+            if (wishlist.length === 0) {
+                grid.innerHTML = '';
+                emptyMsg.classList.remove('hidden');
+                return;
+            }
+            
+            emptyMsg.classList.add('hidden');
+            grid.innerHTML = wishlist.map(id => {
+                const product = productsData.find(p => p.id === id);
+                if (!product) return '';
+                const primaryImg = (product.images && product.images.length > 0) ? product.images[0] : (product.image || 'https://via.placeholder.com/300');
+                const displayPrice = product.priceSingle || product.price || 0;
+                return `
+                    <div class="bg-white rounded-xl overflow-hidden border border-gray-200 shadow-sm p-3 flex flex-col justify-between group">
+                        <div class="cursor-pointer" onclick="openProductDetail(${product.id})">
+                            <div class="h-36 bg-gray-50 flex items-center justify-center rounded mb-2">
+                                <img src="${primaryImg}" alt="${product.name}" class="max-h-full object-contain">
+                            </div>
+                            <h4 class="text-xs font-bold text-gray-800 line-clamp-2">${product.name}</h4>
+                            <span class="text-sm font-extrabold text-fashNavy block mt-1">₦${Number(displayPrice).toLocaleString()}</span>
+                        </div>
+                        <div class="pt-2 border-t border-gray-100 flex gap-2">
+                            <button onclick="openProductDetail(${product.id})" class="flex-1 bg-fashNavy text-fashGold text-[11px] font-bold py-1.5 rounded-lg">View</button>
+                            <button onclick="removeFromWishlist(${product.id})" class="bg-red-50 text-red-600 text-[11px] font-bold px-2.5 py-1.5 rounded-lg border border-red-200"><i class="fa-solid fa-trash"></i></button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function removeFromWishlist(id) {
+            wishlist = wishlist.filter(itemid => itemid !== id);
+            document.getElementById('wishlistCount').innerText = wishlist.length;
+            renderWishlist();
         }
 
         function updateCounts() {
