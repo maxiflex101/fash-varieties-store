@@ -114,11 +114,16 @@
         </div>
 
         <div class="p-6 space-y-6 flex-1">
-            <!-- Navigation Links -->
+            <!-- Navigation Links (Home, Shop, Wishlist, Cart, Contact Us, Login) -->
             <div>
                 <h3 class="text-xs font-semibold text-fashGold tracking-wider uppercase mb-3 border-b border-gray-700 pb-1">Navigation Menu</h3>
                 <ul class="space-y-2 text-sm">
                     <li><a href="#" onclick="switchView('home'); toggleSidebarMenu();" class="block py-1.5 hover:text-fashGold"><i class="fa-solid fa-house w-6 text-fashGold"></i> Home</a></li>
+                    <li><a href="#" onclick="switchView('home'); scrollToProducts(); toggleSidebarMenu();" class="block py-1.5 hover:text-fashGold"><i class="fa-solid fa-store w-6 text-fashGold"></i> Shop</a></li>
+                    <li><a href="#" onclick="switchView('wishlist'); toggleSidebarMenu();" class="block py-1.5 hover:text-fashGold"><i class="fa-regular fa-heart w-6 text-fashGold"></i> Wishlist</a></li>
+                    <li><a href="#" onclick="switchView('cart'); toggleSidebarMenu();" class="block py-1.5 hover:text-fashGold"><i class="fa-solid fa-cart-shopping w-6 text-fashGold"></i> Cart</a></li>
+                    <li><a href="#" onclick="openModal('contactModal'); toggleSidebarMenu();" class="block py-1.5 hover:text-fashGold"><i class="fa-solid fa-envelope w-6 text-fashGold"></i> Contact Us</a></li>
+                    <li><a href="#" onclick="handleUserIconClick(); toggleSidebarMenu();" class="block py-1.5 hover:text-fashGold"><i class="fa-regular fa-user w-6 text-fashGold"></i> Login</a></li>
                     <li><a href="#" onclick="openModal('missionModal'); toggleSidebarMenu();" class="block py-1.5 hover:text-fashGold"><i class="fa-solid fa-bullseye w-6 text-fashGold"></i> Mission</a></li>
                     <li><a href="#" onclick="openModal('policyModal'); toggleSidebarMenu();" class="block py-1.5 hover:text-fashGold"><i class="fa-solid fa-shield-halved w-6 text-fashGold"></i> Policy</a></li>
                     <li><a href="#" onclick="openModal('termsModal'); toggleSidebarMenu();" class="block py-1.5 hover:text-fashGold"><i class="fa-solid fa-file-contract w-6 text-fashGold"></i> Terms & Condition</a></li>
@@ -595,14 +600,14 @@
                         </div>
                     </div>
 
-                    <!-- Bank Transfer Box -->
+                    <!-- Bank Transfer Box & Payment Verification Controls -->
                     <div class="bg-fashNavy text-white p-6 rounded-2xl shadow-lg border-2 border-fashGold space-y-4">
                         <h3 class="text-base font-bold text-fashGold flex items-center gap-2">
-                            <i class="fa-solid fa-building-columns"></i> Bank Transfer Details
+                            <i class="fa-solid fa-building-columns"></i> Bank Transfer Details & Payment Verification
                         </h3>
                         
                         <p class="text-[11px] text-gray-300 leading-relaxed">
-                            Please upload the Bank Payment Receipt. Use your Order ID as the payment reference. Your order will not be shipped until the funds have cleared in our account.
+                            Please ensure you transfer the exact order amount to our official store accounts below. The system verifies payment amount and recipient account before approval.
                         </p>
 
                         <!-- Bank Accounts -->
@@ -629,6 +634,26 @@
                                 <button type="button" onclick="copyAccount('1920452449')" class="bg-fashGold text-fashNavy font-bold px-3 py-1 rounded text-[10px] hover:bg-white transition">
                                     Copy
                                 </button>
+                            </div>
+                        </div>
+
+                        <!-- Payment Verification Input Fields -->
+                        <div class="space-y-3 bg-fashNavyDark p-4 rounded-xl border border-fashGold/30 text-xs">
+                            <h4 class="font-bold text-fashGold uppercase text-[11px] border-b border-gray-700 pb-1">Payment Verification Details *</h4>
+                            
+                            <div>
+                                <label class="block font-semibold text-gray-300 mb-1">Amount Paid (₦) *</label>
+                                <input type="number" required id="paymentAmountInput" placeholder="e.g. 15000" class="w-full p-2 bg-fashNavy text-white border border-fashGold/40 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-fashGold">
+                            </div>
+
+                            <div>
+                                <label class="block font-semibold text-gray-300 mb-1">Account Paid To *</label>
+                                <select required id="paymentAccountSelect" class="w-full p-2 bg-fashNavy text-white border border-fashGold/40 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-fashGold">
+                                    <option value="">-- Select Bank Paid To --</option>
+                                    <option value="moniepoint_official">Moniepoint (5271600556 - FASH VARIETIES STORE)</option>
+                                    <option value="access_official">Access Bank (1920452449 - FASH VARIETIES STORE)</option>
+                                    <option value="third_party">Another Person / Third-Party Account</option>
+                                </select>
                             </div>
                         </div>
 
@@ -686,7 +711,15 @@
     </main>
 
 
-    <!-- ================= 4. FOOTER ================= -->
+    <!-- ================= 4. FLOATING BUTTON ================= -->
+    <div class="fixed bottom-6 right-6 z-40 flex flex-col gap-3">
+        <a href="https://wa.me/2348064414142" target="_blank" class="w-14 h-14 bg-green-500 hover:bg-green-600 text-white rounded-full flex items-center justify-center shadow-2xl transition-all transform hover:scale-110" title="Chat on WhatsApp">
+            <i class="fa-brands fa-whatsapp text-3xl"></i>
+        </a>
+    </div>
+
+
+    <!-- ================= 5. FOOTER ================= -->
     <footer class="bg-fashNavy text-white border-t-4 border-fashGold mt-12">
         <div class="max-w-7xl mx-auto px-4 py-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 text-xs">
             
@@ -758,26 +791,27 @@
     </footer>
 
 
-    <!-- ================= 5. MODALS & POPUPS ================= -->
+    <!-- ================= 6. MODALS & POPUPS ================= -->
 
-    <!-- A. LOGIN / REGISTER MODAL -->
+    <!-- A. LOGIN / REGISTER MODAL WITH SYNC & VALIDATION -->
     <div id="loginModal" class="fixed inset-0 bg-black/70 z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl max-w-md w-full p-6 space-y-4 shadow-2xl relative border-2 border-fashGold">
             <button onclick="closeModal('loginModal')" class="absolute top-4 right-4 text-gray-400 hover:text-gray-800 text-lg"><i class="fa-solid fa-xmark"></i></button>
             <div class="text-center">
                 <div class="w-12 h-12 mx-auto rounded-full bg-fashNavy text-fashGold font-bold flex items-center justify-center mb-2">FV</div>
-                <h3 class="text-xl font-bold text-fashNavy">Login / Register</h3>
-                <p class="text-xs text-gray-500">Access your Fash Varieties Store Account</p>
+                <h3 id="authModalTitle" class="text-xl font-bold text-fashNavy">Login to Your Account</h3>
+                <p id="authModalSubtitle" class="text-xs text-gray-500">Access your Fash Varieties Store Account</p>
             </div>
 
-            <form onsubmit="handleLoginSubmit(event)" class="space-y-3 text-xs">
+            <!-- Login Form -->
+            <form id="loginFormElement" onsubmit="handleLoginSubmit(event)" class="space-y-3 text-xs">
                 <div>
                     <label class="block font-semibold text-gray-700 mb-1">Email Address</label>
-                    <input type="email" id="loginEmailInput" required placeholder="Enter your email" class="w-full p-2.5 border border-gray-300 rounded-lg">
+                    <input type="email" id="loginEmailInput" required placeholder="Enter your registered email" class="w-full p-2.5 border border-gray-300 rounded-lg">
                 </div>
                 <div>
                     <label class="block font-semibold text-gray-700 mb-1">Password</label>
-                    <input type="password" required placeholder="Enter password" class="w-full p-2.5 border border-gray-300 rounded-lg">
+                    <input type="password" id="loginPasswordInput" required placeholder="Enter password" class="w-full p-2.5 border border-gray-300 rounded-lg">
                 </div>
                 <div class="flex justify-between items-center text-[11px]">
                     <label class="flex items-center gap-1.5 cursor-pointer">
@@ -789,8 +823,29 @@
                     LOGIN
                 </button>
             </form>
+
+            <!-- Register Form (Hidden by default) -->
+            <form id="registerFormElement" onsubmit="handleRegisterSubmit(event)" class="space-y-3 text-xs hidden">
+                <div>
+                    <label class="block font-semibold text-gray-700 mb-1">Full Name</label>
+                    <input type="text" id="registerNameInput" required placeholder="Enter your full name" class="w-full p-2.5 border border-gray-300 rounded-lg">
+                </div>
+                <div>
+                    <label class="block font-semibold text-gray-700 mb-1">Email Address</label>
+                    <input type="email" id="registerEmailInput" required placeholder="Enter email to register" class="w-full p-2.5 border border-gray-300 rounded-lg">
+                </div>
+                <div>
+                    <label class="block font-semibold text-gray-700 mb-1">Password</label>
+                    <input type="password" id="registerPasswordInput" required placeholder="Create password" class="w-full p-2.5 border border-gray-300 rounded-lg">
+                </div>
+                <button type="submit" class="w-full bg-fashGold text-fashNavy font-bold py-2.5 rounded-xl uppercase hover:bg-fashNavy hover:text-fashGold transition">
+                    REGISTER ACCOUNT
+                </button>
+            </form>
+
             <div class="text-center text-xs text-gray-500 border-t border-gray-100 pt-3">
-                Don't have an account? <a href="#" class="text-fashNavy font-bold hover:underline">Register</a>
+                <span id="authToggleText">Don't have an account?</span> 
+                <button type="button" onclick="toggleAuthMode()" id="authToggleButton" class="text-fashNavy font-bold hover:underline ml-1">Register</button>
             </div>
         </div>
     </div>
@@ -1124,6 +1179,7 @@
         let activeImageIndex = 0;
         let activeCategory = "All";
         let loggedInUser = null;
+        let isRegisterMode = false;
 
         // On DOM Loaded
         document.addEventListener("DOMContentLoaded", () => {
@@ -1844,11 +1900,30 @@
             });
         }
 
-        // UPDATED ORDER SUBMISSION WITH REAL RECEIPT UPLOAD & AUTO-STOCK REDUCTION
+        // UPDATED PAYMENT PROOF VERIFICATION & ORDER SUBMISSION
         function handlePlaceOrder(e) {
             e.preventDefault();
             if (cart.length === 0) {
                 alert("Your cart is empty!");
+                return;
+            }
+
+            const subtotal = cart.reduce((sum, item) => sum + (item.unitPrice * item.qty), 0);
+            const shipmentMethod = document.querySelector('input[name="shipmentMethod"]:checked')?.value || 'pickup';
+            const shippingFee = shipmentMethod === 'waybill' ? 700 : 0;
+            const totalAmount = subtotal + shippingFee;
+
+            // 1. PAYMENT PROOF VERIFICATION (Checking Amount & Account Provider)
+            const paidAmountInput = parseFloat(document.getElementById('paymentAmountInput').value) || 0;
+            const paidAccountChoice = document.getElementById('paymentAccountSelect').value;
+
+            if (paidAmountInput < totalAmount) {
+                alert(`❌ Invalid Payment: The amount paid (₦${paidAmountInput.toLocaleString()}) is less than the total order amount (₦${totalAmount.toLocaleString()}). Full payment is required.`);
+                return;
+            }
+
+            if (paidAccountChoice === 'third_party' || !paidAccountChoice) {
+                alert(`❌ Invalid Payment: Payment must be made to the official store account provider (Moniepoint or Access Bank - FASH VARIETIES STORE). Payments sent to unauthorized or third-party accounts are not accepted.`);
                 return;
             }
 
@@ -1870,11 +1945,6 @@
                 const email = document.getElementById('billingEmail').value;
                 const billingAddress = `${document.getElementById('billingAddress').value}, ${document.getElementById('billingCity').value}, ${document.getElementById('billingState').value}`;
                 const orderNote = document.getElementById('orderNoteInput').value;
-                const shipmentMethod = document.querySelector('input[name="shipmentMethod"]:checked')?.value || 'pickup';
-                
-                const subtotal = cart.reduce((sum, item) => sum + (item.unitPrice * item.qty), 0);
-                const shippingFee = shipmentMethod === 'waybill' ? 700 : 0;
-                const totalAmount = subtotal + shippingFee;
 
                 const newOrder = {
                     id: orderNum,
@@ -1897,17 +1967,16 @@
                         image: item.image
                     })),
                     total: totalAmount,
-                    proofImg: base64Receipt, // Saves the actual uploaded receipt image
+                    paidAmount: paidAmountInput,
+                    proofImg: base64Receipt,
                     status: 'Pending Confirmation',
-                    day: new Date().getDate() // Captures day for revenue calendar sync
+                    day: new Date().getDate()
                 };
 
-                // 1. Save order to localStorage so Admin panel reads it immediately
                 let existingOrders = JSON.parse(localStorage.getItem('fv_orders')) || [];
                 existingOrders.unshift(newOrder);
                 localStorage.setItem('fv_orders', JSON.stringify(existingOrders));
 
-                // 2. AUTO-REDUCE STOCK QUANTITY FROM PRODUCTS
                 let storedProducts = JSON.parse(localStorage.getItem('fv_products')) || productsData;
                 cart.forEach(cartItem => {
                     const prod = storedProducts.find(p => p.id === cartItem.id);
@@ -1985,20 +2054,81 @@
             if (loggedInUser) {
                 switchView('account');
             } else {
+                isRegisterMode = false;
+                updateAuthModalView();
                 openModal('loginModal');
             }
         }
 
+        function toggleAuthMode() {
+            isRegisterMode = !isRegisterMode;
+            updateAuthModalView();
+        }
+
+        function updateAuthModalView() {
+            const title = document.getElementById('authModalTitle');
+            const subtitle = document.getElementById('authModalSubtitle');
+            const loginForm = document.getElementById('loginFormElement');
+            const registerForm = document.getElementById('registerFormElement');
+            const toggleText = document.getElementById('authToggleText');
+            const toggleBtn = document.getElementById('authToggleButton');
+
+            if (isRegisterMode) {
+                title.innerText = "Create an Account";
+                subtitle.innerText = "Register your email to save your details";
+                loginForm.classList.add('hidden');
+                registerForm.classList.remove('hidden');
+                toggleText.innerText = "Already have an account?";
+                toggleBtn.innerText = "Login";
+            } else {
+                title.innerText = "Login to Your Account";
+                subtitle.innerText = "Access your Fash Varieties Store Account";
+                loginForm.classList.remove('hidden');
+                registerForm.classList.add('hidden');
+                toggleText.innerText = "Don't have an account?";
+                toggleBtn.innerText = "Register";
+            }
+        }
+
+        // REGISTRATION HANDLER
+        function handleRegisterSubmit(e) {
+            e.preventDefault();
+            const name = document.getElementById('registerNameInput').value.trim();
+            const email = document.getElementById('registerEmailInput').value.trim().toLowerCase();
+            const password = document.getElementById('registerPasswordInput').value;
+
+            let users = JSON.parse(localStorage.getItem('fv_users')) || [];
+            if (users.some(u => u.email === email)) {
+                alert("An account with this email is already registered. Please login instead.");
+                return;
+            }
+
+            users.push({ name, email, password });
+            localStorage.setItem('fv_users', JSON.stringify(users));
+            alert("Registration successful! You can now log in with your credentials.");
+            isRegisterMode = false;
+            updateAuthModalView();
+        }
+
+        // LOGIN HANDLER WITH EMAIL SYNC & INVALID POPUP FOR UNREGISTERED USERS
         function handleLoginSubmit(e) {
             e.preventDefault();
-            const email = document.getElementById('loginEmailInput').value;
-            if (email) {
-                loggedInUser = email;
-                document.getElementById('navUserStatus').innerText = "Account";
-                document.getElementById('accountEmailGreeting').innerText = `Hello, ${email}`;
-                closeModal('loginModal');
-                switchView('account');
+            const email = document.getElementById('loginEmailInput').value.trim().toLowerCase();
+            const password = document.getElementById('loginPasswordInput').value;
+
+            let users = JSON.parse(localStorage.getItem('fv_users')) || [];
+            const foundUser = users.find(u => u.email === email && u.password === password);
+
+            if (!foundUser) {
+                alert("❌ Invalid login: This email has not been registered or saved in our system. Please check your email or register a new account first.");
+                return;
             }
+
+            loggedInUser = foundUser.email;
+            document.getElementById('navUserStatus').innerText = "Account";
+            document.getElementById('accountEmailGreeting').innerText = `Hello, ${foundUser.email}`;
+            closeModal('loginModal');
+            switchView('account');
         }
 
         function logoutUser() {
