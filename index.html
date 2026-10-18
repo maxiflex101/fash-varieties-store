@@ -600,14 +600,14 @@
                         </div>
                     </div>
 
-                    <!-- Bank Transfer Box & Payment Verification Controls -->
+                    <!-- Bank Transfer Box -->
                     <div class="bg-fashNavy text-white p-6 rounded-2xl shadow-lg border-2 border-fashGold space-y-4">
                         <h3 class="text-base font-bold text-fashGold flex items-center gap-2">
-                            <i class="fa-solid fa-building-columns"></i> Bank Transfer Details & Payment Verification
+                            <i class="fa-solid fa-building-columns"></i> Bank Transfer Details
                         </h3>
                         
                         <p class="text-[11px] text-gray-300 leading-relaxed">
-                            Please ensure you transfer the exact order amount to our official store accounts below. The system verifies payment amount and recipient account before approval.
+                            Please transfer the exact order amount to our official store accounts below before placing your order.
                         </p>
 
                         <!-- Bank Accounts -->
@@ -635,32 +635,6 @@
                                     Copy
                                 </button>
                             </div>
-                        </div>
-
-                        <!-- Payment Verification Input Fields -->
-                        <div class="space-y-3 bg-fashNavyDark p-4 rounded-xl border border-fashGold/30 text-xs">
-                            <h4 class="font-bold text-fashGold uppercase text-[11px] border-b border-gray-700 pb-1">Payment Verification Details *</h4>
-                            
-                            <div>
-                                <label class="block font-semibold text-gray-300 mb-1">Amount Paid (₦) *</label>
-                                <input type="number" required id="paymentAmountInput" placeholder="e.g. 15000" class="w-full p-2 bg-fashNavy text-white border border-fashGold/40 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-fashGold">
-                            </div>
-
-                            <div>
-                                <label class="block font-semibold text-gray-300 mb-1">Account Paid To *</label>
-                                <select required id="paymentAccountSelect" class="w-full p-2 bg-fashNavy text-white border border-fashGold/40 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-fashGold">
-                                    <option value="">-- Select Bank Paid To --</option>
-                                    <option value="moniepoint_official">Moniepoint (5271600556 - FASH VARIETIES STORE)</option>
-                                    <option value="access_official">Access Bank (1920452449 - FASH VARIETIES STORE)</option>
-                                    <option value="third_party">Another Person / Third-Party Account</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <!-- Upload Receipt -->
-                        <div class="space-y-2">
-                            <label class="block text-xs font-bold text-fashGold">Upload Bank Payment Receipt *</label>
-                            <input type="file" required id="receiptInput" accept="image/*,.pdf" class="w-full text-xs text-gray-300 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-fashGold file:text-fashNavy hover:file:bg-white cursor-pointer bg-fashNavyDark p-2 rounded-lg border border-fashGold/30">
                         </div>
 
                         <p class="text-[10px] text-gray-400">
@@ -817,7 +791,7 @@
                     <label class="flex items-center gap-1.5 cursor-pointer">
                         <input type="checkbox" class="rounded text-fashGold"> Remember me
                     </label>
-                    <a href="#" class="text-fashNavy hover:underline">Lost Your Password?</a>
+                    <a href="#" onclick="openForgotPasswordModal(); return false;" class="text-fashNavy hover:underline">Lost Your Password?</a>
                 </div>
                 <button type="submit" class="w-full bg-fashNavy text-fashGold font-bold py-2.5 rounded-xl uppercase hover:bg-fashGold hover:text-fashNavy transition">
                     LOGIN
@@ -847,6 +821,33 @@
                 <span id="authToggleText">Don't have an account?</span> 
                 <button type="button" onclick="toggleAuthMode()" id="authToggleButton" class="text-fashNavy font-bold hover:underline ml-1">Register</button>
             </div>
+        </div>
+    </div>
+
+
+    <!-- E. FORGOT PASSWORD MODAL -->
+    <div id="forgotPasswordModal" class="fixed inset-0 bg-black/70 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 space-y-4 shadow-2xl relative border-2 border-fashGold">
+            <button onclick="closeModal('forgotPasswordModal')" class="absolute top-4 right-4 text-gray-400 hover:text-gray-800 text-lg"><i class="fa-solid fa-xmark"></i></button>
+            <div class="text-center">
+                <div class="w-12 h-12 mx-auto rounded-full bg-fashNavy text-fashGold font-bold flex items-center justify-center mb-2">FV</div>
+                <h3 class="text-xl font-bold text-fashNavy">Reset Your Password</h3>
+                <p class="text-xs text-gray-500">Enter your registered email and a new password</p>
+            </div>
+
+            <form onsubmit="handleForgotPasswordSubmit(event)" class="space-y-3 text-xs">
+                <div>
+                    <label class="block font-semibold text-gray-700 mb-1">Registered Email Address</label>
+                    <input type="email" id="resetEmailInput" required placeholder="Enter your email" class="w-full p-2.5 border border-gray-300 rounded-lg">
+                </div>
+                <div>
+                    <label class="block font-semibold text-gray-700 mb-1">New Password</label>
+                    <input type="password" id="resetNewPasswordInput" required placeholder="Enter new password" class="w-full p-2.5 border border-gray-300 rounded-lg">
+                </div>
+                <button type="submit" class="w-full bg-fashNavy text-fashGold font-bold py-2.5 rounded-xl uppercase hover:bg-fashGold hover:text-fashNavy transition">
+                    UPDATE PASSWORD
+                </button>
+            </form>
         </div>
     </div>
 
@@ -885,15 +886,15 @@
             
             <div class="bg-green-50 p-4 rounded-xl border border-green-200 space-y-2">
                 <p class="text-xs font-semibold text-green-800">
-                    Please notify me on WhatsApp
+                    Please notify us on WhatsApp
                 </p>
                 <p class="text-[11px] text-green-700">
-                    Click below to send your payment receipt & order reference directly to our customer support.
+                    Click below to send your order reference directly to our customer support.
                 </p>
             </div>
 
             <a id="whatsappNotifyBtn" href="#" target="_blank" class="block w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-xl text-xs uppercase shadow-lg transition">
-                <i class="fa-brands fa-whatsapp text-base mr-1"></i> Send Receipt via WhatsApp
+                <i class="fa-brands fa-whatsapp text-base mr-1"></i> Send Order via WhatsApp
             </a>
 
             <button onclick="closeModal('orderSuccessModal'); switchView('home');" class="text-xs text-gray-500 hover:text-fashNavy underline pt-2">
@@ -1900,7 +1901,7 @@
             });
         }
 
-        // UPDATED PAYMENT PROOF VERIFICATION & ORDER SUBMISSION
+        // ORDER SUBMISSION (WITHOUT PAYMENT VERIFICATION REQUIREMENTS)
         function handlePlaceOrder(e) {
             e.preventDefault();
             if (cart.length === 0) {
@@ -1913,90 +1914,63 @@
             const shippingFee = shipmentMethod === 'waybill' ? 700 : 0;
             const totalAmount = subtotal + shippingFee;
 
-            // 1. PAYMENT PROOF VERIFICATION (Checking Amount & Account Provider)
-            const paidAmountInput = parseFloat(document.getElementById('paymentAmountInput').value) || 0;
-            const paidAccountChoice = document.getElementById('paymentAccountSelect').value;
+            const orderNum = "FV-" + new Date().getFullYear() + "-" + Math.floor(1000 + Math.random() * 9000);
+            
+            const firstName = document.getElementById('billingFirstName').value;
+            const lastName = document.getElementById('billingLastName').value;
+            const customerName = `${firstName} ${lastName}`.trim();
+            const phone = document.getElementById('billingPhone').value;
+            const email = document.getElementById('billingEmail').value;
+            const billingAddress = `${document.getElementById('billingAddress').value}, ${document.getElementById('billingCity').value}, ${document.getElementById('billingState').value}`;
+            const orderNote = document.getElementById('orderNoteInput').value;
 
-            if (paidAmountInput < totalAmount) {
-                alert(`❌ Invalid Payment: The amount paid (₦${paidAmountInput.toLocaleString()}) is less than the total order amount (₦${totalAmount.toLocaleString()}). Full payment is required.`);
-                return;
-            }
-
-            if (paidAccountChoice === 'third_party' || !paidAccountChoice) {
-                alert(`❌ Invalid Payment: Payment must be made to the official store account provider (Moniepoint or Access Bank - FASH VARIETIES STORE). Payments sent to unauthorized or third-party accounts are not accepted.`);
-                return;
-            }
-
-            const fileInput = document.getElementById('receiptInput');
-            if (!fileInput.files || !fileInput.files[0]) {
-                alert("Please upload your payment receipt!");
-                return;
-            }
-
-            const reader = new FileReader();
-            reader.onload = function(event) {
-                const base64Receipt = event.target.result;
-                const orderNum = "FV-" + new Date().getFullYear() + "-" + Math.floor(1000 + Math.random() * 9000);
-                
-                const firstName = document.getElementById('billingFirstName').value;
-                const lastName = document.getElementById('billingLastName').value;
-                const customerName = `${firstName} ${lastName}`.trim();
-                const phone = document.getElementById('billingPhone').value;
-                const email = document.getElementById('billingEmail').value;
-                const billingAddress = `${document.getElementById('billingAddress').value}, ${document.getElementById('billingCity').value}, ${document.getElementById('billingState').value}`;
-                const orderNote = document.getElementById('orderNoteInput').value;
-
-                const newOrder = {
-                    id: orderNum,
-                    customerName: customerName,
-                    phone: phone,
-                    email: email,
-                    billingAddress: billingAddress,
-                    shippingAddress: billingAddress,
-                    orderNote: orderNote,
-                    shipmentMethod: shipmentMethod,
-                    itemsList: cart.map(item => ({
-                        id: item.id,
-                        name: item.name,
-                        qty: item.qty,
-                        color: item.color,
-                        size: item.size,
-                        selection: item.buyingSelection,
-                        price: item.unitPrice,
-                        total: item.subtotal,
-                        image: item.image
-                    })),
-                    total: totalAmount,
-                    paidAmount: paidAmountInput,
-                    proofImg: base64Receipt,
-                    status: 'Pending Confirmation',
-                    day: new Date().getDate()
-                };
-
-                let existingOrders = JSON.parse(localStorage.getItem('fv_orders')) || [];
-                existingOrders.unshift(newOrder);
-                localStorage.setItem('fv_orders', JSON.stringify(existingOrders));
-
-                let storedProducts = JSON.parse(localStorage.getItem('fv_products')) || productsData;
-                cart.forEach(cartItem => {
-                    const prod = storedProducts.find(p => p.id === cartItem.id);
-                    if (prod) {
-                        prod.qty = Math.max(0, (prod.qty || 0) - cartItem.qty);
-                    }
-                });
-                localStorage.setItem('fv_products', JSON.stringify(storedProducts));
-
-                document.getElementById('generatedOrderNumber').innerText = orderNum;
-
-                const totalText = `₦${totalAmount.toLocaleString()}`;
-                const waMsg = encodeURIComponent(`Hello Fash Varieties Store, I have placed an order (${orderNum}). Total Amount: ${totalText}. Attached is my payment receipt.`);
-                document.getElementById('whatsappNotifyBtn').href = `https://wa.me/2348064414142?text=${waMsg}`;
-
-                cart = [];
-                updateCounts();
-                openModal('orderSuccessModal');
+            const newOrder = {
+                id: orderNum,
+                customerName: customerName,
+                phone: phone,
+                email: email,
+                billingAddress: billingAddress,
+                shippingAddress: billingAddress,
+                orderNote: orderNote,
+                shipmentMethod: shipmentMethod,
+                itemsList: cart.map(item => ({
+                    id: item.id,
+                    name: item.name,
+                    qty: item.qty,
+                    color: item.color,
+                    size: item.size,
+                    selection: item.buyingSelection,
+                    price: item.unitPrice,
+                    total: item.subtotal,
+                    image: item.image
+                })),
+                total: totalAmount,
+                status: 'Pending Confirmation',
+                day: new Date().getDate()
             };
-            reader.readAsDataURL(fileInput.files[0]);
+
+            let existingOrders = JSON.parse(localStorage.getItem('fv_orders')) || [];
+            existingOrders.unshift(newOrder);
+            localStorage.setItem('fv_orders', JSON.stringify(existingOrders));
+
+            let storedProducts = JSON.parse(localStorage.getItem('fv_products')) || productsData;
+            cart.forEach(cartItem => {
+                const prod = storedProducts.find(p => p.id === cartItem.id);
+                if (prod) {
+                    prod.qty = Math.max(0, (prod.qty || 0) - cartItem.qty);
+                }
+            });
+            localStorage.setItem('fv_products', JSON.stringify(storedProducts));
+
+            document.getElementById('generatedOrderNumber').innerText = orderNum;
+
+            const totalText = `₦${totalAmount.toLocaleString()}`;
+            const waMsg = encodeURIComponent(`Hello Fash Varieties Store, I have placed an order (${orderNum}). Total Amount: ${totalText}.`);
+            document.getElementById('whatsappNotifyBtn').href = `https://wa.me/2348064414142?text=${waMsg}`;
+
+            cart = [];
+            updateCounts();
+            openModal('orderSuccessModal');
         }
 
         // Render Customer Order History
@@ -2129,6 +2103,33 @@
             document.getElementById('accountEmailGreeting').innerText = `Hello, ${foundUser.email}`;
             closeModal('loginModal');
             switchView('account');
+        }
+
+        // FORGOT PASSWORD HANDLERS
+        function openForgotPasswordModal() {
+            closeModal('loginModal');
+            openModal('forgotPasswordModal');
+        }
+
+        function handleForgotPasswordSubmit(e) {
+            e.preventDefault();
+            const email = document.getElementById('resetEmailInput').value.trim().toLowerCase();
+            const newPassword = document.getElementById('resetNewPasswordInput').value;
+
+            let users = JSON.parse(localStorage.getItem('fv_users')) || [];
+            const userIndex = users.findIndex(u => u.email === email);
+
+            if (userIndex === -1) {
+                alert("❌ This email address is not registered in our system.");
+                return;
+            }
+
+            users[userIndex].password = newPassword;
+            localStorage.setItem('fv_users', JSON.stringify(users));
+
+            alert("✅ Password updated successfully! You can now log in with your new password.");
+            closeModal('forgotPasswordModal');
+            openModal('loginModal');
         }
 
         function logoutUser() {
