@@ -53,8 +53,7 @@
 
             <!-- Search Bar -->
             <div class="hidden md:flex flex-1 max-w-md relative">
-                <input type="text" id="desktopSearchInput" placeholder="Search product items, kitchen gadgets, appliances..." 
-                       oninput="handleSearch(this.value)"
+                <input type="text" placeholder="Search product items, kitchen gadgets, appliances..." 
                        class="w-full pl-4 pr-10 py-2 rounded-full border border-fashGold text-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-fashGold">
                 <button class="absolute right-3 top-2.5 text-fashNavy hover:text-fashGold">
                     <i class="fa-solid fa-magnifying-glass"></i>
@@ -91,17 +90,17 @@
         <!-- Mobile Search Bar -->
         <div class="md:hidden px-4 pb-3">
             <div class="relative w-full">
-                <input type="text" id="mobileSearchInput" placeholder="Search products..." oninput="handleSearch(this.value)" class="w-full pl-4 pr-10 py-1.5 rounded-full text-gray-800 text-sm border border-fashGold focus:outline-none">
+                <input type="text" placeholder="Search products..." class="w-full pl-4 pr-10 py-1.5 rounded-full text-gray-800 text-sm border border-fashGold focus:outline-none">
                 <button class="absolute right-3 top-2 text-fashNavy">
                     <i class="fa-solid fa-magnifying-glass"></i>
                 </button>
             </div>
         </div>
 
-        <!-- Header Image Banner Under the Search Bar -->
-        <div class="w-full bg-fashNavyDark border-t border-fashGold/30 overflow-hidden">
-            <div class="max-w-7xl mx-auto h-32 md:h-48">
-                <img src="https://i.postimg.cc/wM5QvPLp/IMG-20260826-010246.jpg" alt="Fash Varieties Store Banner" class="w-full h-full object-cover object-center">
+        <!-- Header Banner Image Under Search Bar (Not Cut) -->
+        <div class="w-full bg-fashNavyDark border-t border-fashGold/30">
+            <div class="max-w-7xl mx-auto">
+                <img src="https://i.postimg.cc/c4pT5Zmm/IMG-20260826-010246.jpg" alt="Fash Varieties Store Banner" class="w-full h-auto object-contain block">
             </div>
         </div>
     </header>
@@ -1262,49 +1261,6 @@
             activeCategory = cat;
             renderCategoryTabs();
             renderProductGrid();
-            switchView('home');
-        }
-
-        // Live Search Functionality
-        function handleSearch(query) {
-            const searchTerm = query.toLowerCase().trim();
-            activeCategory = "All";
-            renderCategoryTabs();
-            
-            productsData = JSON.parse(localStorage.getItem('fv_products')) || productsData;
-            const grid = document.getElementById('productGrid');
-            const filtered = productsData.filter(p => 
-                p.name.toLowerCase().includes(searchTerm) || 
-                p.category.toLowerCase().includes(searchTerm) || 
-                (p.tag && p.tag.toLowerCase().includes(searchTerm))
-            );
-
-            if (filtered.length === 0) {
-                grid.innerHTML = `<p class="col-span-full text-center text-gray-500 py-8 text-xs">No products found matching "${query}".</p>`;
-                return;
-            }
-
-            grid.innerHTML = filtered.map(product => {
-                const primaryImg = (product.images && product.images.length > 0) ? product.images[0] : (product.image || 'https://via.placeholder.com/300');
-                const displayPrice = product.priceSingle || product.price || 0;
-                const displayTag = (product.tags && product.tags.length > 0) ? product.tags[0] : (product.tag || product.category);
-                return `
-                    <div onclick="openProductDetail(${product.id})" class="bg-white rounded-xl overflow-hidden border border-gray-200 shadow-sm hover:shadow-md transition flex flex-col justify-between group cursor-pointer">
-                        <div class="relative overflow-hidden bg-gray-50 h-44 flex items-center justify-center p-2">
-                            <img src="${primaryImg}" alt="${product.name}" class="max-h-full object-contain group-hover:scale-105 transition duration-300">
-                        </div>
-                        <div class="p-3 space-y-2 flex-1 flex flex-col justify-between">
-                            <div>
-                                <span class="text-[10px] bg-fashGold/20 text-fashNavy font-semibold px-2 py-0.5 rounded block w-fit mb-1 truncate">${displayTag}</span>
-                                <h4 class="text-xs font-bold text-gray-800 line-clamp-2 group-hover:text-fashNavy">${product.name}</h4>
-                            </div>
-                            <div class="pt-2 border-t border-gray-100 flex items-center justify-between">
-                                <span class="text-sm font-extrabold text-fashNavy">₦${Number(displayPrice).toLocaleString()}</span>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }).join('');
             switchView('home');
         }
 
