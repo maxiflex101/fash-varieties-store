@@ -264,7 +264,7 @@
                     <div class="bg-brandNavy text-white p-6 rounded-xl shadow-md flex flex-wrap justify-between items-center gap-4">
                         <div>
                             <p class="text-xs text-gray-300 uppercase tracking-wider">Total Monthly Sales</p>
-                            <h2 class="text-2xl sm:text-3xl font-extrabold text-brandGold mt-1">₦ 0</h2>
+                            <h2 id="total-monthly-sales-display" class="text-2xl sm:text-3xl font-extrabold text-brandGold mt-1">₦ 0</h2>
                         </div>
                         <div class="text-right">
                             <p class="text-xs text-gray-300 uppercase tracking-wider">Instructions</p>
@@ -489,7 +489,7 @@
                             <input type="text" id="p-color" placeholder="e.g. Red, Black, Gold" class="w-full p-2 bg-white rounded border mb-2">
                             <div class="grid grid-cols-2 gap-2">
                                 <div>
-                                    <label class="block font-[11px] font-semibold text-gray-600 mb-1">Colour Price (₦)</label>
+                                    <label class="block text-[11px] font-semibold text-gray-600 mb-1">Colour Price (₦)</label>
                                     <input type="number" id="p-color-price" placeholder="0" class="w-full p-2 bg-white rounded border text-xs">
                                 </div>
                                 <div>
@@ -503,7 +503,7 @@
                             <input type="text" id="p-size" placeholder="e.g. Medium, Large, XL" class="w-full p-2 bg-white rounded border mb-2">
                             <div class="grid grid-cols-2 gap-2">
                                 <div>
-                                    <label class="block font-[11px] font-semibold text-gray-600 mb-1">Size Price (₦)</label>
+                                    <label class="block text-[11px] font-semibold text-gray-600 mb-1">Size Price (₦)</label>
                                     <input type="number" id="p-size-price" placeholder="0" class="w-full p-2 bg-white rounded border text-xs">
                                 </div>
                                 <div>
@@ -816,6 +816,7 @@
         const initialOrders = [
             {
                 id: 'ORD-9021',
+                date: '2026-10-25', // Added order date stamp
                 customerName: 'Mrs. Funke Adebayo',
                 phone: '08031234567',
                 email: 'funke.adebayo@gmail.com',
@@ -840,9 +841,6 @@
                 status: 'Pending Confirmation'
             }
         ];
-
-        // Daily Revenue Goods Purchased Simulation Data (Cleared history for October 2026)
-        const sampleDailySales = {};
 
         // State Initialization
         let products = JSON.parse(localStorage.getItem('fv_products')) || initialProducts;
@@ -1263,7 +1261,9 @@
                 return;
             }
 
-            container.innerHTML = orders.map(o => `
+            container.innerHTML = orders.map(o => {
+                const orderDateStr = o.date ? new Date(o.date).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : 'N/A';
+                return `
                 <div onclick="openOrderDetailsModal('${o.id}')" class="bg-white p-5 rounded-xl shadow-md border border-gray-200 space-y-3 cursor-pointer hover:border-brandGold transition">
                     <div class="flex flex-wrap justify-between items-center border-b pb-2 gap-2">
                         <div>
@@ -1271,6 +1271,7 @@
                             <span class="text-xs text-gray-500 ml-2">Customer: <strong>${o.customerName}</strong> (${o.phone})</span>
                         </div>
                         <div class="flex items-center space-x-2">
+                            <span class="bg-gray-100 text-gray-700 text-[10px] font-semibold px-2 py-0.5 rounded"><i class="fa-regular fa-calendar"></i> ${orderDateStr}</span>
                             <span class="bg-blue-100 text-blue-800 text-[10px] font-bold px-2 py-0.5 rounded uppercase">Method: ${o.shipmentMethod || 'Pickup'}</span>
                             <span class="bg-yellow-100 text-yellow-800 text-xs font-bold px-2.5 py-1 rounded-full">${o.status}</span>
                         </div>
@@ -1284,7 +1285,7 @@
                         <button class="bg-brandNavy text-brandGold font-bold px-3 py-1.5 rounded text-xs">View Details</button>
                     </div>
                 </div>
-            `).join('');
+            `}).join('');
         }
 
         function openOrderDetailsModal(orderId) {
@@ -1313,12 +1314,14 @@
                 itemsHtml = `<p class="text-xs text-gray-700 bg-gray-50 p-3 rounded border">${order.items || 'No items description'}</p>`;
             }
 
+            const formattedOrderDate = order.date ? new Date(order.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : 'N/A';
+
             content.innerHTML = `
                 <!-- Order Number & Status -->
                 <div class="flex justify-between items-center bg-brandNavy text-white p-3 rounded-xl">
                     <div>
-                        <span class="text-[10px] text-gray-300 uppercase font-bold">Order Number</span>
-                        <h4 class="font-black text-brandGold text-base">#${order.id}</h4>
+                        <span class="text-[10px] text-gray-300 uppercase font-bold">Order Number & Date</span>
+                        <h4 class="font-black text-brandGold text-base">#${order.id} <span class="text-xs text-gray-200 font-normal">(${formattedOrderDate})</span></h4>
                     </div>
                     <div>
                         <span class="text-[10px] text-gray-300 uppercase font-bold">Status</span>
@@ -1402,7 +1405,7 @@
 
         function viewProof(imgUrl) {
             document.getElementById('proof-img').src = imgUrl;
-            document.getElementById('proof-modal').classList.remove('hidden');
+            document.getElementById('proof-modal').classList.add('hidden');
         }
 
         function deleteOrder(id) {
@@ -1435,7 +1438,7 @@
             `).join('');
         }
 
-        // Calendar & Daily Goods Purchased Handler (Dynamic accurate days for current year and month)
+        // Calendar & Daily Goods Purchased Handler (Dynamically aggregates sales from actual orders)
         function renderCalendar() {
             const grid = document.getElementById('calendar-grid');
             grid.innerHTML = '';
@@ -1454,18 +1457,63 @@
                 monthLabel.innerText = `Month: ${monthNames[month]} ${year}`;
             }
 
+            // Build dynamic sales map from actual orders list for the current month and year
+            const dynamicDailySales = {};
+            let totalMonthlyRevenue = 0;
+
+            orders.forEach(ord => {
+                if (ord.date) {
+                    const ordDate = new Date(ord.date);
+                    if (ordDate.getFullYear() === year && ordDate.getMonth() === month) {
+                        const dayNum = ordDate.getDate();
+                        if (!dynamicDailySales[dayNum]) {
+                            dynamicDailySales[dayNum] = [];
+                        }
+                        
+                        // Add items from order or fallback to main order summary
+                        if (ord.itemsList && Array.isArray(ord.itemsList)) {
+                            ord.itemsList.forEach(it => {
+                                dynamicDailySales[dayNum].push({
+                                    name: it.name,
+                                    qty: it.qty || 1,
+                                    price: it.price || ord.total,
+                                    total: it.total || ord.total,
+                                    orderId: ord.id
+                                });
+                                totalMonthlyRevenue += (it.total || ord.total);
+                            });
+                        } else {
+                            dynamicDailySales[dayNum].push({
+                                name: ord.items || 'Customer Order',
+                                qty: 1,
+                                price: ord.total,
+                                total: ord.total,
+                                orderId: ord.id
+                            });
+                            totalMonthlyRevenue += ord.total;
+                        }
+                    }
+                }
+            });
+
+            // Update Total Monthly Sales display card
+            const monthlySalesDisplay = document.getElementById('total-monthly-sales-display');
+            if (monthlySalesDisplay) {
+                monthlySalesDisplay.innerText = `₦ ${totalMonthlyRevenue.toLocaleString()}`;
+            }
+
             // Render offset blank cells for the starting day of the week
             for (let i = 0; i < firstDayIndex; i++) {
                 grid.innerHTML += `<div class="border rounded-lg p-2 min-h-[65px] bg-transparent border-transparent"></div>`;
             }
 
             for (let i = 1; i <= totalDays; i++) {
-                const dayItems = sampleDailySales[i] || [];
+                const dayItems = dynamicDailySales[i] || [];
                 const hasSales = dayItems.length > 0;
                 const dayTotal = hasSales ? dayItems.reduce((acc, item) => acc + item.total, 0) : 0;
                 
                 grid.innerHTML += `
-                    <div onclick="openDayRevenueModal(${i})" class="border rounded-lg p-2 min-h-[65px] flex flex-col justify-between cursor-pointer transition hover:border-brandGold hover:shadow-md ${hasSales ? 'bg-green-50/80 border-green-300' : 'bg-gray-50 hover:bg-gray-100'}">
+                    <div onclick="openDayRevenueModal(${i}, ${encodeURIComponent(JSON.stringify(dayItems))})" class="border rounded-lg p-2 min-h-[65px] flex flex-col justify-between cursor-pointer transition hover:border-brandGold hover:shadow-md ${hasSales ? 'bg-green-50/80 border-green-300' : 'bg-gray-50 hover:bg-gray-100'}">
                         <div class="flex justify-between items-center">
                             <span class="text-xs font-bold text-gray-700">${i}</span>
                             ${hasSales ? '<span class="w-2 h-2 rounded-full bg-green-500"></span>' : ''}
@@ -1476,7 +1524,7 @@
             }
         }
 
-        function openDayRevenueModal(dayNum) {
+        function openDayRevenueModal(dayNum, encodedItems) {
             const modal = document.getElementById('day-revenue-modal');
             const dateTitle = document.getElementById('revenue-modal-date');
             const totalEl = document.getElementById('revenue-modal-total');
@@ -1487,7 +1535,12 @@
             const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
             dateTitle.innerText = `${monthNames[now.getMonth()]} ${dayNum}, ${now.getFullYear()} - Daily Goods Purchased`;
 
-            const dayItems = sampleDailySales[dayNum] || [];
+            let dayItems = [];
+            try {
+                dayItems = typeof encodedItems === 'string' ? JSON.parse(decodeURIComponent(encodedItems)) : (encodedItems || []);
+            } catch(e) {
+                dayItems = [];
+            }
 
             if (dayItems.length === 0) {
                 totalEl.innerText = '₦ 0';
