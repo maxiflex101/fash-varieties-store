@@ -1266,7 +1266,9 @@
                 return;
             }
 
-            container.innerHTML = orders.map(o => `
+            container.innerHTML = orders.map(o => {
+                const orderDateStr = o.date ? new Date(o.date).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : 'N/A';
+                return `
                 <div onclick="openOrderDetailsModal('${o.id}')" class="bg-white p-5 rounded-xl shadow-md border border-gray-200 space-y-3 cursor-pointer hover:border-brandGold transition">
                     <div class="flex flex-wrap justify-between items-center border-b pb-2 gap-2">
                         <div>
@@ -1274,6 +1276,7 @@
                             <span class="text-xs text-gray-500 ml-2">Customer: <strong>${o.customerName}</strong> (${o.phone})</span>
                         </div>
                         <div class="flex items-center space-x-2">
+                            <span class="bg-gray-100 text-gray-700 text-[10px] font-semibold px-2 py-0.5 rounded"><i class="fa-regular fa-calendar"></i> ${orderDateStr}</span>
                             <span class="bg-blue-100 text-blue-800 text-[10px] font-bold px-2 py-0.5 rounded uppercase">Method: ${o.shipmentMethod || 'Pickup'}</span>
                             <span class="bg-yellow-100 text-yellow-800 text-xs font-bold px-2.5 py-1 rounded-full">${o.status}</span>
                         </div>
@@ -1287,7 +1290,7 @@
                         <button class="bg-brandNavy text-brandGold font-bold px-3 py-1.5 rounded text-xs">View Details</button>
                     </div>
                 </div>
-            `).join('');
+            `}).join('');
         }
 
         function openOrderDetailsModal(orderId) {
@@ -1316,12 +1319,14 @@
                 itemsHtml = `<p class="text-xs text-gray-700 bg-gray-50 p-3 rounded border">${order.items || 'No items description'}</p>`;
             }
 
+            const formattedOrderDate = order.date ? new Date(order.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : 'N/A';
+
             content.innerHTML = `
                 <!-- Order Number & Status -->
                 <div class="flex justify-between items-center bg-brandNavy text-white p-3 rounded-xl">
                     <div>
-                        <span class="text-[10px] text-gray-300 uppercase font-bold">Order Number</span>
-                        <h4 class="font-black text-brandGold text-base">#${order.id}</h4>
+                        <span class="text-[10px] text-gray-300 uppercase font-bold">Order Number & Date</span>
+                        <h4 class="font-black text-brandGold text-base">#${order.id} <span class="text-xs text-gray-200 font-normal">(${formattedOrderDate})</span></h4>
                     </div>
                     <div>
                         <span class="text-[10px] text-gray-300 uppercase font-bold">Status</span>
@@ -1418,7 +1423,7 @@
         }
 
         function viewProof(imgUrl) {
-            document.getElementById('proof-img').src = imgUrl;
+            document.getElementById('proof-img').src = imgUrl || 'https://via.placeholder.com/300';
             document.getElementById('proof-modal').classList.remove('hidden');
         }
 
