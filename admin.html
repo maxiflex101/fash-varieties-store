@@ -489,7 +489,7 @@
                             <input type="text" id="p-color" placeholder="e.g. Red, Black, Gold" class="w-full p-2 bg-white rounded border mb-2">
                             <div class="grid grid-cols-2 gap-2">
                                 <div>
-                                    <label class="block text-[11px] font-semibold text-gray-600 mb-1">Colour Price (₦)</label>
+                                    <label class="block font-[11px] font-semibold text-gray-600 mb-1">Colour Price (₦)</label>
                                     <input type="number" id="p-color-price" placeholder="0" class="w-full p-2 bg-white rounded border text-xs">
                                 </div>
                                 <div>
@@ -503,7 +503,7 @@
                             <input type="text" id="p-size" placeholder="e.g. Medium, Large, XL" class="w-full p-2 bg-white rounded border mb-2">
                             <div class="grid grid-cols-2 gap-2">
                                 <div>
-                                    <label class="block text-[11px] font-semibold text-gray-600 mb-1">Size Price (₦)</label>
+                                    <label class="block font-[11px] font-semibold text-gray-600 mb-1">Size Price (₦)</label>
                                     <input type="number" id="p-size-price" placeholder="0" class="w-full p-2 bg-white rounded border text-xs">
                                 </div>
                                 <div>
@@ -1090,17 +1090,17 @@
             const title = document.getElementById('modal-title');
             const relatedSelect = document.getElementById('p-related');
 
-            // Populate related products dropdown from existing catalog
+            // Find current product if editing
+            const prod = editId ? products.find(p => p.id === editId) : null;
+
+            // Populate related products dropdown from existing catalog (excluding current product name/id to prevent self-linking)
             relatedSelect.innerHTML = products
-                .filter(p => editId ? p.id !== editId : true)
+                .filter(p => prod ? p.name !== prod.name : true)
                 .map(p => `<option value="${p.name}">${p.name} (${p.category})</option>`)
                 .join('');
 
-            if (editId) {
+            if (prod) {
                 // EDIT MODE
-                const prod = products.find(p => p.id === editId);
-                if (!prod) return;
-
                 title.innerText = '✎ Edit Product Details';
                 document.getElementById('p-id').value = prod.id;
                 document.getElementById('p-name').value = prod.name || '';
