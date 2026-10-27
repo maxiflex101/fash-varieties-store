@@ -152,6 +152,11 @@
                         <span>REVENUE</span>
                     </button>
 
+                    <button onclick="navigateTo('records')" id="nav-records" class="nav-btn w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg font-semibold text-xs sm:text-sm text-gray-300 hover:bg-brandNavyDark hover:text-brandGold transition">
+                        <i class="fa-solid fa-book-bookmark w-5 text-center"></i>
+                        <span>RECORD</span>
+                    </button>
+
                     <button onclick="navigateTo('low-stock')" id="nav-low-stock" class="nav-btn w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg font-semibold text-xs sm:text-sm text-gray-300 hover:bg-brandNavyDark hover:text-brandGold transition">
                         <i class="fa-solid fa-triangle-exclamation w-5 text-center"></i>
                         <span>LOW STOCK</span>
@@ -211,15 +216,15 @@
                             </div>
                         </div>
 
-                        <!-- Low Stock Tile -->
-                        <div onclick="navigateTo('low-stock')" class="bg-white p-5 sm:p-6 rounded-xl shadow-md border-l-8 border-red-500 hover:shadow-lg transition cursor-pointer flex items-center justify-between">
+                        <!-- Record Tile -->
+                        <div onclick="navigateTo('records')" class="bg-white p-5 sm:p-6 rounded-xl shadow-md border-l-8 border-indigo-600 hover:shadow-lg transition cursor-pointer flex items-center justify-between">
                             <div>
-                                <h2 class="text-lg sm:text-xl font-bold text-brandNavy">LOW STOCK</h2>
-                                <p class="text-xs text-gray-500 mt-1">Inventory remaining low alerts</p>
-                                <span id="dash-lowstock-count" class="text-xs font-bold text-red-500 mt-2 inline-block">0 Items low</span>
+                                <h2 class="text-lg sm:text-xl font-bold text-brandNavy">RECORD</h2>
+                                <p class="text-xs text-gray-500 mt-1">Complete sales ledger & archives</p>
+                                <span id="dash-record-count" class="text-xs font-bold text-indigo-600 mt-2 inline-block">View all store logs</span>
                             </div>
-                            <div class="w-12 h-12 rounded-full bg-red-100 text-red-500 flex items-center justify-center text-2xl">
-                                <i class="fa-solid fa-triangle-exclamation"></i>
+                            <div class="w-12 h-12 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center text-2xl">
+                                <i class="fa-solid fa-book-bookmark"></i>
                             </div>
                         </div>
                     </div>
@@ -281,7 +286,53 @@
                     </div>
                 </section>
 
-                <!-- 5. LOW STOCK VIEW -->
+                <!-- 5. RECORDS VIEW -->
+                <section id="view-records" class="content-view space-y-6 hidden">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        <div>
+                            <h1 class="text-xl sm:text-2xl font-bold text-brandNavy">Store Records & Sales History</h1>
+                            <p class="text-xs text-gray-500 mt-1">Complete archive of all completed and recorded transactions</p>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <span id="record-count-badge" class="bg-indigo-100 text-indigo-800 text-xs font-bold px-3 py-1.5 rounded-full">0 Records</span>
+                        </div>
+                    </div>
+
+                    <!-- Search / Filter bar for Records -->
+                    <div class="bg-white p-3 rounded-xl shadow-sm border flex flex-col sm:flex-row gap-3">
+                        <div class="relative flex-1">
+                            <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-gray-400 text-sm"></i>
+                            <input type="text" id="record-search" oninput="renderRecords()" placeholder="Search records by customer name, order ID, or items..." class="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-brandGold">
+                        </div>
+                        <button onclick="exportRecordsToCSV()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-4 py-2 rounded-lg text-xs flex items-center justify-center space-x-1.5 shadow">
+                            <i class="fa-solid fa-download"></i>
+                            <span>Export Records</span>
+                        </button>
+                    </div>
+
+                    <!-- Records Table / List -->
+                    <div class="bg-white rounded-xl shadow-md border overflow-hidden">
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-xs sm:text-sm">
+                                <thead class="bg-brandNavy text-white uppercase text-[11px] font-bold">
+                                    <tr>
+                                        <th class="p-3.5">Order ID & Date</th>
+                                        <th class="p-3.5">Customer</th>
+                                        <th class="p-3.5">Items / Goods</th>
+                                        <th class="p-3.5">Method</th>
+                                        <th class="p-3.5">Total Amount</th>
+                                        <th class="p-3.5 text-center">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="records-table-body" class="divide-y text-gray-700">
+                                    <!-- Populated dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 6. LOW STOCK VIEW -->
                 <section id="view-low-stock" class="content-view space-y-6 hidden">
                     <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded-r-xl">
                         <h1 class="text-lg font-bold text-red-800">Low Stock Alert Panel</h1>
@@ -290,7 +341,7 @@
                     <div id="low-stock-list" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
                 </section>
 
-                <!-- 6. SETTINGS VIEW -->
+                <!-- 7. SETTINGS VIEW -->
                 <section id="view-settings" class="content-view space-y-6 hidden">
                     <h1 class="text-xl sm:text-2xl font-bold text-brandNavy">Store Identity & Settings</h1>
 
@@ -493,7 +544,7 @@
                                     <input type="number" id="p-color-price" placeholder="0" class="w-full p-2 bg-white rounded border text-xs">
                                 </div>
                                 <div>
-                                    <label class="block font-semibold text-[11px] text-gray-600 mb-1">Colour Qty</label>
+                                    <label class="block font-semibold text-[11px] font-semibold text-gray-600 mb-1">Colour Qty</label>
                                     <input type="number" id="p-color-qty" placeholder="0" class="w-full p-2 bg-white rounded border text-xs">
                                 </div>
                             </div>
@@ -507,7 +558,7 @@
                                     <input type="number" id="p-size-price" placeholder="0" class="w-full p-2 bg-white rounded border text-xs">
                                 </div>
                                 <div>
-                                    <label class="block text-[11px] font-semibold text-gray-600 mb-1">Size Qty</label>
+                                    <label class="block font-semibold text-[11px] font-semibold text-gray-600 mb-1">Size Qty</label>
                                     <input type="number" id="p-size-qty" placeholder="0" class="w-full p-2 bg-white rounded border text-xs">
                                 </div>
                             </div>
@@ -946,6 +997,7 @@
             if (sectionId === 'orders') renderOrders();
             if (sectionId === 'low-stock') renderLowStock();
             if (sectionId === 'revenue') renderCalendar();
+            if (sectionId === 'records') renderRecords();
         }
 
         // App Initialization
@@ -969,6 +1021,7 @@
             renderOrders();
             renderLowStock();
             renderCalendar();
+            renderRecords();
         }
 
         function updateDashboardCounts() {
@@ -976,6 +1029,8 @@
             document.getElementById('dash-order-count').innerText = `${orders.length} Orders active`;
             const lowCount = products.filter(p => p.qty <= 5).length;
             document.getElementById('dash-lowstock-count').innerText = `${lowCount} Items low`;
+            const recordCountBadge = document.getElementById('dash-record-count');
+            if (recordCountBadge) recordCountBadge.innerText = `${orders.length} Total records logged`;
         }
 
         // Product Rendering & Operations
@@ -1320,6 +1375,89 @@
             `}).join('');
         }
 
+        // Records View Rendering
+        function renderRecords() {
+            const container = document.getElementById('records-table-body');
+            const countBadge = document.getElementById('record-count-badge');
+            const searchInput = document.getElementById('record-search');
+            const query = searchInput ? searchInput.value.toLowerCase() : '';
+
+            const filteredOrders = orders.filter(o => {
+                const customerMatch = o.customerName && o.customerName.toLowerCase().includes(query);
+                const idMatch = o.id && o.id.toLowerCase().includes(query);
+                const itemMatch = o.itemsList && o.itemsList.some(item => item.name && item.name.toLowerCase().includes(query));
+                return customerMatch || idMatch || itemMatch;
+            });
+
+            if (countBadge) countBadge.innerText = `${filteredOrders.length} Records`;
+
+            if (filteredOrders.length === 0) {
+                container.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="p-8 text-center text-gray-500 font-semibold">No store records found.</td>
+                    </tr>
+                `;
+                return;
+            }
+
+            container.innerHTML = filteredOrders.map(o => {
+                const orderDateStr = o.date ? new Date(o.date).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : 'N/A';
+                const itemsSummary = (o.itemsList || []).map(i => `${i.name} (x${i.qty})`).join(', ') || 'Standard Order';
+                
+                return `
+                    <tr class="hover:bg-gray-50 transition">
+                        <td class="p-3.5 font-bold text-brandNavy">
+                            <div>#${o.id}</div>
+                            <div class="text-[10px] text-gray-400 font-normal">${orderDateStr}</div>
+                        </td>
+                        <td class="p-3.5">
+                            <div class="font-semibold text-gray-800">${o.customerName}</div>
+                            <div class="text-[11px] text-gray-500">${o.phone}</div>
+                        </td>
+                        <td class="p-3.5 text-xs text-gray-600 max-w-xs truncate" title="${itemsSummary}">${itemsSummary}</td>
+                        <td class="p-3.5">
+                            <span class="bg-blue-50 text-blue-800 text-[10px] font-bold px-2 py-0.5 rounded uppercase">${o.shipmentMethod || 'Pickup'}</span>
+                        </td>
+                        <td class="p-3.5 font-extrabold text-green-700">₦${Number(o.total).toLocaleString()}</td>
+                        <td class="p-3.5 text-center">
+                            <button onclick="openOrderDetailsModal('${o.id}')" class="bg-brandNavy hover:bg-brandNavyDark text-white font-bold px-3 py-1.5 rounded text-xs shadow">
+                                View
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function exportRecordsToCSV() {
+            if (orders.length === 0) {
+                alert("No records available to export.");
+                return;
+            }
+
+            let csvContent = "data:text/csv;charset=utf-8,Order ID,Date,Customer Name,Phone,Shipment Method,Total Amount,Status\r\n";
+            orders.forEach(o => {
+                const row = [
+                    o.id,
+                    `"${o.date || ''}"`,
+                    `"${o.customerName || ''}"`,
+                    `"${o.phone || ''}"`,
+                    `"${o.shipmentMethod || ''}"`,
+                    o.total,
+                    `"${o.status || ''}"`
+                ];
+                csvContent += row.join(",") + "\r\n";
+            });
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", `Fash_Store_Records_${new Date().toISOString().slice(0, 10)}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
         function openOrderDetailsModal(orderId) {
             const order = orders.find(o => o.id === orderId);
             if (!order) return;
@@ -1347,6 +1485,7 @@
             }
 
             const formattedOrderDate = order.date ? new Date(order.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : 'N/A';
+            const proofImageSource = order.receipt || order.proofImg || 'https://via.placeholder.com/300';
 
             content.innerHTML = `
                 <!-- Order Number & Status -->
@@ -1417,7 +1556,7 @@
                         <h4 class="text-xl font-black text-brandNavy">₦${Number(order.total).toLocaleString()}</h4>
                     </div>
                     <div class="flex flex-wrap items-center gap-2">
-                        <button onclick="viewProof('${order.proofImg}')" class="bg-brandNavy text-brandGold font-bold px-3 py-2 rounded-lg text-xs flex items-center space-x-1.5 shadow">
+                        <button onclick="viewProof('${proofImageSource}')" class="bg-brandNavy text-brandGold font-bold px-3 py-2 rounded-lg text-xs flex items-center space-x-1.5 shadow">
                             <i class="fa-solid fa-file-invoice"></i>
                             <span>View Proof</span>
                         </button>
@@ -1440,6 +1579,7 @@
                 order.status = 'Confirmed & Processing';
                 saveState();
                 renderOrders();
+                renderRecords();
                 alert(`Order #${orderId} marked as Confirmed!`);
                 closeOrderDetailsModal();
             }
@@ -1459,6 +1599,7 @@
                 orders = orders.filter(o => o.id !== id);
                 saveState();
                 renderOrders();
+                renderRecords();
             }
         }
 
@@ -1613,6 +1754,7 @@
                 `).join('');
             }
 
+            modal.classList.add('hidden'); // Fixed toggle call
             modal.classList.remove('hidden');
         }
 
