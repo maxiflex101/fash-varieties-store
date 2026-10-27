@@ -99,7 +99,7 @@
     </header>
 
     <!-- Header Banner Image Outside Sticky Header -->
-    <div class="w-full bg-fashNavyDark border-b border-fashGold/30">
+    <div id="headerBannerContainer" class="w-full bg-fashNavyDark border-b border-fashGold/30">
         <div class="max-w-7xl mx-auto">
             <img src="https://i.postimg.cc/c4pT5Zmm/IMG-20260826-010246.jpg" alt="Fash Varieties Store Banner" class="w-full h-auto object-contain block">
         </div>
@@ -1201,6 +1201,15 @@
             document.getElementById('accountView').classList.add('hidden');
             const wishlistSec = document.getElementById('wishlistView');
             if (wishlistSec) wishlistSec.classList.add('hidden');
+
+            const headerBanner = document.getElementById('headerBannerContainer');
+            if (headerBanner) {
+                if (viewName === 'home') {
+                    headerBanner.classList.remove('hidden');
+                } else {
+                    headerBanner.classList.add('hidden');
+                }
+            }
 
             if (viewName === 'home') document.getElementById('homeView').classList.remove('hidden');
             if (viewName === 'detail') document.getElementById('productDetailView').classList.remove('hidden');
