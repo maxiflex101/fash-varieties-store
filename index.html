@@ -277,7 +277,7 @@
                         <span class="bg-green-100 text-green-700 text-xs px-2.5 py-0.5 rounded-full font-semibold" id="detailStockBadge">In Stock</span>
                     </div>
 
-                    <!-- Cascading Options Container (Size -> Colour -> Selection of Buying) -->
+                    <!-- Cascading Options Container (Size -> Colour -> Buying Option) -->
                     <div id="detailOptionsContainer" class="space-y-4">
                         <!-- Dynamically populated options -->
                     </div>
@@ -1335,7 +1335,7 @@
                 html += `
                     <div class="space-y-1">
                         <label class="block text-xs font-semibold text-gray-700 uppercase">
-                            Choose Size <span class="text-red-500">*</span>
+                            Size <span class="text-red-500">*</span>
                         </label>
                         <select id="detailSizeSelect" onchange="handleSizeChange()" class="w-full border border-gray-300 rounded-lg p-2.5 text-sm focus:border-fashGold focus:outline-none bg-white font-medium">
                             <option value="">-- Select Size --</option>
@@ -1351,7 +1351,7 @@
             // 2. Container for dynamic Colour dropdown
             html += `<div id="colorSelectContainer" class="space-y-1"></div>`;
 
-            // 3. Container for dynamic Selection of Buying dropdown
+            // 3. Container for dynamic Buying Option dropdown
             html += `<div id="buyingSelectContainer" class="space-y-1"></div>`;
 
             // 4. Live Selection Summary Box
@@ -1387,7 +1387,7 @@
 
                 if (availableColors.length > 0) {
                     colorContainer.innerHTML = `
-                        <label class="block text-xs font-semibold text-gray-700 uppercase">Choose Colour</label>
+                        <label class="block text-xs font-semibold text-gray-700 uppercase">Colour</label>
                         <select id="detailColorSelect" onchange="handleColorChange()" class="w-full border border-gray-300 rounded-lg p-2.5 text-sm focus:border-fashGold focus:outline-none bg-white font-medium">
                             <option value="">-- Select Colour --</option>
                             ${availableColors.map(c => {
@@ -1403,7 +1403,7 @@
                 }
             }
 
-            // Populate Selection of Buying
+            // Populate Buying Option
             const buyingContainer = document.getElementById('buyingSelectContainer');
             if (buyingContainer) {
                 let rawBuying = currentProduct.buyingSelections;
@@ -1419,7 +1419,7 @@
 
                 if (rawBuying && rawBuying.length > 0) {
                     buyingContainer.innerHTML = `
-                        <label class="block text-xs font-semibold text-gray-700 uppercase">Choose Selection of Buying</label>
+                        <label class="block text-xs font-semibold text-gray-700 uppercase">Buying Option</label>
                         <select id="detailBuyingSelectionSelect" onchange="updateProductVariant()" class="w-full border border-gray-300 rounded-lg p-2.5 text-sm focus:border-fashGold focus:outline-none bg-white font-medium">
                             <option value="">-- Select Buying Option --</option>
                             ${rawBuying.map(b => {
@@ -1548,7 +1548,7 @@
                     let infoHTML = `<div class="font-bold text-xs text-fashNavy border-b border-fashGold/30 pb-1 mb-1">SELECTED OPTION DETAILS:</div>`;
                     if (sizeSelect && sizeSelect.value) infoHTML += `<div>• <strong>Selected Size:</strong> ${sizeSelect.value}</div>`;
                     if (colorSelect && colorSelect.value) infoHTML += `<div>• <strong>Selected Colour:</strong> ${colorSelect.value}</div>`;
-                    if (buyingSelect && buyingSelect.value) infoHTML += `<div>• <strong>Selection of Buying:</strong> ${buyingSelect.value}</div>`;
+                    if (buyingSelect && buyingSelect.value) infoHTML += `<div>• <strong>Buying Option:</strong> ${buyingSelect.value}</div>`;
                     infoHTML += `<div class="pt-1 text-fashNavy font-bold">• <strong>Price for Selection:</strong> ₦${finalUnitPrice.toLocaleString()}</div>`;
                     infoHTML += `<div class="text-green-700 font-bold">• <strong>Quantity Available:</strong> ${maxAvailableQty}</div>`;
                     card.innerHTML = infoHTML;
