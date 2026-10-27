@@ -507,7 +507,7 @@
                                     <input type="number" id="p-size-price" placeholder="0" class="w-full p-2 bg-white rounded border text-xs">
                                 </div>
                                 <div>
-                                    <label class="block font-semibold text-[11px] font-semibold text-gray-600 mb-1">Size Qty</label>
+                                    <label class="block text-[11px] font-semibold text-gray-600 mb-1">Size Qty</label>
                                     <input type="number" id="p-size-qty" placeholder="0" class="w-full p-2 bg-white rounded border text-xs">
                                 </div>
                             </div>
@@ -517,11 +517,15 @@
 
                 <!-- 7. Pricing Tier (OPTIONAL) -->
                 <div class="bg-amber-50/60 p-4 rounded-xl border border-amber-200 space-y-3">
-                    <h4 class="font-bold text-brandNavy">Pricing Tiers (Wholesale & Standard - Optional)</h4>
+                    <h4 class="font-bold text-brandNavy">Pricing Tiers (Wholesale & Piece - Optional)</h4>
                     <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
                         <div>
-                            <label class="block font-semibold mb-1">Single Unit Price (₦)</label>
+                            <label class="block font-semibold mb-1">Piece Price (₦)</label>
                             <input type="number" id="p-price-single" placeholder="0" class="w-full p-2 bg-white rounded border">
+                        </div>
+                        <div>
+                            <label class="block font-semibold mb-1">Piece Qty</label>
+                            <input type="number" id="p-qty-single" placeholder="0" class="w-full p-2 bg-white rounded border">
                         </div>
                         <div>
                             <label class="block font-semibold mb-1">Half Dozen Price (₦)</label>
@@ -534,6 +538,10 @@
                         <div>
                             <label class="block font-semibold mb-1">Half Carton Price (₦)</label>
                             <input type="number" id="p-price-halfcarton" placeholder="0" class="w-full p-2 bg-white rounded border">
+                        </div>
+                        <div>
+                            <label class="block font-semibold mb-1">Half Carton Qty</label>
+                            <input type="number" id="p-qty-halfcarton" placeholder="0" class="w-full p-2 bg-white rounded border">
                         </div>
                         <div>
                             <label class="block font-semibold mb-1">Per Carton Price (₦)</label>
@@ -764,9 +772,11 @@
                 shares: ['WhatsApp', 'TikTok', 'Instagram', 'Facebook', 'Telegram'],
                 relatedProducts: ['Non-Stick Cookware Set'],
                 priceSingle: 15000,
+                qtySingle: 1,
                 priceHalfDozen: 80000,
                 priceDozen: 150000,
                 priceHalfCarton: 280000,
+                qtyHalfCarton: 6,
                 priceCarton: 500000,
                 cartonNote: '40 pcs per carton',
                 disc5: 14000,
@@ -797,9 +807,11 @@
                 shares: ['WhatsApp', 'TikTok', 'Instagram', 'Facebook', 'Telegram'],
                 relatedProducts: ['Luxury Leather Handbag'],
                 priceSingle: 32000,
+                qtySingle: 1,
                 priceHalfDozen: 180000,
                 priceDozen: 350000,
                 priceHalfCarton: 650000,
+                qtyHalfCarton: 5,
                 priceCarton: 1200000,
                 cartonNote: '10 sets per carton',
                 disc5: 30000,
@@ -816,7 +828,7 @@
         const initialOrders = [
             {
                 id: 'ORD-9021',
-                date: '2026-10-25', // Assigned date for October revenue reading
+                date: '2026-10-25T10:30:00.000Z', // Assigned date for October revenue reading
                 customerName: 'Mrs. Funke Adebayo',
                 phone: '08031234567',
                 email: 'funke.adebayo@gmail.com',
@@ -830,7 +842,7 @@
                         qty: 2,
                         color: 'Black',
                         size: 'Medium',
-                        selection: 'Single Unit',
+                        selection: 'Piece',
                         price: 15000,
                         total: 30000,
                         image: 'https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=500'
@@ -938,6 +950,19 @@
 
         // App Initialization
         function initApp() {
+            // Ensure any new customer-submitted orders coming from store.html get a server-side entry date stamped if missing
+            let updatedOrders = false;
+            orders = orders.map(ord => {
+                if (!ord.date) {
+                    updatedOrders = true;
+                    return { ...ord, date: new Date().toISOString() };
+                }
+                return ord;
+            });
+            if (updatedOrders) {
+                localStorage.setItem('fv_orders', JSON.stringify(orders));
+            }
+
             updateDailySalesFromOrders();
             updateDashboardCounts();
             renderProducts();
@@ -1028,9 +1053,10 @@
 
                         <!-- Pricing & Specs -->
                         <div class="text-xs space-y-1 text-gray-700 bg-gray-50 p-2.5 rounded border">
-                            <p><strong>Single Price:</strong> ${p.priceSingle ? '₦' + Number(p.priceSingle).toLocaleString() : 'Optional / Not set'}</p>
+                            <p><strong>Piece Price:</strong> ${p.priceSingle ? '₦' + Number(p.priceSingle).toLocaleString() + (p.qtySingle !== undefined && p.qtySingle !== '' ? ' (Qty: ' + p.qtySingle + ')' : '') : 'Optional / Not set'}</p>
                             ${p.color ? `<p><strong>Color:</strong> ${p.color}${p.colorPrice ? '(₦' + Number(p.colorPrice).toLocaleString() + ', Qty: ' + (p.colorQty || 0) + ')' : ''}</p>` : ''}
                             ${p.size ? `<p><strong>Size:</strong> ${p.size}${p.sizePrice ? '(₦' + Number(p.sizePrice).toLocaleString() + ', Qty: ' + (p.sizeQty || 0) + ')' : ''}</p>` : ''}
+                            ${p.priceHalfCarton ? `<p><strong>Half Carton Price:</strong> ₦${Number(p.priceHalfCarton).toLocaleString()}${p.qtyHalfCarton !== undefined && p.qtyHalfCarton !== '' ? ' (Qty: ' + p.qtyHalfCarton + ')' : ''}</p>` : ''}
                             ${p.priceCarton ? `<p><strong>Carton Price:</strong> ₦${Number(p.priceCarton).toLocaleString()} (${p.cartonNote || ''})</p>` : ''}
                             
                             ${volumeBadges.length > 0 ? `
@@ -1096,11 +1122,8 @@
             // Find current product if editing
             const prod = editId ? products.find(p => p.id === editId) : null;
 
-            // Populate related products dropdown from existing catalog (excluding current product name to prevent self-linking)
-            relatedSelect.innerHTML = products
-                .filter(p => prod ? p.name !== prod.name : true)
-                .map(p => `<option value="${p.name}">${p.name} (${p.category})</option>`)
-                .join('');
+            // Populate related products dropdown directly from existing catalog items
+            relatedSelect.innerHTML = products.map(p => `<option value="${p.name}">${p.name} (${p.category})</option>`).join('');
 
             if (prod) {
                 // EDIT MODE
@@ -1122,9 +1145,11 @@
                 document.getElementById('p-shipping-outside').value = prod.shippingOutside || 'outside Lagos 3-5days';
                 
                 document.getElementById('p-price-single').value = prod.priceSingle || '';
+                document.getElementById('p-qty-single').value = prod.qtySingle !== undefined ? prod.qtySingle : '';
                 document.getElementById('p-price-halfdozen').value = prod.priceHalfDozen || '';
                 document.getElementById('p-price-dozen').value = prod.priceDozen || '';
                 document.getElementById('p-price-halfcarton').value = prod.priceHalfCarton || '';
+                document.getElementById('p-qty-halfcarton').value = prod.qtyHalfCarton !== undefined ? prod.qtyHalfCarton : '';
                 document.getElementById('p-price-carton').value = prod.priceCarton || '';
                 document.getElementById('p-carton-note').value = prod.cartonNote || '';
 
@@ -1219,9 +1244,11 @@
                 shares: shares,
                 relatedProducts: selectedRelated,
                 priceSingle: Number(document.getElementById('p-price-single').value) || 0,
+                qtySingle: document.getElementById('p-qty-single').value !== '' ? Number(document.getElementById('p-qty-single').value) : '',
                 priceHalfDozen: Number(document.getElementById('p-price-halfdozen').value) || 0,
                 priceDozen: Number(document.getElementById('p-price-dozen').value) || 0,
                 priceHalfCarton: Number(document.getElementById('p-price-halfcarton').value) || 0,
+                qtyHalfCarton: document.getElementById('p-qty-halfcarton').value !== '' ? Number(document.getElementById('p-qty-halfcarton').value) : '',
                 priceCarton: Number(document.getElementById('p-price-carton').value) || 0,
                 cartonNote: document.getElementById('p-carton-note').value,
                 disc5: Number(document.getElementById('p-disc-5').value) || 0,
@@ -1325,7 +1352,7 @@
                 <!-- Order Number & Status -->
                 <div class="flex justify-between items-center bg-brandNavy text-white p-3 rounded-xl">
                     <div>
-                        <span class="text-[10px] text-gray-300 uppercase font-bold">Order Number & Date</span>
+                        <span class="text-[10px] text-gray-300 uppercase font-bold">Order Number & Date (Admin Stamped)</span>
                         <h4 class="font-black text-brandGold text-base">#${order.id} <span class="text-xs text-gray-200 font-normal">(${formattedOrderDate})</span></h4>
                     </div>
                     <div>
