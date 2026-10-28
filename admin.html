@@ -286,7 +286,6 @@
                                         <th class="p-3.5">Order ID & Date</th>
                                         <th class="p-3.5">Customer</th>
                                         <th class="p-3.5">Items / Goods</th>
-                                        <th class="p-3.5">Admin Note / Reminder</th>
                                         <th class="p-3.5">Total Amount</th>
                                         <th class="p-3.5 text-center">Action</th>
                                     </tr>
@@ -1299,7 +1298,7 @@
             if (filteredOrders.length === 0) {
                 container.innerHTML = `
                     <tr>
-                        <td colspan="6" class="p-8 text-center text-gray-500 font-semibold">No store records found.</td>
+                        <td colspan="5" class="p-8 text-center text-gray-500 font-semibold">No store records found.</td>
                     </tr>
                 `;
                 return;
@@ -1320,9 +1319,6 @@
                             <div class="text-[11px] text-gray-500">${o.phone}</div>
                         </td>
                         <td class="p-3.5 text-xs text-gray-600 max-w-xs truncate" title="${itemsSummary}">${itemsSummary}</td>
-                        <td class="p-3.5 text-xs text-indigo-700 font-medium">
-                            <input type="text" id="inline-note-${o.id}" value="${o.adminNote || ''}" placeholder="Type reminder..." onchange="saveInlineAdminNote('${o.id}', this.value)" class="w-full p-1.5 bg-indigo-50/50 rounded border border-indigo-200 focus:outline-none focus:ring-1 focus:ring-brandGold">
-                        </td>
                         <td class="p-3.5 font-extrabold text-green-700">₦${Number(o.total).toLocaleString()}</td>
                         <td class="p-3.5 text-center">
                             <button onclick="openOrderDetailsModal('${o.id}')" class="bg-brandNavy hover:bg-brandNavyDark text-white font-bold px-3 py-1.5 rounded text-xs shadow">
@@ -1332,15 +1328,6 @@
                     </tr>
                 `;
             }).join('');
-        }
-
-        function saveInlineAdminNote(orderId, noteValue) {
-            const order = orders.find(o => o.id === orderId);
-            if (order) {
-                order.adminNote = noteValue.trim();
-                saveState();
-                renderOrders();
-            }
         }
 
         function saveAdminNote(orderId) {
