@@ -967,7 +967,7 @@
             container.innerHTML = filtered.map(p => {
                 const primaryImage = (p.images && p.images.length > 0) ? p.images[0] : (p.image || 'https://via.placeholder.com/300');
                 const photoCount = p.images ? p.images.length : (p.image ? 1 : 0);
-                const itemPrice = p.price || p.priceSingle || 0;
+                const itemPrice = p.price || 0;
 
                 const volumeBadges = [];
                 if(p.disc5) volumeBadges.push(`5+: ₦${Number(p.disc5).toLocaleString()}`);
@@ -1097,7 +1097,7 @@
                 document.getElementById('p-name').value = prod.name || '';
                 document.getElementById('p-sku').value = prod.sku || '';
                 document.getElementById('p-category').value = prod.category || '';
-                document.getElementById('p-price').value = prod.price || prod.priceSingle || '';
+                document.getElementById('p-price').value = prod.price || '';
                 document.getElementById('p-qty').value = prod.qty || 0;
                 document.getElementById('p-color').value = prod.color || '';
                 document.getElementById('p-color-price').value = prod.colorPrice || '';
@@ -1110,7 +1110,7 @@
                 document.getElementById('p-shipping-lagos').value = prod.shippingLagos || 'within Lagos 24 hours';
                 document.getElementById('p-shipping-outside').value = prod.shippingOutside || 'outside Lagos 3-5days';
                 
-                document.getElementById('p-price-single').value = prod.priceSingle || prod.price || '';
+                document.getElementById('p-price-single').value = prod.priceSingle || '';
                 document.getElementById('p-qty-single').value = prod.qtySingle !== undefined ? prod.qtySingle : '';
                 document.getElementById('p-price-halfdozen').value = prod.priceHalfDozen || '';
                 document.getElementById('p-price-dozen').value = prod.priceDozen || '';
@@ -1203,7 +1203,7 @@
                 shippingOutside: document.getElementById('p-shipping-outside').value || 'outside Lagos 3-5days',
                 shares: shares,
                 relatedProducts: selectedRelated,
-                priceSingle: mainPrice || Number(document.getElementById('p-price-single').value) || 0,
+                priceSingle: Number(document.getElementById('p-price-single').value) || 0,
                 qtySingle: document.getElementById('p-qty-single').value !== '' ? Number(document.getElementById('p-qty-single').value) : '',
                 priceHalfDozen: Number(document.getElementById('p-price-halfdozen').value) || 0,
                 priceDozen: Number(document.getElementById('p-price-dozen').value) || 0,
