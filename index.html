@@ -1049,7 +1049,7 @@
                     }
                 ],
                 buyingSelections: [
-                    { name: "Piece", units: 1, price: 35000 },
+                    { name: "Piece (1 pc)", units: 1, price: 35000 },
                     { name: "Half Dozen (6)", units: 6, price: 200000 },
                     { name: "Dozen (12)", units: 12, price: 390000 },
                     { name: "Half Carton (15 sets)", units: 15, price: 480000 },
@@ -1074,7 +1074,7 @@
                     { name: "Rose Gold", priceOffset: 1500, stock: 3 }
                 ],
                 buyingSelections: [
-                    { name: "Piece", units: 1, price: 19500 },
+                    { name: "Piece (1 pc)", units: 1, price: 19500 },
                     { name: "Half Dozen (6)", units: 6, price: 110000 },
                     { name: "Dozen (12)", units: 12, price: 215000 },
                     { name: "Half Carton (10 pcs)", units: 10, price: 175000 },
@@ -1098,7 +1098,7 @@
                     { name: "Large (60cm)", price: 18500, stock: 6 }
                 ],
                 buyingSelections: [
-                    { name: "Piece", units: 1, price: 14000 },
+                    { name: "Piece (1 pc)", units: 1, price: 14000 },
                     { name: "Half Dozen (6)", units: 6, price: 80000 },
                     { name: "Dozen (12)", units: 12, price: 155000 },
                     { name: "Half Carton (8 pcs)", units: 8, price: 105000 },
@@ -1122,7 +1122,7 @@
                     { name: "White Gold / Silver", priceOffset: 0, stock: 140 }
                 ],
                 buyingSelections: [
-                    { name: "Piece", units: 1, price: 12500 },
+                    { name: "Piece (1 pc)", units: 1, price: 12500 },
                     { name: "Half Dozen (6)", units: 6, price: 70000 },
                     { name: "Dozen (12)", units: 12, price: 135000 },
                     { name: "Half Carton (50 pcs)", units: 50, price: 550000 },
@@ -1146,7 +1146,7 @@
                     { name: "50,000 mAh Ultra", price: 24000, stock: 15 }
                 ],
                 buyingSelections: [
-                    { name: "Piece", units: 1, price: 16000 },
+                    { name: "Piece (1 pc)", units: 1, price: 16000 },
                     { name: "Half Dozen (6)", units: 6, price: 92000 },
                     { name: "Dozen (12)", units: 12, price: 180000 },
                     { name: "Half Carton (15 pcs)", units: 15, price: 220000 },
@@ -1166,7 +1166,7 @@
                     "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=500&auto=format&fit=crop&q=60"
                 ],
                 buyingSelections: [
-                    { name: "Piece", units: 1, price: 8500 },
+                    { name: "Piece (1 pc)", units: 1, price: 8500 },
                     { name: "Half Dozen (6)", units: 6, price: 48000 },
                     { name: "Dozen (12)", units: 12, price: 92000 },
                     { name: "Half Carton (25 pcs)", units: 25, price: 185000 },
@@ -1417,12 +1417,16 @@
             if (buyingContainer) {
                 let rawBuying = currentProduct.buyingSelections;
                 if (!rawBuying) {
+                    const pieceLabel = currentProduct.qtySingle !== undefined && currentProduct.qtySingle !== '' ? `Piece (${currentProduct.qtySingle})` : "Piece (1 pc)";
+                    const halfCartonLabel = currentProduct.qtyHalfCarton ? `Half Carton (${currentProduct.qtyHalfCarton})` : "Half Carton";
+                    const cartonLabel = currentProduct.cartonNote ? `Carton (${currentProduct.cartonNote})` : "Carton";
+
                     rawBuying = [
-                        { name: "Single Unit", units: 1, price: currentProduct.priceSingle || currentProduct.price },
+                        { name: pieceLabel, units: currentProduct.qtySingle || 1, price: currentProduct.priceSingle || currentProduct.price },
                         { name: "Half Dozen", units: 6, price: currentProduct.priceHalfDozen },
                         { name: "Dozen", units: 12, price: currentProduct.priceDozen },
-                        { name: "Half Carton", units: 15, price: currentProduct.priceHalfCarton },
-                        { name: "Carton", units: 30, price: currentProduct.priceCarton }
+                        { name: halfCartonLabel, units: currentProduct.qtyHalfCarton || 15, price: currentProduct.priceHalfCarton },
+                        { name: cartonLabel, units: currentProduct.qtyCarton || 30, price: currentProduct.priceCarton }
                     ].filter(b => b.price && b.price > 0);
                 }
 
