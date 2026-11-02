@@ -399,6 +399,26 @@
                                 </div>
                             </div>
                         </div>
+
+                        <!-- Data Backup & Sync -->
+                        <div class="bg-white p-6 rounded-xl shadow-md border space-y-4 lg:col-span-2">
+                            <h2 class="font-bold text-brandNavy border-b pb-2 flex items-center space-x-2">
+                                <i class="fa-solid fa-cloud-arrow-down text-brandGold"></i>
+                                <span>Data Backup & Sync (Export / Import across devices)</span>
+                            </h2>
+                            <p class="text-xs text-gray-500">Download a backup of your products, orders, and admin notes to transfer to another phone or browser, or restore from an existing backup file.</p>
+                            <div class="flex flex-wrap items-center gap-3 pt-2">
+                                <button onclick="exportAppData()" class="bg-brandNavy text-white font-bold px-4 py-2.5 rounded-lg text-xs flex items-center space-x-2 shadow hover:bg-brandNavyDark">
+                                    <i class="fa-solid fa-download"></i>
+                                    <span>Export All Data (JSON)</span>
+                                </button>
+                                <label class="bg-brandGold hover:bg-brandGoldHover text-brandNavy font-bold px-4 py-2.5 rounded-lg text-xs flex items-center space-x-2 shadow cursor-pointer">
+                                    <i class="fa-solid fa-upload"></i>
+                                    <span>Import Data (JSON)</span>
+                                    <input type="file" id="import-file-input" accept=".json" onchange="importAppData(event)" class="hidden">
+                                </label>
+                            </div>
+                        </div>
                     </div>
                 </section>
 
@@ -1512,6 +1532,51 @@
                 saveState();
                 renderAdminNotes();
             }
+        }
+
+        // Export / Import Backup Functions
+        function exportAppData() {
+            const backupData = {
+                products: products,
+                orders: orders,
+                adminNotes: adminNotes,
+                exportDate: new Date().toISOString()
+            };
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(backupData, null, 2));
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", `Fash_Store_Backup_${new Date().toISOString().slice(0, 10)}.json`);
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
+        }
+
+        function importAppData(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                try {
+                    const parsedData = JSON.parse(event.target.result);
+                    if (parsedData.products && Array.isArray(parsedData.products)) {
+                        products = parsedData.products;
+                    }
+                    if (parsedData.orders && Array.isArray(parsedData.orders)) {
+                        orders = parsedData.orders;
+                    }
+                    if (parsedData.adminNotes && Array.isArray(parsedData.adminNotes)) {
+                        adminNotes = parsedData.adminNotes;
+                    }
+                    saveState();
+                    initApp();
+                    alert("Data imported successfully! Your store data has been updated.");
+                } catch (err) {
+                    alert("Invalid JSON backup file. Please select a valid store backup file.");
+                }
+                e.target.value = '';
+            };
+            reader.readAsText(file);
         }
 
         function exportRecordsToCSV() {
