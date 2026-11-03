@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shop All Products - FASH VARIETIES STORE</title>
+    <meta name="description" content="Browse wholesale and retail products at Fash Varieties Store. Kitchen appliances, fashion, electronics, and more.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        fashNavy: '#0b1d3a',
+                        fashNavyDark: '#071226',
+                        fashGold: '#d4af37',
+                        fashGoldHover: '#b59328',
+                        fashAccentYellow: '#f5b014',
+                        fashLightBg: '#f8fafc'
+                    },
+                    fontFamily: { sans: ['Poppins', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-fashLightBg text-gray-800 font-sans min-h-screen flex flex-col pb-16">
+    <!-- Header -->
+    <header class="bg-fashNavy text-white sticky top-0 z-40 shadow-lg border-b-2 border-fashGold">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
+            <a href="index.html" class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full border-2 border-fashGold bg-fashNavy flex items-center justify-center font-bold text-fashGold shadow-md overflow-hidden">
+                    <img src="https://i.postimg.cc/wM5QvPLp/IMG-20260826-010246.jpg" alt="Logo" class="w-full h-full object-cover">
+                </div>
+                <div>
+                    <h1 class="font-bold text-lg leading-tight tracking-wide text-white">FASH VARIETIES STORE</h1>
+                    <p class="text-[10px] text-fashGold tracking-wider uppercase font-semibold">Wholesale & Retail</p>
+                </div>
+            </a>
+            <div class="flex items-center gap-5">
+                <a href="wishlist.html" class="relative hover:text-fashGold transition-colors"><i class="fa-regular fa-heart text-xl"></i><span id="wishlistCount" class="absolute -top-2 -right-2 bg-fashGold text-fashNavy text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">0</span></a>
+                <a href="cart.html" class="relative hover:text-fashGold transition-colors"><i class="fa-solid fa-cart-shopping text-xl"></i><span id="cartCount" class="absolute -top-2 -right-2 bg-fashGold text-fashNavy text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">0</span></a>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 space-y-6">
+        <h2 class="text-2xl font-bold text-fashNavy border-l-4 border-fashGold pl-3">Shop Products</h2>
+        
+        <!-- Category Tabs -->
+        <div class="flex gap-2 overflow-x-auto pb-2 text-xs font-medium" id="shopCategoryTabs"></div>
+
+        <!-- Products Grid -->
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-6" id="shopProductGrid"></div>
+    </main>
+
+    <footer class="bg-fashNavy text-white text-center py-4 text-xs mt-auto border-t-2 border-fashGold">
+        2026 © FASH VARIETIES STORE. All rights reserved.
+    </footer>
+
+    <script>
+        const categories = [
+            "All", "Kitchen Utensils", "Kitchen Items", "Kitchen Gadgets", 
+            "Home Appliances", "Home Gadgets", "Fashion Items", "Fashion Accessories", 
+            "Jewellery", "Beauty Items", "Interior Decor", "Lighting", 
+            "Furniture", "Phone Accessories", "Power Bank", "Babies & Kiddies", "Back to School"
+        ];
+
+        let productsData = JSON.parse(localStorage.getItem('fv_products')) || [];
+        let cart = JSON.parse(localStorage.getItem('fv_cart')) || [];
+        let wishlist = JSON.parse(localStorage.getItem('fv_wishlist')) || [];
+
+        const urlParams = new URLSearchParams(window.location.search);
+        let activeCategory = urlParams.get('category') || "All";
+
+        document.addEventListener("DOMContentLoaded", () => {
+            renderShopTabs();
+            renderShopProducts();
+            updateCounts();
+        });
+
+        function renderShopTabs() {
+            const container = document.getElementById('shopCategoryTabs');
+            if(!container) return;
+            container.innerHTML = categories.map(cat => `
+                <a href="shop.html?category=${encodeURIComponent(cat)}" class="px-4 py-2 rounded-full whitespace-nowrap transition border ${activeCategory === cat ? 'bg-fashNavy text-fashGold border-fashGold font-bold shadow-sm' : 'bg-white text-gray-700 border-gray-200 hover:border-fashGold'}">
+                    ${cat}
+                </a>
+            `).join('');
+        }
+
+        function renderShopProducts() {
+            const grid = document.getElementById('shopProductGrid');
+            if(!grid) return;
+            const filtered = activeCategory === "All" ? productsData : productsData.filter(p => p.category === activeCategory);
+
+            if (filtered.length === 0) {
+                grid.innerHTML = `<p class="col-span-full text-center text-gray-500 py-8 text-xs">No products found in this category.</p>`;
+                return;
+            }
+
+            grid.innerHTML = filtered.map(product => {
+                const primaryImg = (product.images && product.images.length > 0) ? product.images[0] : (product.image || 'https://via.placeholder.com/300');
+                const displayPrice = product.priceSingle || product.price || 0;
+                const displayTag = (product.tags && product.tags.length > 0) ? product.tags[0] : (product.tag || product.category);
+                return `
+                    <a href="product.html?id=${product.id}" class="bg-white rounded-xl overflow-hidden border border-gray-200 shadow-sm hover:shadow-md transition flex flex-col justify-between group cursor-pointer">
+                        <div class="relative overflow-hidden bg-gray-50 h-44 flex items-center justify-center p-2">
+                            <img src="${primaryImg}" alt="${product.name}" class="max-h-full object-contain group-hover:scale-105 transition duration-300">
+                        </div>
+                        <div class="p-3 space-y-2 flex-1 flex flex-col justify-between">
+                            <div>
+                                <span class="text-[10px] bg-fashGold/20 text-fashNavy font-semibold px-2 py-0.5 rounded block w-fit mb-1 truncate">${displayTag}</span>
+                                <h4 class="text-xs font-bold text-gray-800 line-clamp-2 group-hover:text-fashNavy">${product.name}</h4>
+                            </div>
+                            <div class="pt-2 border-t border-gray-100 flex items-center justify-between">
+                                <span class="text-sm font-extrabold text-fashNavy">₦${Number(displayPrice).toLocaleString()}</span>
+                            </div>
+                        </div>
+                    </a>
+                `;
+            }).join('');
+        }
+
+        function updateCounts() {
+            const totalItems = cart.reduce((sum, item) => sum + item.qty, 0);
+            const cCount = document.getElementById('cartCount');
+            const wCount = document.getElementById('wishlistCount');
+            if (cCount) cCount.innerText = totalItems;
+            if (wCount) wCount.innerText = wishlist.length;
+        }
+    </script>
+</body>
+</html>
