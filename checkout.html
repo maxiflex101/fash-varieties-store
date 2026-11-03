@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - FASH VARIETIES STORE</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        fashNavy: '#0b1d3a', fashNavyDark: '#071226',
+                        fashGold: '#d4af37', fashLightBg: '#f8fafc'
+                    },
+                    fontFamily: { sans: ['Poppins', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-fashLightBg text-gray-800 font-sans min-h-screen flex flex-col pb-16">
+    <header class="bg-fashNavy text-white sticky top-0 z-40 shadow-lg border-b-2 border-fashGold">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+            <a href="index.html" class="font-bold text-lg text-white">FASH VARIETIES STORE</a>
+            <a href="cart.html" class="text-xs text-fashGold font-semibold hover:underline">Back to Cart</a>
+        </div>
+    </header>
+
+    <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 space-y-8">
+        <h2 class="text-2xl font-bold text-fashNavy border-l-4 border-fashGold pl-3">Checkout & Payment</h2>
+
+        <form id="checkoutForm" onsubmit="handlePlaceOrder(event)" class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            <div class="lg:col-span-7 bg-white p-6 rounded-2xl shadow-lg border border-gray-200 space-y-6">
+                <h3 class="text-lg font-bold text-fashNavy border-b border-gray-200 pb-2">Billing Details</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+                    <div><label class="block font-semibold mb-1">First Name *</label><input type="text" id="billingFirstName" required class="w-full p-2.5 border rounded-lg"></div>
+                    <div><label class="block font-semibold mb-1">Last Name *</label><input type="text" id="billingLastName" required class="w-full p-2.5 border rounded-lg"></div>
+                    <div class="sm:col-span-2"><label class="block font-semibold mb-1">Street Address *</label><input type="text" id="billingAddress" required class="w-full p-2.5 border rounded-lg"></div>
+                    <div><label class="block font-semibold mb-1">Town / City *</label><input type="text" id="billingCity" required class="w-full p-2.5 border rounded-lg"></div>
+                    <div><label class="block font-semibold mb-1">Phone *</label><input type="tel" id="billingPhone" required class="w-full p-2.5 border rounded-lg"></div>
+                    <div class="sm:col-span-2"><label class="block font-semibold mb-1">Email Address *</label><input type="email" id="billingEmail" required class="w-full p-2.5 border rounded-lg"></div>
+                </div>
+            </div>
+
+            <div class="lg:col-span-5 space-y-6">
+                <div class="bg-fashNavy text-white p-6 rounded-2xl shadow-lg border-2 border-fashGold space-y-4">
+                    <h3 class="text-base font-bold text-fashGold"><i class="fa-solid fa-building-columns"></i> Bank Transfer Details</h3>
+                    <p class="text-[11px] text-gray-300">Transfer order amount to our official store accounts below:</p>
+                    <div class="space-y-2 bg-fashNavyDark p-3 rounded-xl text-xs">
+                        <p class="text-fashGold font-semibold">MONIEPOINT: 5271600556</p>
+                        <p class="text-fashGold font-semibold">ACCESS BANK: 1920452449</p>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-fashGold uppercase mb-1">Upload Payment Receipt *</label>
+                        <input type="file" id="receiptUploadInput" accept="image/*" required class="w-full text-xs text-gray-300 file:bg-fashGold file:text-fashNavy file:py-2 file:px-4 file:rounded-lg">
+                    </div>
+                    <button type="submit" class="w-full bg-fashGold hover:bg-white text-fashNavy font-extrabold py-3 rounded-xl uppercase shadow-lg transition">
+                        PLACE ORDER
+                    </button>
+                </div>
+            </div>
+        </form>
+    </main>
+
+    <footer class="bg-fashNavy text-white text-center py-4 text-xs mt-auto border-t-2 border-fashGold">
+        2026 © FASH VARIETIES STORE. All rights reserved.
+    </footer>
+
+    <script>
+        let cart = JSON.parse(localStorage.getItem('fv_cart')) || [];
+
+        function handlePlaceOrder(e) {
+            e.preventDefault();
+            const receiptInput = document.getElementById('receiptUploadInput');
+            if (!receiptInput.files || receiptInput.files.length === 0) {
+                alert("Please upload your payment receipt!");
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(uploadEvent) {
+                alert("Order placed successfully!");
+                localStorage.removeItem('fv_cart');
+                window.location.href = "index.html";
+            };
+            reader.readAsDataURL(receiptInput.files[0]);
+        }
+    </script>
+</body>
+</html>
