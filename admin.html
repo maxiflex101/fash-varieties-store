@@ -22,6 +22,8 @@
     </script>
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Supabase JS SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         .custom-scrollbar::-webkit-scrollbar { width: 6px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: #0F2042; }
@@ -97,8 +99,9 @@
                     </div>
                 </div>
 
-                <!-- View Store Button & Logout -->
+                <!-- Sync Indicator & View Store & Logout -->
                 <div class="flex items-center space-x-2">
+                    <span id="sync-status" class="text-[10px] bg-green-500/25 text-green-300 font-bold px-2 py-1 rounded hidden sm:inline-block">Cloud Synced Live</span>
                     <button onclick="window.location.href='index.html'" class="bg-brandGold hover:bg-brandGoldHover text-brandNavy font-semibold text-xs sm:text-sm px-3 py-1.5 rounded-md flex items-center space-x-1 shadow">
                         <i class="fa-regular fa-eye"></i>
                         <span class="hidden sm:inline">View Store</span>
@@ -815,6 +818,19 @@
             password: 'nbsf-05-0696'
         };
 
+        // Supabase Configuration
+        const SUPABASE_URL = 'https://pflulqqwxjqcierurzbj.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_iqo26JVy_vJyGBKYN--phA_BB0YQmFs';
+        let supabaseClient = null;
+
+        if (window.supabase && SUPABASE_URL && SUPABASE_KEY) {
+            try {
+                supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+            } catch (err) {
+                console.error('Supabase initialization error:', err);
+            }
+        }
+
         // Sample Initial Products
         const initialProducts = [
             {
@@ -935,11 +951,70 @@
         let orders = JSON.parse(localStorage.getItem('fv_orders')) || initialOrders;
         let adminNotes = JSON.parse(localStorage.getItem('fv_admin_notes')) || initialAdminNotes;
 
+        // Cloud Sync Functions
+        async function fetchFromCloud() {
+            if (!supabaseClient) return;
+            try {
+                const { data, error } = await supabaseClient.from('store_state').select('*');
+                if (error) {
+                    console.error('Fetch error:', error);
+                    return;
+                }
+                if (data && data.length > 0) {
+                    data.forEach(row => {
+                        if (row.key === 'products' && row.payload) products = row.payload;
+                        if (row.key === 'orders' && row.payload) orders = row.payload;
+                        if (row.key === 'admin_notes' && row.payload) adminNotes = row.payload;
+                    });
+                    localStorage.setItem('fv_products', JSON.stringify(products));
+                    localStorage.setItem('fv_orders', JSON.stringify(orders));
+                    localStorage.setItem('fv_admin_notes', JSON.stringify(adminNotes));
+                    updateDashboardCounts();
+                    renderProducts();
+                    renderOrders();
+                    renderLowStock();
+                    renderRecords();
+                    renderAdminNotes();
+                } else {
+                    await saveStateToCloud();
+                }
+            } catch (err) {
+                console.error('Cloud fetch exception:', err);
+            }
+        }
+
+        async function saveStateToCloud() {
+            if (!supabaseClient) return;
+            try {
+                await supabaseClient.from('store_state').upsert([
+                    { key: 'products', payload: products },
+                    { key: 'orders', payload: orders },
+                    { key: 'admin_notes', payload: adminNotes }
+                ]);
+            } catch (err) {
+                console.error('Cloud save error:', err);
+            }
+        }
+
+        function subscribeToRealtime() {
+            if (!supabaseClient) return;
+            supabaseClient
+                .channel('public:store_state')
+                .on('postgres_changes', { event: '*', schema: 'public', table: 'store_state' }, payload => {
+                    fetchFromCloud();
+                })
+                .subscribe();
+        }
+
         // Auto Check Admin Session on Page Load
         window.addEventListener('DOMContentLoaded', () => {
             const isLoggedIn = localStorage.getItem('fv_admin_logged_in');
             if (isLoggedIn === 'true') {
                 showAdminDashboard();
+            }
+            if (supabaseClient) {
+                fetchFromCloud();
+                subscribeToRealtime();
             }
         });
 
@@ -948,6 +1023,7 @@
             localStorage.setItem('fv_orders', JSON.stringify(orders));
             localStorage.setItem('fv_admin_notes', JSON.stringify(adminNotes));
             updateDashboardCounts();
+            saveStateToCloud();
         }
 
         // Authentication Handler
@@ -1043,6 +1119,7 @@
             renderLowStock();
             renderRecords();
             renderAdminNotes();
+            if (supabaseClient) fetchFromCloud();
         }
 
         function updateDashboardCounts() {
@@ -1737,7 +1814,7 @@
 
         function viewProof(imgUrl) {
             document.getElementById('proof-img').src = imgUrl || 'https://via.placeholder.com/300';
-            document.getElementById('proof-modal').classList.remove('hidden');
+            document.getElementById('proof-modal').classList.add('hidden');
         }
 
         function deleteOrder(id) {
@@ -1766,7 +1843,7 @@
                         <p class="text-xs text-gray-500">Category: ${p.category}</p>
                         <span class="text-xs font-bold text-red-600 mt-1 inline-block">Stock Remaining: ${p.qty} pcs</span>
                     </div>
-                    <button onclick="navigateTo('products')" class="text-xs bg-brandNavy text-white px-3 py-1.5 rounded font-bold">Restock</button>
+                    <button onclick="navigateTo('products')" class="test-xs bg-brandNavy text-white px-3 py-1.5 rounded font-bold">Restock</button>
                 </div>
             `).join('');
         }
