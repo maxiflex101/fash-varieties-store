@@ -557,7 +557,7 @@
                     </div>
                 </div>
 
-                                <!-- 5. Related Products Link / URL -->
+                <!-- 5. Related Products Link / URL -->
                 <div class="bg-amber-50/80 p-4 rounded-xl border border-amber-200 space-y-3">
                     <h4 class="font-bold text-brandNavy flex items-center space-x-2">
                         <i class="fa-solid fa-link text-brandGold"></i>
@@ -1271,10 +1271,9 @@
             const modal = document.getElementById('product-modal');
             const form = document.getElementById('product-form');
             const title = document.getElementById('modal-title');
-            const relatedSelect = document.getElementById('p-related');
+            const relatedInput = document.getElementById('p-related-input');
 
             const prod = editId ? products.find(p => p.id === editId) : null;
-            relatedSelect.innerHTML = products.map(p => `<option value="${p.name}">${p.name} (${p.category})</option>`).join('');
 
             if (prod) {
                 title.innerText = '✎ Edit Product Details';
@@ -1325,9 +1324,7 @@
                 document.getElementById('share-telegram').checked = shares.includes('Telegram');
 
                 const related = prod.relatedProducts || [];
-                Array.from(relatedSelect.options).forEach(option => {
-                    option.selected = related.includes(option.value);
-                });
+                relatedInput.value = related.join(', ');
 
             } else {
                 title.innerText = '+ Add New Product';
@@ -1335,6 +1332,7 @@
                 document.getElementById('p-id').value = '';
                 document.getElementById('p-shipping-lagos').value = 'within Lagos 24 hours';
                 document.getElementById('p-shipping-outside').value = 'outside Lagos 3-5days';
+                if(relatedInput) relatedInput.value = '';
             }
 
             modal.classList.remove('hidden');
@@ -1356,8 +1354,8 @@
                 if (imgVal) uploadedImages.push(imgVal);
             }
 
-            const relatedSelect = document.getElementById('p-related');
-            const selectedRelated = Array.from(relatedSelect.selectedOptions).map(opt => opt.value);
+            const relatedInputValue = document.getElementById('p-related-input').value;
+            const selectedRelated = relatedInputValue ? relatedInputValue.split(',').map(s => s.trim()).filter(s => s !== '') : [];
 
             const tagsInput = document.getElementById('p-tags').value;
             const tagsArray = tagsInput ? tagsInput.split(',').map(t => t.trim()).filter(t => t !== '') : [];
