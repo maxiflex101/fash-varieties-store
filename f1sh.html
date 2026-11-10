@@ -557,16 +557,14 @@
                     </div>
                 </div>
 
-                <!-- 5. Related Products Selection -->
+                                <!-- 5. Related Products Link / URL -->
                 <div class="bg-amber-50/80 p-4 rounded-xl border border-amber-200 space-y-3">
                     <h4 class="font-bold text-brandNavy flex items-center space-x-2">
                         <i class="fa-solid fa-link text-brandGold"></i>
-                        <span>Related Products Link</span>
+                        <span>Related Product Link / Name</span>
                     </h4>
-                    <p class="text-[11px] text-gray-500">Hold Ctrl (or Cmd on Mac) to select multiple related items from your existing catalog:</p>
-                    <select id="p-related" multiple class="w-full p-2 bg-white rounded border text-xs h-28 focus:ring-1 focus:ring-brandGold custom-scrollbar">
-                        <!-- Dynamically populated from JS products list -->
-                    </select>
+                    <p class="text-[11px] text-gray-500">Type or paste the product name, page link, or URL (separate multiple items with a comma):</p>
+                    <input type="text" id="p-related-input" placeholder="e.g. product.html?id=101, Luxury Handbag" class="w-full p-2.5 bg-white rounded border text-xs focus:ring-1 focus:ring-brandGold">
                 </div>
 
                 <!-- 6. Variants (with Price & Qty for Size and Color) -->
