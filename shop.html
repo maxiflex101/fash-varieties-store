@@ -8,6 +8,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Supabase JS SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
         tailwind.config = {
             theme: {
@@ -61,6 +63,19 @@
     </footer>
 
     <script>
+        // Supabase Configuration
+        const SUPABASE_URL = 'https://pflulqqwxjqcierurzbj.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_iqo26JVy_vJyGBKYN--phA_BB0YQmFs';
+        let supabaseClient = null;
+
+        if (window.supabase && SUPABASE_URL && SUPABASE_KEY) {
+            try {
+                supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+            } catch (err) {
+                console.error('Supabase initialization error:', err);
+            }
+        }
+
         const categories = [
             "All", "Kitchen Utensils", "Kitchen Items", "Kitchen Gadgets", 
             "Home Appliances", "Home Gadgets", "Fashion Items", "Fashion Accessories", 
@@ -75,10 +90,46 @@
         const urlParams = new URLSearchParams(window.location.search);
         let activeCategory = urlParams.get('category') || "All";
 
+        async function fetchStoreProducts() {
+            if (!supabaseClient) return;
+            try {
+                const { data, error } = await supabaseClient.from('store_state').select('*');
+                if (error) {
+                    console.error('Fetch error:', error);
+                    return;
+                }
+                if (data && data.length > 0) {
+                    data.forEach(row => {
+                        if (row.key === 'products' && row.payload) {
+                            productsData = row.payload;
+                            localStorage.setItem('fv_products', JSON.stringify(productsData));
+                        }
+                    });
+                    renderShopProducts();
+                }
+            } catch (err) {
+                console.error('Cloud fetch exception:', err);
+            }
+        }
+
+        function subscribeToRealtime() {
+            if (!supabaseClient) return;
+            supabaseClient
+                .channel('public:store_state')
+                .on('postgres_changes', { event: '*', schema: 'public', table: 'store_state' }, payload => {
+                    fetchStoreProducts();
+                })
+                .subscribe();
+        }
+
         document.addEventListener("DOMContentLoaded", () => {
             renderShopTabs();
             renderShopProducts();
             updateCounts();
+            if (supabaseClient) {
+                fetchStoreProducts();
+                subscribeToRealtime();
+            }
         });
 
         function renderShopTabs() {
@@ -92,6 +143,7 @@
         }
 
         function renderShopProducts() {
+            productsData = JSON.parse(localStorage.getItem('fv_products')) || productsData;
             const grid = document.getElementById('shopProductGrid');
             if(!grid) return;
             const filtered = activeCategory === "All" ? productsData : productsData.filter(p => p.category === activeCategory);
