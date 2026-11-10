@@ -11,6 +11,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Supabase JS SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
         tailwind.config = {
             theme: {
@@ -511,6 +513,19 @@
 
     <!-- ================= JAVASCRIPT ================= -->
     <script>
+        // Supabase Configuration
+        const SUPABASE_URL = 'https://pflulqqwxjqcierurzbj.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_iqo26JVy_vJyGBKYN--phA_BB0YQmFs';
+        let supabaseClient = null;
+
+        if (window.supabase && SUPABASE_URL && SUPABASE_KEY) {
+            try {
+                supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+            } catch (err) {
+                console.error('Supabase initialization error:', err);
+            }
+        }
+
         const categories = [
             "All", "Kitchen Utensils", "Kitchen Items", "Kitchen Gadgets", 
             "Home Appliances", "Home Gadgets", "Fashion Items", "Fashion Accessories", 
@@ -561,6 +576,38 @@
         let loggedInUser = localStorage.getItem('fv_logged_user') || null;
         let isRegisterMode = false;
 
+        async function fetchStoreProducts() {
+            if (!supabaseClient) return;
+            try {
+                const { data, error } = await supabaseClient.from('store_state').select('*');
+                if (error) {
+                    console.error('Fetch error:', error);
+                    return;
+                }
+                if (data && data.length > 0) {
+                    data.forEach(row => {
+                        if (row.key === 'products' && row.payload) {
+                            productsData = row.payload;
+                            localStorage.setItem('fv_products', JSON.stringify(productsData));
+                        }
+                    });
+                    renderProductGrid();
+                }
+            } catch (err) {
+                console.error('Cloud fetch exception:', err);
+            }
+        }
+
+        function subscribeToRealtime() {
+            if (!supabaseClient) return;
+            supabaseClient
+                .channel('public:store_state')
+                .on('postgres_changes', { event: '*', schema: 'public', table: 'store_state' }, payload => {
+                    fetchStoreProducts();
+                })
+                .subscribe();
+        }
+
         document.addEventListener("DOMContentLoaded", () => {
             renderSidebarCategories();
             renderCategoryTabs();
@@ -571,6 +618,10 @@
                 if (navStatus) navStatus.innerText = "Account";
                 const fNavStatus = document.getElementById('floatingNavUserStatus');
                 if (fNavStatus) fNavStatus.innerText = "Account";
+            }
+            if (supabaseClient) {
+                fetchStoreProducts();
+                subscribeToRealtime();
             }
         });
 
