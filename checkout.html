@@ -38,25 +38,79 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
                     <div><label class="block font-semibold mb-1">First Name *</label><input type="text" id="billingFirstName" required class="w-full p-2.5 border rounded-lg"></div>
                     <div><label class="block font-semibold mb-1">Last Name *</label><input type="text" id="billingLastName" required class="w-full p-2.5 border rounded-lg"></div>
-                    <div class="sm:col-span-2"><label class="block font-semibold mb-1">Street Address *</label><input type="text" id="billingAddress" required class="w-full p-2.5 border rounded-lg"></div>
+                    <div class="sm:col-span-2"><label class="block font-semibold mb-1">Company name (optional)</label><input type="text" id="billingCompany" class="w-full p-2.5 border rounded-lg"></div>
+                    <div><label class="block font-semibold mb-1">Location / Country *</label><input type="text" id="billingCountry" value="Nigeria" required class="w-full p-2.5 border rounded-lg"></div>
+                    <div><label class="block font-semibold mb-1">State *</label><input type="text" id="billingState" required class="w-full p-2.5 border rounded-lg"></div>
+                    <div class="sm:col-span-2"><label class="block font-semibold mb-1">Address *</label><input type="text" id="billingAddress" required class="w-full p-2.5 border rounded-lg"></div>
                     <div><label class="block font-semibold mb-1">Town / City *</label><input type="text" id="billingCity" required class="w-full p-2.5 border rounded-lg"></div>
-                    <div><label class="block font-semibold mb-1">Phone *</label><input type="tel" id="billingPhone" required class="w-full p-2.5 border rounded-lg"></div>
-                    <div class="sm:col-span-2"><label class="block font-semibold mb-1">Email Address *</label><input type="email" id="billingEmail" required class="w-full p-2.5 border rounded-lg"></div>
+                    <div><label class="block font-semibold mb-1">Phone number *</label><input type="tel" id="billingPhone" required class="w-full p-2.5 border rounded-lg"></div>
+                    <div class="sm:col-span-2"><label class="block font-semibold mb-1">Email *</label><input type="email" id="billingEmail" required class="w-full p-2.5 border rounded-lg"></div>
+                    <div class="sm:col-span-2"><label class="block font-semibold mb-1">Order note (optional)</label><textarea id="orderNote" rows="2" class="w-full p-2.5 border rounded-lg" placeholder="Notes about your order..."></textarea></div>
+                </div>
+
+                <div class="space-y-3 pt-4 border-t">
+                    <h3 class="text-base font-bold text-fashNavy">Shipment Method *</h3>
+                    <div class="space-y-2 text-xs">
+                        <label class="flex items-center gap-2 cursor-pointer p-2 bg-gray-50 rounded border">
+                            <input type="radio" name="shipmentMethod" value="pickup" checked onchange="updateShipmentFee()" class="text-fashGold"> Local pickup
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer p-2 bg-gray-50 rounded border">
+                            <input type="radio" name="shipmentMethod" value="stockpile" onchange="updateShipmentFee()" class="text-fashGold"> Stockpile (strict within one week)
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer p-2 bg-gray-50 rounded border">
+                            <input type="radio" name="shipmentMethod" value="waybill" onchange="updateShipmentFee()" class="text-fashGold"> Waybill (additional ₦700 fee to take to park)
+                        </label>
+                    </div>
+
+                    <div id="waybillParkContainer" class="hidden pt-2">
+                        <label class="block text-xs font-semibold mb-1 text-fashNavy">Name of the Nearest Park / Bus Stop / State *</label>
+                        <input type="text" id="nearestParkInput" placeholder="e.g. Berger Park, Lagos" class="w-full p-2.5 border rounded-lg text-xs">
+                    </div>
                 </div>
             </div>
 
             <div class="lg:col-span-5 space-y-6">
+                <!-- Order Summary -->
+                <div class="bg-white p-6 rounded-2xl shadow-lg border border-gray-200 space-y-4">
+                    <h3 class="text-base font-bold text-fashNavy border-b pb-2">Your Order</h3>
+                    <div id="checkoutSummaryItems" class="space-y-2 text-xs max-h-48 overflow-y-auto custom-scrollbar"></div>
+                    <div class="border-t pt-3 space-y-1 text-xs">
+                        <div class="flex justify-between"><span>Subtotal</span><span id="summarySubtotal" class="font-bold">₦0</span></div>
+                        <div class="flex justify-between" id="shippingFeeRow"><span>Shipping / Waybill</span><span id="summaryShipping" class="font-bold">₦0</span></div>
+                        <div class="flex justify-between text-sm font-extrabold text-fashNavy pt-2 border-t"><span>Total</span><span id="summaryTotal">₦0</span></div>
+                    </div>
+                </div>
+
                 <div class="bg-fashNavy text-white p-6 rounded-2xl shadow-lg border-2 border-fashGold space-y-4">
                     <h3 class="text-base font-bold text-fashGold"><i class="fa-solid fa-building-columns"></i> Bank Transfer Details</h3>
-                    <p class="text-[11px] text-gray-300">Transfer order amount to our official store accounts below:</p>
-                    <div class="space-y-2 bg-fashNavyDark p-3 rounded-xl text-xs">
-                        <p class="text-fashGold font-semibold">MONIEPOINT: 5271600556</p>
-                        <p class="text-fashGold font-semibold">ACCESS BANK: 1920452449</p>
+                    <p class="text-[11px] text-gray-300">Make your payment directly into our bank account first on below details. And please Upload the Bank Payment Receipt use and your Order ID as the payment reference. Your order will not be shipped until the funds have cleared in our account.</p>
+                    
+                    <div class="space-y-3 bg-fashNavyDark p-3.5 rounded-xl text-xs">
+                        <div class="flex justify-between items-center bg-white/5 p-2 rounded border border-white/10">
+                            <div>
+                                <p class="text-gray-400 text-[10px]">MONIEPOINT (Fash Varieties Store)</p>
+                                <p class="text-fashGold font-mono font-bold text-sm" id="acc1">5271600556</p>
+                            </div>
+                            <button type="button" onclick="copyAcc('5271600556', this)" class="bg-fashGold text-fashNavy px-2.5 py-1 rounded text-[10px] font-bold">Copy</button>
+                        </div>
+                        <div class="flex justify-between items-center bg-white/5 p-2 rounded border border-white/10">
+                            <div>
+                                <p class="text-gray-400 text-[10px]">ACCESS BANK (Fash Varieties Store)</p>
+                                <p class="text-fashGold font-mono font-bold text-sm" id="acc2">1920452449</p>
+                            </div>
+                            <button type="button" onclick="copyAcc('1920452449', this)" class="bg-fashGold text-fashNavy px-2.5 py-1 rounded text-[10px] font-bold">Copy</button>
+                        </div>
                     </div>
+
                     <div>
-                        <label class="block text-xs font-semibold text-fashGold uppercase mb-1">Upload Payment Receipt *</label>
+                        <label class="block text-xs font-semibold text-fashGold uppercase mb-1">Upload the Bank Payments Receipt *</label>
                         <input type="file" id="receiptUploadInput" accept="image/*" required class="w-full text-xs text-gray-300 file:bg-fashGold file:text-fashNavy file:py-2 file:px-4 file:rounded-lg">
                     </div>
+
+                    <p class="text-[10px] text-gray-300 leading-relaxed">
+                        Your personal data will be used to process your order, support your experience throughout this website, and for other purposes described in our privacy policy.
+                    </p>
+
                     <button type="submit" class="w-full bg-fashGold hover:bg-white text-fashNavy font-extrabold py-3 rounded-xl uppercase shadow-lg transition">
                         PLACE ORDER
                     </button>
@@ -65,12 +119,79 @@
         </form>
     </main>
 
+    <!-- CONTACT US DETAILS & COPYRIGHT AFTER PLACE ORDER -->
+    <div class="max-w-7xl mx-auto px-4 w-full py-6 space-y-4 text-xs text-gray-700 border-t border-gray-300">
+        <h4 class="font-bold text-fashNavy text-sm uppercase">Contact Us Details</h4>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+                <p><strong>Email:</strong> deeflexconsult@gmail.com</p>
+                <p><strong>Phone:</strong> 08155707964, 09013256588</p>
+                <p><strong>WhatsApp:</strong> +2348064414142, +2349060954176</p>
+            </div>
+            <div>
+                <p><strong>Store 1:</strong> 89, Agege Motor Road Papa Ashafa besides Isokoko police station Agege Lagos</p>
+                <p><strong>Store 2:</strong> 23, Subuola Street, Dopemu Lagos</p>
+            </div>
+        </div>
+    </div>
+
     <footer class="bg-fashNavy text-white text-center py-4 text-xs mt-auto border-t-2 border-fashGold">
         2026 © FASH VARIETIES STORE. All rights reserved.
     </footer>
 
     <script>
         let cart = JSON.parse(localStorage.getItem('fv_cart')) || [];
+        let subtotalAmt = 0;
+
+        document.addEventListener("DOMContentLoaded", () => {
+            renderSummary();
+        });
+
+        function renderSummary() {
+            const container = document.getElementById('checkoutSummaryItems');
+            subtotalAmt = cart.reduce((acc, item) => acc + (item.unitPrice * item.qty), 0);
+
+            container.innerHTML = cart.map(item => `
+                <div class="flex justify-between items-center py-1 border-b">
+                    <span>${item.name} (x${item.qty})</span>
+                    <span class="font-bold">₦${(item.unitPrice * item.qty).toLocaleString()}</span>
+                </div>
+            `).join('');
+
+            document.getElementById('summarySubtotal').innerText = `₦${subtotalAmt.toLocaleString()}`;
+            updateTotalCalculation();
+        }
+
+        function updateShipmentFee() {
+            const method = document.querySelector('input[name="shipmentMethod"]:checked').value;
+            const parkContainer = document.getElementById('waybillParkContainer');
+            const parkInput = document.getElementById('nearestParkInput');
+
+            if (method === 'waybill') {
+                parkContainer.classList.remove('hidden');
+                parkInput.required = true;
+            } else {
+                parkContainer.classList.add('hidden');
+                parkInput.required = false;
+            }
+            updateTotalCalculation();
+        }
+
+        function updateTotalCalculation() {
+            const method = document.querySelector('input[name="shipmentMethod"]:checked').value;
+            const shippingFee = (method === 'waybill') ? 700 : 0;
+            const total = subtotalAmt + shippingFee;
+
+            document.getElementById('summaryShipping').innerText = shippingFee > 0 ? `₦${shippingFee.toLocaleString()}` : 'Free / Pickup';
+            document.getElementById('summaryTotal').innerText = `₦${total.toLocaleString()}`;
+        }
+
+        function copyAcc(text, btn) {
+            navigator.clipboard.writeText(text);
+            const original = btn.innerText;
+            btn.innerText = "Copied!";
+            setTimeout(() => btn.innerText = original, 2000);
+        }
 
         function handlePlaceOrder(e) {
             e.preventDefault();
@@ -80,9 +201,33 @@
                 return;
             }
 
+            const orderId = 'ORD-' + Math.floor(100000 + Math.random() * 900000);
+            const method = document.querySelector('input[name="shipmentMethod"]:checked').value;
+            const shippingFee = method === 'waybill' ? 700 : 0;
+
+            const orderData = {
+                id: orderId,
+                date: new Date().toISOString(),
+                customerName: document.getElementById('billingFirstName').value + ' ' + document.getElementById('billingLastName').value,
+                phone: document.getElementById('billingPhone').value,
+                email: document.getElementById('billingEmail').value,
+                billingAddress: document.getElementById('billingAddress').value,
+                shippingAddress: document.getElementById('billingAddress').value + (document.getElementById('nearestParkInput').value ? ' | Nearest Park: ' + document.getElementById('nearestParkInput').value : ''),
+                orderNote: document.getElementById('orderNote').value,
+                shipmentMethod: method,
+                itemsList: cart,
+                total: subtotalAmt + shippingFee,
+                status: 'Pending Confirmation'
+            };
+
             const reader = new FileReader();
             reader.onload = function(uploadEvent) {
-                alert("Order placed successfully!");
+                orderData.receipt = uploadEvent.target.result;
+                let orders = JSON.parse(localStorage.getItem('fv_orders')) || [];
+                orders.push(orderData);
+                localStorage.setItem('fv_orders', JSON.stringify(orders));
+
+                alert(`Order #${orderId} placed successfully! Please ensure you use your Order ID as your payment reference.`);
                 localStorage.removeItem('fv_cart');
                 window.location.href = "index.html";
             };
