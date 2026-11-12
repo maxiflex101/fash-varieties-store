@@ -47,7 +47,7 @@
                 </div>
             </a>
             <div class="flex items-center gap-5">
-                <a href="wishlist.html" class="relative hover:text-fashGold transition-colors"><i class="fa-regular fa-heart text-xl"></i><span id="wishlistCount" class="absolute -top-2 -right-2 bg-fashGold text-fashNavy text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">0</span></a>
+                <a href="#" onclick="openModal('wishlistModal'); return false;" class="relative hover:text-fashGold transition-colors"><i class="fa-regular fa-heart text-xl"></i><span id="wishlistCount" class="absolute -top-2 -right-2 bg-fashGold text-fashNavy text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">0</span></a>
                 <a href="cart.html" class="relative hover:text-fashGold transition-colors"><i class="fa-solid fa-cart-shopping text-xl"></i><span id="cartCount" class="absolute -top-2 -right-2 bg-fashGold text-fashNavy text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">0</span></a>
             </div>
         </div>
@@ -59,14 +59,14 @@
         </a>
 
         <div class="bg-white p-6 rounded-2xl shadow-lg border border-gray-200 grid grid-cols-1 md:grid-cols-2 gap-8">
-            <!-- Gallery Slider -->
+            <!-- Gallery Slider (Swipeable with fingers) -->
             <div>
-                <div id="mainImgContainer" class="relative rounded-xl overflow-hidden border border-gray-200 bg-gray-50 h-80 flex items-center justify-center cursor-grab select-none">
-                    <img id="detailMainImg" src="" alt="Product Image" class="h-full object-contain pointer-events-none">
-                    <span class="absolute top-2 right-2 bg-fashNavy/70 text-fashGold text-[10px] px-2 py-0.5 rounded-full font-bold">
+                <div id="mainImgContainer" class="relative rounded-xl overflow-hidden border border-gray-200 bg-gray-50 h-80 flex items-center justify-center select-none touch-pan-x overflow-x-auto snap-x snap-mandatory">
+                    <div id="imageSwipeTrack" class="flex w-full h-full"></div>
+                    <span class="absolute top-2 right-2 bg-fashNavy/70 text-fashGold text-[10px] px-2 py-0.5 rounded-full font-bold pointer-events-none">
                         <i class="fa-solid fa-hand-pointer"></i> Swipe image
                     </span>
-                    <div class="absolute bottom-2 bg-black/60 text-white text-[10px] px-2.5 py-0.5 rounded-full font-medium" id="imageIndexIndicator">1 / 1</div>
+                    <div class="absolute bottom-2 bg-black/60 text-white text-[10px] px-2.5 py-0.5 rounded-full font-medium pointer-events-none" id="imageIndexIndicator">1 / 1</div>
                 </div>
                 <div class="flex gap-2 mt-4 overflow-x-auto pb-2 custom-scrollbar" id="detailThumbnails"></div>
             </div>
@@ -83,12 +83,18 @@
                 <div id="detailOptionsContainer" class="space-y-4"></div>
 
                 <div class="space-y-2 bg-fashLightBg p-3 rounded-lg border border-gray-200">
-                    <div class="flex items-center gap-3">
-                        <label class="text-xs font-semibold text-gray-700">QTY:</label>
-                        <div class="flex items-center border border-gray-300 rounded-lg bg-white overflow-hidden">
-                            <button onclick="adjustDetailQty(-1)" class="px-3 py-1 bg-gray-100 hover:bg-gray-200 font-bold">-</button>
-                            <input type="number" id="detailQty" value="1" min="1" onchange="updateProductVariant()" class="w-12 text-center text-sm font-bold border-none focus:outline-none">
-                            <button onclick="adjustDetailQty(1)" class="px-3 py-1 bg-gray-100 hover:bg-gray-200 font-bold">+</button>
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <label class="text-xs font-semibold text-gray-700">QTY:</label>
+                            <div class="flex items-center border border-gray-300 rounded-lg bg-white overflow-hidden">
+                                <button onclick="adjustDetailQty(-1)" class="px-3 py-1 bg-gray-100 hover:bg-gray-200 font-bold">-</button>
+                                <input type="number" id="detailQty" value="1" min="1" onchange="calculateFinalPrice()" class="w-12 text-center text-sm font-bold border-none focus:outline-none">
+                                <button onclick="adjustDetailQty(1)" class="px-3 py-1 bg-gray-100 hover:bg-gray-200 font-bold">+</button>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <span class="text-[10px] text-gray-500 uppercase block font-semibold">Calculated Price:</span>
+                            <span id="calculatedTotalPrice" class="text-base font-extrabold text-green-700">₦0</span>
                         </div>
                     </div>
                 </div>
@@ -102,6 +108,30 @@
                     </button>
                 </div>
 
+                <!-- Shipping Note, Add Info, Share, Related Products -->
+                <div class="space-y-3 pt-3 border-t border-gray-200 text-xs">
+                    <div class="bg-emerald-50/70 p-3 rounded-lg border border-emerald-200 text-emerald-900 space-y-1">
+                        <p><strong>Shipping & Delivery:</strong></p>
+                        <p id="shippingLagosNote"><i class="fa-solid fa-truck"></i> Lagos: within Lagos 24 hours</p>
+                        <p id="shippingOutsideNote"><i class="fa-solid fa-plane"></i> Outside Lagos: outside Lagos 3-5days</p>
+                    </div>
+
+                    <div id="additionalInfoBox" class="bg-gray-50 p-3 rounded-lg border text-gray-700 hidden">
+                        <strong class="block text-brandNavy mb-1">Additional Information:</strong>
+                        <p id="additionalInfoText"></p>
+                    </div>
+
+                    <div class="flex items-center gap-2 pt-1">
+                        <span class="font-bold text-gray-700 uppercase">Share:</span>
+                        <div id="sharePlatformsContainer" class="flex gap-2 text-base text-fashNavy"></div>
+                    </div>
+
+                    <div id="relatedProductsBox" class="bg-amber-50/70 p-3 rounded-lg border border-amber-200 hidden">
+                        <strong class="block text-brandNavy mb-1"><i class="fa-solid fa-link text-fashGold"></i> Related Product:</strong>
+                        <div id="relatedProductsList" class="flex flex-wrap gap-1 mt-1"></div>
+                    </div>
+                </div>
+
                 <div class="text-xs text-gray-500 space-y-1 border-t border-gray-200 pt-3">
                     <p><strong>SKU:</strong> <span id="detailSKU">FASH-001</span></p>
                     <p><strong>Category:</strong> <span id="detailCategory">Kitchen Utensils</span></p>
@@ -109,6 +139,15 @@
             </div>
         </div>
     </main>
+
+    <!-- WISHLIST MODAL -->
+    <div id="wishlistModal" class="fixed inset-0 bg-black/70 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-lg w-full p-6 space-y-4 shadow-2xl relative border-2 border-fashGold max-h-[80vh] flex flex-col">
+            <button onclick="closeModal('wishlistModal')" class="absolute top-4 right-4 text-gray-400 hover:text-gray-800 text-lg"><i class="fa-solid fa-xmark"></i></button>
+            <h3 class="text-xl font-bold text-fashNavy border-b pb-2">Your Saved Wishlist</h3>
+            <div id="wishlistModalItems" class="overflow-y-auto space-y-3 flex-1 custom-scrollbar"></div>
+        </div>
+    </div>
 
     <footer class="bg-fashNavy text-white text-center py-4 text-xs mt-auto border-t-2 border-fashGold">
         2026 © FASH VARIETIES STORE. All rights reserved.
@@ -168,7 +207,36 @@
                 document.getElementById('detailTitle').innerText = currentProduct.name;
                 document.getElementById('detailSKU').innerText = currentProduct.sku || 'FASH-001';
                 document.getElementById('detailCategory').innerText = currentProduct.category;
+                document.getElementById('detailPrice').innerText = `₦${Number(currentProduct.price || 0).toLocaleString()}`;
                 
+                // Shipping notes
+                if(currentProduct.shippingLagos) document.getElementById('shippingLagosNote').innerHTML = `<i class="fa-solid fa-truck"></i> Lagos: ${currentProduct.shippingLagos}`;
+                if(currentProduct.shippingOutside) document.getElementById('shippingOutsideNote').innerHTML = `<i class="fa-solid fa-plane"></i> Outside Lagos: ${currentProduct.shippingOutside}`;
+
+                // Additional Info
+                if(currentProduct.additionalInfo) {
+                    document.getElementById('additionalInfoBox').classList.remove('hidden');
+                    document.getElementById('additionalInfoText').innerText = currentProduct.additionalInfo;
+                }
+
+                // Share platforms
+                if(currentProduct.shares && currentProduct.shares.length > 0) {
+                    const shareIconsMap = {
+                        'WhatsApp': '<i class="fa-brands fa-whatsapp text-green-600"></i>',
+                        'TikTok': '<i class="fa-brands fa-tiktok text-gray-900"></i>',
+                        'Instagram': '<i class="fa-brands fa-instagram text-pink-600"></i>',
+                        'Facebook': '<i class="fa-brands fa-facebook text-blue-600"></i>',
+                        'Telegram': '<i class="fa-brands fa-telegram text-sky-500"></i>'
+                    };
+                    document.getElementById('sharePlatformsContainer').innerHTML = currentProduct.shares.map(s => shareIconsMap[s] || '').join(' ');
+                }
+
+                // Related Products
+                if(currentProduct.relatedProducts && currentProduct.relatedProducts.length > 0) {
+                    document.getElementById('relatedProductsBox').classList.remove('hidden');
+                    document.getElementById('relatedProductsList').innerHTML = currentProduct.relatedProducts.map(r => `<span class="bg-white px-2 py-0.5 rounded border text-xs font-semibold">${r}</span>`).join('');
+                }
+
                 if(!currentProduct.images || currentProduct.images.length === 0) {
                     currentProduct.images = [currentProduct.image || 'https://via.placeholder.com/300'];
                 }
@@ -180,6 +248,7 @@
         document.addEventListener("DOMContentLoaded", () => {
             loadProductDetails();
             updateCounts();
+            renderWishlistModal();
             if (supabaseClient) {
                 fetchStoreProducts();
             }
@@ -187,12 +256,19 @@
 
         function updateImageGallery() {
             if (!currentProduct || !currentProduct.images) return;
-            const mainImg = document.getElementById('detailMainImg');
+            const track = document.getElementById('imageSwipeTrack');
             const indicator = document.getElementById('imageIndexIndicator');
             const thumbs = document.getElementById('detailThumbnails');
 
-            mainImg.src = currentProduct.images[activeImageIndex];
             indicator.innerText = `${activeImageIndex + 1} / ${currentProduct.images.length}`;
+
+            track.innerHTML = currentProduct.images.map((img, idx) => `
+                <div class="w-full h-full flex-shrink-0 snap-center flex items-center justify-center p-2">
+                    <img src="${img}" class="max-h-full max-w-full object-contain">
+                </div>
+            `).join('');
+            track.style.transform = `translateX(-${activeImageIndex * 100}%)`;
+            track.style.transition = 'transform 0.3s ease-in-out';
 
             thumbs.innerHTML = currentProduct.images.map((img, idx) => `
                 <img src="${img}" onclick="setImageIndex(${idx})" class="w-14 h-14 object-contain rounded-lg border-2 cursor-pointer ${idx === activeImageIndex ? 'border-fashGold bg-gray-100' : 'border-gray-200'}">
@@ -208,24 +284,104 @@
             const container = document.getElementById('detailOptionsContainer');
             if (!currentProduct) return;
             let html = '';
-            if (currentProduct.sizes && currentProduct.sizes.length > 0) {
-                html += `
-                    <div class="space-y-1">
-                        <label class="block text-xs font-semibold text-gray-700 uppercase">Size *</label>
-                        <select id="detailSizeSelect" class="w-full border border-gray-300 rounded-lg p-2.5 text-sm bg-white font-medium">
-                            ${currentProduct.sizes.map(s => `<option value="${s.name || s}">${s.name || s}</option>`).join('')}
-                        </select>
-                    </div>
-                `;
-            }
+
+            // Size
+            html += `
+                <div class="space-y-1">
+                    <label class="block text-xs font-semibold text-gray-700 uppercase">Size (heading)</label>
+                    <select id="detailSizeSelect" onchange="onOptionChanged()" class="w-full border border-gray-300 rounded-lg p-2.5 text-sm bg-white font-medium">
+                        <option value="">Choose an option</option>
+                        ${currentProduct.size ? currentProduct.size.split(',').map(s => `<option value="${s.trim()}">${s.trim()}</option>`).join('') : '<option value="Standard">Standard</option>'}
+                    </select>
+                    <p id="sizeStockPriceInfo" class="text-[11px] text-fashNavy font-semibold mt-1 hidden"></p>
+                </div>
+            `;
+
+            // Colour
+            html += `
+                <div class="space-y-1">
+                    <label class="block text-xs font-semibold text-gray-700 uppercase">Colour (heading)</label>
+                    <select id="detailColorSelect" onchange="onOptionChanged()" class="w-full border border-gray-300 rounded-lg p-2.5 text-sm bg-white font-medium">
+                        <option value="">Choose an option</option>
+                        ${currentProduct.color ? currentProduct.color.split(',').map(c => `<option value="${c.trim()}">${c.trim()}</option>`).join('') : '<option value="Default">Default</option>'}
+                    </select>
+                    <p id="colorStockPriceInfo" class="text-[11px] text-fashNavy font-semibold mt-1 hidden"></p>
+                </div>
+            `;
+
+            // Selection of Buying
+            html += `
+                <div class="space-y-1">
+                    <label class="block text-xs font-semibold text-gray-700 uppercase">Selection of Buying (heading)</label>
+                    <select id="detailBuyingSelect" onchange="onOptionChanged()" class="w-full border border-gray-300 rounded-lg p-2.5 text-sm bg-white font-medium">
+                        <option value="">Choose an option</option>
+                        <option value="Piece">Piece</option>
+                        ${currentProduct.priceHalfDozen ? '<option value="Half Dozen">Half Dozen</option>' : ''}
+                        ${currentProduct.priceDozen ? '<option value="Dozen">Dozen</option>' : ''}
+                        ${currentProduct.priceCarton ? '<option value="Carton">Carton</option>' : ''}
+                    </select>
+                    <p id="buyingStockPriceInfo" class="text-[11px] text-fashNavy font-semibold mt-1 hidden"></p>
+                </div>
+            `;
+
             container.innerHTML = html;
-            updateProductVariant();
+            calculateFinalPrice();
         }
 
-        function updateProductVariant() {
+        function onOptionChanged() {
+            const sizeVal = document.getElementById('detailSizeSelect').value;
+            const colorVal = document.getElementById('detailColorSelect').value;
+            const buyingVal = document.getElementById('detailBuyingSelect').value;
+
+            if (sizeVal && sizeVal !== "Choose an option") {
+                const sInfo = document.getElementById('sizeStockPriceInfo');
+                sInfo.classList.remove('hidden');
+                sInfo.innerText = `Available Qty: ${currentProduct.sizeQty || currentProduct.qty || 10} | Price: ₦${Number(currentProduct.sizePrice || currentProduct.price || 0).toLocaleString()}`;
+            }
+
+            if (colorVal && colorVal !== "Choose an option") {
+                const cInfo = document.getElementById('colorStockPriceInfo');
+                cInfo.classList.remove('hidden');
+                cInfo.innerText = `Available Qty: ${currentProduct.colorQty || currentProduct.qty || 10} | Price: ₦${Number(currentProduct.colorPrice || currentProduct.price || 0).toLocaleString()}`;
+            }
+
+            if (buyingVal && buyingVal !== "Choose an option") {
+                const bInfo = document.getElementById('buyingStockPriceInfo');
+                bInfo.classList.remove('hidden');
+                let bPrice = currentProduct.price;
+                if (buyingVal === 'Half Dozen') bPrice = currentProduct.priceHalfDozen || currentProduct.price;
+                if (buyingVal === 'Dozen') bPrice = currentProduct.priceDozen || currentProduct.price;
+                if (buyingVal === 'Carton') bPrice = currentProduct.priceCarton || currentProduct.price;
+                bInfo.innerText = `Price for ${buyingVal}: ₦${Number(bPrice).toLocaleString()}`;
+            }
+
+            calculateFinalPrice();
+        }
+
+        function calculateFinalPrice() {
             if (!currentProduct) return;
-            let unitPrice = currentProduct.priceSingle || currentProduct.price || 0;
-            document.getElementById('detailPrice').innerText = `₦${unitPrice.toLocaleString()}`;
+            const qty = parseInt(document.getElementById('detailQty').value) || 1;
+            let baseUnitPrice = currentProduct.price || 0;
+
+            const buyingVal = document.getElementById('detailBuyingSelect')?.value;
+            if (buyingVal === 'Half Dozen') baseUnitPrice = currentProduct.priceHalfDozen || baseUnitPrice;
+            if (buyingVal === 'Dozen') baseUnitPrice = currentProduct.priceDozen || baseUnitPrice;
+            if (buyingVal === 'Carton') baseUnitPrice = currentProduct.priceCarton || baseUnitPrice;
+
+            // Volume Discount Tiers check: (5,10,15,20,30,40,50,60,70,80,90,100)
+            let effectiveUnitPrice = baseUnitPrice;
+            if (qty >= 100 && currentProduct.disc100) effectiveUnitPrice = currentProduct.disc100;
+            else if (qty >= 50 && currentProduct.disc50) effectiveUnitPrice = currentProduct.disc50;
+            else if (qty >= 40 && currentProduct.disc40) effectiveUnitPrice = currentProduct.disc40;
+            else if (qty >= 30 && currentProduct.disc30) effectiveUnitPrice = currentProduct.disc30;
+            else if (qty >= 20 && currentProduct.disc20) effectiveUnitPrice = currentProduct.disc20;
+            else if (qty >= 15 && currentProduct.disc15) effectiveUnitPrice = currentProduct.disc15;
+            else if (qty >= 10 && currentProduct.disc10) effectiveUnitPrice = currentProduct.disc10;
+            else if (qty >= 5 && currentProduct.disc5) effectiveUnitPrice = currentProduct.disc5;
+
+            const totalAmount = effectiveUnitPrice * qty;
+            document.getElementById('calculatedTotalPrice').innerText = `₦${totalAmount.toLocaleString()}`;
+            currentProduct.activeCalculatedPrice = effectiveUnitPrice;
         }
 
         function adjustDetailQty(delta) {
@@ -233,20 +389,24 @@
             let val = (parseInt(input.value) || 1) + delta;
             if (val < 1) val = 1;
             input.value = val;
+            calculateFinalPrice();
         }
 
         function addToCartFromDetail() {
             if (!currentProduct) return;
-            const unitPrice = currentProduct.priceSingle || currentProduct.price || 0;
             const qty = parseInt(document.getElementById('detailQty').value) || 1;
+            const unitPrice = currentProduct.activeCalculatedPrice || currentProduct.price || 0;
+            const size = document.getElementById('detailSizeSelect')?.value || 'Standard';
+            const color = document.getElementById('detailColorSelect')?.value || 'Default';
+            const selection = document.getElementById('detailBuyingSelect')?.value || 'Piece';
 
             cart.push({
                 id: currentProduct.id,
                 name: currentProduct.name,
                 image: currentProduct.images[0],
-                size: "Standard",
-                color: "Default",
-                buyingSelection: "Piece",
+                size: size,
+                color: color,
+                buyingSelection: selection,
                 unitPrice: unitPrice,
                 qty: qty,
                 subtotal: unitPrice * qty
@@ -277,6 +437,33 @@
             if (cCount) cCount.innerText = totalItems;
             if (wCount) wCount.innerText = wishlist.length;
         }
+
+        function renderWishlistModal() {
+            productsData = JSON.parse(localStorage.getItem('fv_products')) || productsData;
+            const container = document.getElementById('wishlistModalItems');
+            if (!container) return;
+            if (wishlist.length === 0) {
+                container.innerHTML = `<p class="text-center text-gray-500 text-xs py-6">Your wishlist is currently empty.</p>`;
+                return;
+            }
+            const savedProducts = productsData.filter(p => wishlist.includes(p.id));
+            container.innerHTML = savedProducts.map(p => `
+                <div class="flex items-center justify-between gap-3 p-2 bg-gray-50 rounded-lg border">
+                    <img src="${p.images?.[0] || p.image}" class="w-12 h-12 object-contain rounded">
+                    <div class="flex-1">
+                        <h4 class="font-bold text-xs text-gray-800">${p.name}</h4>
+                        <p class="text-xs font-extrabold text-fashNavy">₦${Number(p.price).toLocaleString()}</p>
+                    </div>
+                    <a href="product.html?id=${p.id}" class="px-3 py-1 bg-fashNavy text-fashGold rounded text-xs font-bold">View</a>
+                </div>
+            `).join('');
+        }
+
+        function openModal(id) {
+            if (id === 'wishlistModal') renderWishlistModal();
+            document.getElementById(id).classList.remove('hidden');
+        }
+        function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
     </script>
 </body>
 </html>
