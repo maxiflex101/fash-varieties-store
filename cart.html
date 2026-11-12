@@ -38,6 +38,7 @@
                     <thead>
                         <tr class="border-b border-gray-200 text-xs uppercase text-gray-500 bg-fashLightBg">
                             <th class="p-3">Product</th>
+                            <th class="p-3">Options</th>
                             <th class="p-3">Price</th>
                             <th class="p-3">Quantity</th>
                             <th class="p-3">Subtotal</th>
@@ -109,6 +110,11 @@
                             <div>
                                 <h4 class="font-bold text-gray-800 text-xs">${item.name}</h4>
                             </div>
+                        </td>
+                        <td class="p-3 text-xs text-gray-600">
+                            ${item.size ? 'Size: ' + item.size + '<br>' : ''}
+                            ${item.color ? 'Colour: ' + item.color + '<br>' : ''}
+                            ${item.buyingSelection ? 'Selection: ' + item.buyingSelection : ''}
                         </td>
                         <td class="p-3 font-semibold text-gray-700">₦${item.unitPrice.toLocaleString()}</td>
                         <td class="p-3 font-bold">${item.qty}</td>
