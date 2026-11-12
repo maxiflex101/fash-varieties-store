@@ -32,7 +32,9 @@
 </head>
 <body class="bg-gray-100 font-sans text-gray-800 antialiased min-h-screen flex flex-col">
 
-    <!-- LOGIN SCREEN -->
+    <!-- ========================================== -->
+    <!-- 1. LOGIN SCREEN                           -->
+    <!-- ========================================== -->
     <div id="login-view" class="fixed inset-0 z-50 bg-brandNavy flex items-center justify-center p-4">
         <div class="bg-white w-full max-w-md rounded-2xl shadow-2xl p-6 sm:p-8 border-t-8 border-brandGold">
             <div class="text-center mb-6">
@@ -44,7 +46,8 @@
                 <p class="text-xs text-gray-500">Sign in to your store control panel</p>
             </div>
 
-            <div id="login-error" class="hidden mb-4 p-3 bg-red-100 border border-red-300 text-red-700 text-xs rounded-lg flex items-center space-x-2">
+            <!-- INVALID LOGIN ERROR ALERT BANNER -->
+            <div id="login-error" class="hidden mb-4 p-3 bg-red-100 border border-red-300 text-red-700 text-xs rounded-lg flex items-center space-x-2 animate-bounce">
                 <i class="fa-solid fa-circle-exclamation text-red-600 text-base"></i>
                 <span id="login-error-text" class="font-bold">Invalid email or password. Please try again!</span>
             </div>
@@ -62,27 +65,41 @@
                     Sign In
                 </button>
             </form>
+
+            <div class="mt-8 pt-4 border-t border-gray-200 text-center text-xs text-gray-500 space-x-2">
+                <span>✦ Transparency</span>
+                <span>✦ Quality</span>
+                <span>✦ Reliability</span>
+            </div>
         </div>
     </div>
 
-    <!-- MAIN ADMIN APP WRAPPER -->
+    <!-- ========================================== -->
+    <!-- MAIN ADMIN APP WRAPPER                     -->
+    <!-- ========================================== -->
     <div id="admin-app" class="hidden flex-col min-h-screen">
+
+        <!-- HEADER BAR -->
         <header class="bg-brandNavy text-white shadow-md sticky top-0 z-30">
             <div class="flex items-center justify-between px-4 py-3">
                 <div class="flex items-center space-x-3">
+                    <!-- Hamburger Toggle Button -->
                     <button onclick="toggleSidebar()" class="text-brandGold hover:text-white text-2xl focus:outline-none p-1">
                         <i class="fa-solid fa-bars"></i>
                     </button>
+
+                    <!-- Brand Logo & Title -->
                     <div class="flex items-center space-x-2">
                         <div class="w-9 h-9 rounded-full bg-brandGold text-brandNavy font-black flex items-center justify-center text-base shadow border">
                             FV
                         </div>
-                        <span class="font-bold tracking-tight text-sm sm:text-lg uppercase text-white truncate">
+                        <span class="font-bold tracking-tight text-sm sm:text-lg uppercase text-white truncate max-w-[180px] sm:max-w-none">
                             Fash Varieties Store
                         </span>
                     </div>
                 </div>
 
+                <!-- Sync Indicator & View Store & Logout -->
                 <div class="flex items-center space-x-2">
                     <span id="sync-status" class="text-[10px] bg-green-500/25 text-green-300 font-bold px-2 py-1 rounded hidden sm:inline-block">Cloud Synced Live</span>
                     <button onclick="window.location.href='index.html'" class="bg-brandGold hover:bg-brandGoldHover text-brandNavy font-semibold text-xs sm:text-sm px-3 py-1.5 rounded-md flex items-center space-x-1 shadow">
@@ -96,216 +113,932 @@
             </div>
         </header>
 
+        <!-- MAIN LAYOUT BODY -->
         <div class="flex flex-1 relative overflow-hidden">
+
+            <!-- MOBILE BACKDROP -->
             <div id="mobile-backdrop" onclick="toggleSidebar(false)" class="fixed inset-0 bg-black/60 z-40 hidden md:hidden transition-opacity"></div>
 
+            <!-- SIDEBAR NAVIGATION DRAWER -->
             <aside id="sidebar" class="fixed md:static inset-y-0 left-0 z-50 w-64 bg-brandNavy text-white flex flex-col transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out shadow-2xl md:shadow-none h-full">
+                
+                <!-- Admin Tag -->
                 <div class="p-4 border-b border-gray-700/60 flex items-center space-x-3 bg-brandNavyDark">
-                    <div class="w-8 h-8 rounded-full bg-brandGold text-brandNavy font-bold flex items-center justify-center text-sm">F</div>
+                    <div class="w-8 h-8 rounded-full bg-brandGold text-brandNavy font-bold flex items-center justify-center text-sm">
+                        F
+                    </div>
                     <div>
                         <h2 class="font-bold text-xs tracking-wider text-brandGold uppercase">Fash Admin</h2>
                         <p class="text-[10px] text-gray-300">Control Panel</p>
                     </div>
                 </div>
 
+                <!-- Navigation Links -->
                 <nav class="p-3 space-y-1.5 flex-1 overflow-y-auto custom-scrollbar">
                     <button onclick="navigateTo('dashboard')" id="nav-dashboard" class="nav-btn w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg font-bold text-xs sm:text-sm transition bg-brandGold text-brandNavy">
-                        <i class="fa-solid fa-chart-pie w-5 text-center"></i><span>DASHBOARD</span>
+                        <i class="fa-solid fa-chart-pie w-5 text-center"></i>
+                        <span>DASHBOARD</span>
                     </button>
+
                     <button onclick="navigateTo('products')" id="nav-products" class="nav-btn w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg font-semibold text-xs sm:text-sm text-gray-300 hover:bg-brandNavyDark hover:text-brandGold transition">
-                        <i class="fa-solid fa-boxes-stacked w-5 text-center"></i><span>PRODUCT</span>
+                        <i class="fa-solid fa-boxes-stacked w-5 text-center"></i>
+                        <span>PRODUCT</span>
                     </button>
+
                     <button onclick="navigateTo('orders')" id="nav-orders" class="nav-btn w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg font-semibold text-xs sm:text-sm text-gray-300 hover:bg-brandNavyDark hover:text-brandGold transition">
-                        <i class="fa-solid fa-receipt w-5 text-center"></i><span>ORDER</span>
+                        <i class="fa-solid fa-receipt w-5 text-center"></i>
+                        <span>ORDER</span>
                     </button>
+
                     <button onclick="navigateTo('records')" id="nav-records" class="nav-btn w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg font-semibold text-xs sm:text-sm text-gray-300 hover:bg-brandNavyDark hover:text-brandGold transition">
-                        <i class="fa-solid fa-book-bookmark w-5 text-center"></i><span>RECORD</span>
+                        <i class="fa-solid fa-book-bookmark w-5 text-center"></i>
+                        <span>RECORD</span>
                     </button>
+
                     <button onclick="navigateTo('admin-notes')" id="nav-admin-notes" class="nav-btn w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg font-semibold text-xs sm:text-sm text-gray-300 hover:bg-brandNavyDark hover:text-brandGold transition">
-                        <i class="fa-solid fa-note-sticky w-5 text-center"></i><span>ADMIN NOTES</span>
+                        <i class="fa-solid fa-note-sticky w-5 text-center"></i>
+                        <span>ADMIN NOTES</span>
                     </button>
+
                     <button onclick="navigateTo('low-stock')" id="nav-low-stock" class="nav-btn w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg font-semibold text-xs sm:text-sm text-gray-300 hover:bg-brandNavyDark hover:text-brandGold transition">
-                        <i class="fa-solid fa-triangle-exclamation w-5 text-center"></i><span>LOW STOCK</span>
+                        <i class="fa-solid fa-triangle-exclamation w-5 text-center"></i>
+                        <span>LOW STOCK</span>
                     </button>
+
                     <button onclick="navigateTo('settings')" id="nav-settings" class="nav-btn w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg font-semibold text-xs sm:text-sm text-gray-300 hover:bg-brandNavyDark hover:text-brandGold transition">
-                        <i class="fa-solid fa-gear w-5 text-center"></i><span>SETTING</span>
+                        <i class="fa-solid fa-gear w-5 text-center"></i>
+                        <span>SETTING</span>
                     </button>
                 </nav>
             </aside>
 
+            <!-- MAIN CONTENT AREA -->
             <main class="flex-1 p-4 sm:p-6 overflow-y-auto max-w-7xl mx-auto w-full">
-                <!-- DASHBOARD VIEW -->
+
+                <!-- 1. DASHBOARD VIEW -->
                 <section id="view-dashboard" class="content-view space-y-6">
-                    <h1 class="text-xl sm:text-2xl font-bold text-brandNavy">Admin Dashboard</h1>
+                    <div class="flex items-center justify-between">
+                        <h1 class="text-xl sm:text-2xl font-bold text-brandNavy">Admin Dashboard</h1>
+                        <span class="text-xs bg-brandGold/20 text-brandNavy font-semibold px-2.5 py-1 rounded-full">Live Overview</span>
+                    </div>
+
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-                        <div onclick="navigateTo('products')" class="bg-white p-5 rounded-xl shadow-md border-l-8 border-brandGold cursor-pointer flex justify-between items-center">
+                        <!-- Product Tile -->
+                        <div onclick="navigateTo('products')" class="bg-white p-5 sm:p-6 rounded-xl shadow-md border-l-8 border-brandGold hover:shadow-lg transition cursor-pointer flex items-center justify-between">
                             <div>
-                                <h2 class="text-lg font-bold text-brandNavy">PRODUCT</h2>
+                                <h2 class="text-lg sm:text-xl font-bold text-brandNavy">PRODUCT</h2>
+                                <p class="text-xs text-gray-500 mt-1">Manage catalog, add/edit items</p>
                                 <span id="dash-prod-count" class="text-xs font-bold text-brandGold mt-2 inline-block">0 Items active</span>
                             </div>
-                            <i class="fa-solid fa-boxes-stacked text-2xl text-brandGold"></i>
+                            <div class="w-12 h-12 rounded-full bg-brandGold/10 text-brandGold flex items-center justify-center text-2xl">
+                                <i class="fa-solid fa-boxes-stacked"></i>
+                            </div>
                         </div>
-                        <div onclick="navigateTo('orders')" class="bg-white p-5 rounded-xl shadow-md border-l-8 border-brandNavy cursor-pointer flex justify-between items-center">
+
+                        <!-- Order Tile -->
+                        <div onclick="navigateTo('orders')" class="bg-white p-5 sm:p-6 rounded-xl shadow-md border-l-8 border-brandNavy hover:shadow-lg transition cursor-pointer flex items-center justify-between">
                             <div>
-                                <h2 class="text-lg font-bold text-brandNavy">ORDER</h2>
+                                <h2 class="text-lg sm:text-xl font-bold text-brandNavy">ORDER</h2>
+                                <p class="text-xs text-gray-500 mt-1">Customer orders & payment status</p>
                                 <span id="dash-order-count" class="text-xs font-bold text-brandNavy mt-2 inline-block">0 Orders pending</span>
                             </div>
-                            <i class="fa-solid fa-cart-shopping text-2xl text-brandNavy"></i>
+                            <div class="w-12 h-12 rounded-full bg-brandNavy/10 text-brandNavy flex items-center justify-center text-2xl">
+                                <i class="fa-solid fa-cart-shopping"></i>
+                            </div>
                         </div>
-                        <div onclick="navigateTo('records')" class="bg-white p-5 rounded-xl shadow-md border-l-8 border-indigo-600 cursor-pointer flex justify-between items-center">
+
+                        <!-- Record Tile -->
+                        <div onclick="navigateTo('records')" class="bg-white p-5 sm:p-6 rounded-xl shadow-md border-l-8 border-indigo-600 hover:shadow-lg transition cursor-pointer flex items-center justify-between">
                             <div>
-                                <h2 class="text-lg font-bold text-brandNavy">RECORD</h2>
+                                <h2 class="text-lg sm:text-xl font-bold text-brandNavy">RECORD</h2>
+                                <p class="text-xs text-gray-500 mt-1">Complete sales ledger & archives</p>
                                 <span id="dash-record-count" class="text-xs font-bold text-indigo-600 mt-2 inline-block">View all store logs</span>
                             </div>
-                            <i class="fa-solid fa-book-bookmark text-2xl text-indigo-600"></i>
+                            <div class="w-12 h-12 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center text-2xl">
+                                <i class="fa-solid fa-book-bookmark"></i>
+                            </div>
+                        </div>
+
+                        <!-- Admin Notes Tile -->
+                        <div onclick="navigateTo('admin-notes')" class="bg-white p-5 sm:p-6 rounded-xl shadow-md border-l-8 border-amber-500 hover:shadow-lg transition cursor-pointer flex items-center justify-between">
+                            <div>
+                                <h2 class="text-lg sm:text-xl font-bold text-brandNavy">ADMIN NOTES</h2>
+                                <p class="text-xs text-gray-500 mt-1">General store reminders & tasks</p>
+                                <span id="dash-notes-count" class="text-xs font-bold text-amber-600 mt-2 inline-block">0 Notes active</span>
+                            </div>
+                            <div class="w-12 h-12 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center text-2xl">
+                                <i class="fa-solid fa-note-sticky"></i>
+                            </div>
+                        </div>
+
+                        <!-- Low Stock Tile -->
+                        <div onclick="navigateTo('low-stock')" class="bg-white p-5 sm:p-6 rounded-xl shadow-md border-l-8 border-red-500 hover:shadow-lg transition cursor-pointer flex items-center justify-between">
+                            <div>
+                                <h2 class="text-lg sm:text-xl font-bold text-brandNavy">LOW STOCK</h2>
+                                <p class="text-xs text-gray-500 mt-1">Inventory remaining low alerts</p>
+                                <span id="dash-lowstock-count" class="text-xs font-bold text-red-500 mt-2 inline-block">0 Items low</span>
+                            </div>
+                            <div class="w-12 h-12 rounded-full bg-red-100 text-red-500 flex items-center justify-center text-2xl">
+                                <i class="fa-solid fa-triangle-exclamation"></i>
+                            </div>
                         </div>
                     </div>
                 </section>
 
-                <!-- PRODUCTS VIEW -->
+                <!-- 2. PRODUCTS VIEW -->
                 <section id="view-products" class="content-view space-y-6 hidden">
-                    <div class="flex justify-between items-center">
-                        <h1 class="text-xl font-bold text-brandNavy">Product Management</h1>
-                        <button onclick="openProductModal()" class="bg-brandGold text-brandNavy font-bold px-4 py-2.5 rounded-lg text-sm shadow">+ Add Product</button>
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        <h1 class="text-xl sm:text-2xl font-bold text-brandNavy">Product Management</h1>
+                        <button onclick="openProductModal()" class="bg-brandGold hover:bg-brandGoldHover text-brandNavy font-bold px-4 py-2.5 rounded-lg text-sm shadow flex items-center justify-center space-x-2">
+                            <i class="fa-solid fa-plus"></i>
+                            <span>+ Add Product</span>
+                        </button>
                     </div>
-                    <div class="bg-white p-3 rounded-xl border">
-                        <input type="text" id="prod-search" oninput="renderProducts()" placeholder="Search products..." class="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none">
+
+                    <!-- Search Bar -->
+                    <div class="bg-white p-3 rounded-xl shadow-sm border">
+                        <div class="relative">
+                            <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-gray-400 text-sm"></i>
+                            <input type="text" id="prod-search" oninput="renderProducts()" placeholder="Search product name, SKU, tags or category..." class="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-brandGold">
+                        </div>
                     </div>
+
+                    <!-- Product Grid/List -->
                     <div id="products-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
                 </section>
 
-                <!-- ORDERS VIEW -->
+                <!-- 3. ORDERS VIEW -->
                 <section id="view-orders" class="content-view space-y-6 hidden">
-                    <h1 class="text-xl font-bold text-brandNavy">Order Management</h1>
+                    <h1 class="text-xl sm:text-2xl font-bold text-brandNavy">Order Management</h1>
                     <div id="orders-list" class="space-y-4"></div>
                 </section>
 
-                <!-- RECORDS VIEW -->
+                <!-- 4. RECORDS VIEW -->
                 <section id="view-records" class="content-view space-y-6 hidden">
-                    <h1 class="text-xl font-bold text-brandNavy">Store Records & Sales History</h1>
-                    <div id="records-table-body" class="bg-white rounded-xl shadow border overflow-x-auto"></div>
-                </section>
-
-                <!-- ADMIN NOTES VIEW -->
-                <section id="view-admin-notes" class="content-view space-y-6 hidden">
-                    <div class="flex justify-between items-center">
-                        <h1 class="text-xl font-bold text-brandNavy">Admin Notes</h1>
-                        <button onclick="openNoteModal()" class="bg-brandGold text-brandNavy font-bold px-4 py-2 rounded-lg text-sm">+ Add Note</button>
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        <div>
+                            <h1 class="text-xl sm:text-2xl font-bold text-brandNavy">Store Records & Sales History</h1>
+                            <p class="text-xs text-gray-500 mt-1">Complete archive of all completed and recorded transactions</p>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <span id="record-count-badge" class="bg-indigo-100 text-indigo-800 text-xs font-bold px-3 py-1.5 rounded-full">0 Records</span>
+                        </div>
                     </div>
-                    <div id="admin-notes-list" class="grid grid-cols-1 md:grid-cols-3 gap-4"></div>
+
+                    <!-- Search / Filter bar for Records -->
+                    <div class="bg-white p-3 rounded-xl shadow-sm border flex flex-col sm:flex-row gap-3">
+                        <div class="relative flex-1">
+                            <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-gray-400 text-sm"></i>
+                            <input type="text" id="record-search" oninput="renderRecords()" placeholder="Search records by customer name, order ID or items..." class="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-brandGold">
+                        </div>
+                        <button onclick="exportRecordsToCSV()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-4 py-2 rounded-lg text-xs flex items-center justify-center space-x-1.5 shadow">
+                            <i class="fa-solid fa-download"></i>
+                            <span>Export Records</span>
+                        </button>
+                    </div>
+
+                    <!-- Records Table / List -->
+                    <div class="bg-white rounded-xl shadow-md border overflow-hidden">
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-xs sm:text-sm">
+                                <thead class="bg-brandNavy text-white uppercase text-[11px] font-bold">
+                                    <tr>
+                                        <th class="p-3.5">Order ID & Date</th>
+                                        <th class="p-3.5">Customer</th>
+                                        <th class="p-3.5">Items / Goods</th>
+                                        <th class="p-3.5">Total Amount</th>
+                                        <th class="p-3.5 text-center">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="records-table-body" class="divide-y text-gray-700">
+                                    <!-- Populated dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </section>
 
-                <!-- LOW STOCK VIEW -->
+                <!-- 5. ADMIN NOTES VIEW -->
+                <section id="view-admin-notes" class="content-view space-y-6 hidden">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        <div>
+                            <h1 class="text-xl sm:text-2xl font-bold text-brandNavy">Admin Notes & Reminders</h1>
+                            <p class="text-xs text-gray-500 mt-1">Manage standalone store reminders, tasks, and notes</p>
+                        </div>
+                        <button onclick="openNoteModal()" class="bg-brandGold hover:bg-brandGoldHover text-brandNavy font-bold px-4 py-2.5 rounded-lg text-sm shadow flex items-center justify-center space-x-2">
+                            <i class="fa-solid fa-plus"></i>
+                            <span>+ Add New Note</span>
+                        </button>
+                    </div>
+
+                    <!-- Search Bar for Notes -->
+                    <div class="bg-white p-3 rounded-xl shadow-sm border">
+                        <div class="relative">
+                            <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-gray-400 text-sm"></i>
+                            <input type="text" id="note-search" oninput="renderAdminNotes()" placeholder="Search notes by title or content..." class="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-brandGold">
+                        </div>
+                    </div>
+
+                    <!-- Notes List / Grid -->
+                    <div id="admin-notes-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+                </section>
+
+                <!-- 6. LOW STOCK VIEW -->
                 <section id="view-low-stock" class="content-view space-y-6 hidden">
-                    <h1 class="text-xl font-bold text-red-800">Low Stock Alert Panel</h1>
+                    <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded-r-xl">
+                        <h1 class="text-lg font-bold text-red-800">Low Stock Alert Panel</h1>
+                        <p class="text-xs text-red-600">The products listed below have depleted inventory below safe threshold limits.</p>
+                    </div>
                     <div id="low-stock-list" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
                 </section>
 
-                <!-- SETTINGS VIEW -->
+                <!-- 7. SETTINGS VIEW -->
                 <section id="view-settings" class="content-view space-y-6 hidden">
-                    <h1 class="text-xl font-bold text-brandNavy">Settings & Backup</h1>
-                    <div class="bg-white p-6 rounded-xl shadow border space-y-4">
-                        <button onclick="exportAppData()" class="bg-brandNavy text-white font-bold px-4 py-2 rounded text-xs">Export Backup (JSON)</button>
+                    <h1 class="text-xl sm:text-2xl font-bold text-brandNavy">Store Identity & Settings</h1>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <!-- Store Info -->
+                        <div class="bg-white p-6 rounded-xl shadow-md border space-y-4">
+                            <h2 class="font-bold text-brandNavy border-b pb-2 flex items-center space-x-2">
+                                <i class="fa-solid fa-store text-brandGold"></i>
+                                <span>Store Identity</span>
+                            </h2>
+                            <div>
+                                <label class="text-xs font-bold text-gray-500 uppercase">Store Name</label>
+                                <p class="text-base font-bold text-gray-800">Fash Varieties Store</p>
+                            </div>
+                            <div>
+                                <label class="text-xs font-bold text-gray-500 uppercase">Address 1</label>
+                                <p class="text-sm text-gray-700">89, Agege Motor Road beside Isokoko Police Station, Papa Ashafa, Agege, Lagos.</p>
+                            </div>
+                            <div>
+                                <label class="text-xs font-bold text-gray-500 uppercase">Address 2</label>
+                                <p class="text-sm text-gray-700">23, Subuola Street, Aluminium Village, Dopemu, Agege, Lagos.</p>
+                            </div>
+                        </div>
+
+                        <!-- Contact & Payment Details -->
+                        <div class="bg-white p-6 rounded-xl shadow-md border space-y-4">
+                            <h2 class="font-bold text-brandNavy border-b pb-2 flex items-center space-x-2">
+                                <i class="fa-solid fa-wallet text-brandGold"></i>
+                                <span>Contact & Payment Info</span>
+                            </h2>
+                            <div>
+                                <label class="text-xs font-bold text-gray-500 uppercase">WhatsApp Numbers</label>
+                                <p class="text-sm font-semibold text-green-700"><i class="fa-brands fa-whatsapp"></i> +234 8064414142</p>
+                                <p class="text-sm font-semibold text-green-700"><i class="fa-brands fa-whatsapp"></i> +234 9060954176</p>
+                            </div>
+                            <div class="pt-2 border-t space-y-2">
+                                <label class="text-xs font-bold text-gray-500 uppercase">Bank Accounts (Proof of Payment)</label>
+                                <div class="bg-gray-50 p-3 rounded-lg border text-xs space-y-1">
+                                    <p class="font-bold text-brandNavy">Access Bank</p>
+                                    <p class="text-gray-700">Account No: <span class="font-mono font-bold text-brandNavy">1920452449</span></p>
+                                    <p class="text-gray-500">Name: FASH VARIETIES STORE</p>
+                                </div>
+                                <div class="bg-gray-50 p-3 rounded-lg border text-xs space-y-1">
+                                    <p class="font-bold text-brandNavy">Moniepoint</p>
+                                    <p class="text-gray-700">Account No: <span class="font-mono font-bold text-brandNavy">5274600536</span></p>
+                                    <p class="text-gray-500">Name: FASH VARIETIES STORE</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Data Backup & Sync -->
+                        <div class="bg-white p-6 rounded-xl shadow-md border space-y-4 lg:col-span-2">
+                            <h2 class="font-bold text-brandNavy border-b pb-2 flex items-center space-x-2">
+                                <i class="fa-solid fa-cloud-arrow-down text-brandGold"></i>
+                                <span>Data Backup & Sync (Export / Import across devices)</span>
+                            </h2>
+                            <p class="text-xs text-gray-500">Download a backup of your products, orders, and admin notes to transfer to another phone or browser, or restore from an existing backup file.</p>
+                            <div class="flex flex-wrap items-center gap-3 pt-2">
+                                <button onclick="exportAppData()" class="bg-brandNavy text-white font-bold px-4 py-2.5 rounded-lg text-xs flex items-center space-x-2 shadow hover:bg-brandNavyDark">
+                                    <i class="fa-solid fa-download"></i>
+                                    <span>Export All Data (JSON)</span>
+                                </button>
+                                <label class="bg-brandGold hover:bg-brandGoldHover text-brandNavy font-bold px-4 py-2.5 rounded-lg text-xs flex items-center space-x-2 shadow cursor-pointer">
+                                    <i class="fa-solid fa-upload"></i>
+                                    <span>Import Data (JSON)</span>
+                                    <input type="file" id="import-file-input" accept=".json" onchange="importAppData(event)" class="hidden">
+                                </label>
+                            </div>
+                        </div>
                     </div>
                 </section>
+
             </main>
         </div>
     </div>
 
-    <!-- PRODUCT MODAL -->
+    <!-- ========================================== -->
+    <!-- ADD / EDIT PRODUCT MODAL                    -->
+    <!-- ========================================== -->
     <div id="product-modal" class="fixed inset-0 z-50 bg-black/60 hidden flex items-center justify-center p-4 overflow-y-auto">
         <div class="bg-white w-full max-w-3xl rounded-2xl shadow-2xl overflow-hidden max-h-[90vh] flex flex-col my-auto">
-            <div class="bg-brandNavy text-white p-4 px-6 flex justify-between items-center">
-                <h3 class="font-bold text-lg text-brandGold" id="modal-title">Add Product</h3>
-                <button onclick="closeProductModal()" class="text-white text-xl"><i class="fa-solid fa-xmark"></i></button>
+            <div class="bg-brandNavy text-white p-4 px-6 flex items-center justify-between">
+                <h3 class="font-bold text-lg text-brandGold" id="modal-title">+ Add New Product</h3>
+                <button onclick="closeProductModal()" class="text-gray-300 hover:text-white text-xl"><i class="fa-solid fa-xmark"></i></button>
             </div>
-            <form id="product-form" onsubmit="saveProduct(event)" class="p-6 overflow-y-auto space-y-4 text-xs sm:text-sm custom-scrollbar">
+
+            <form id="product-form" onsubmit="saveProduct(event)" class="p-6 overflow-y-auto space-y-5 custom-scrollbar text-xs sm:text-sm">
+                
+                <!-- Hidden Product ID for Edit Mode -->
                 <input type="hidden" id="p-id">
-                <div class="grid grid-cols-2 gap-4">
-                    <div><label class="block font-bold mb-1">Product Name *</label><input type="text" id="p-name" required class="w-full p-2.5 border rounded"></div>
-                    <div><label class="block font-bold mb-1">SKU Code</label><input type="text" id="p-sku" class="w-full p-2.5 border rounded"></div>
-                </div>
-                <div class="grid grid-cols-3 gap-4">
-                    <div><label class="block font-bold mb-1">Category *</label><select id="p-category" required class="w-full p-2.5 border rounded"><option value="Kitchen Utensils">Kitchen Utensils</option><option value="Kitchen Items">Kitchen Items</option><option value="Kitchen Gadgets">Kitchen Gadgets</option><option value="Home Appliances">Home Appliances</option><option value="Fashion Items">Fashion Items</option><option value="Fashion Accessories">Fashion Accessories</option></select></div>
-                    <div><label class="block font-bold mb-1">Price (₦) *</label><input type="number" id="p-price" required class="w-full p-2.5 border rounded font-bold text-green-700"></div>
-                    <div><label class="block font-bold mb-1">Stock Qty *</label><input type="number" id="p-qty" required class="w-full p-2.5 border rounded"></div>
-                </div>
 
-                <!-- Custom pieces / Qty / Variant inputs -->
-                <div class="grid grid-cols-2 gap-4 bg-gray-50 p-3 rounded border">
-                    <div><label class="block font-semibold mb-1">Available Colors (comma-separated)</label><input type="text" id="p-color" placeholder="Red, Blue, Black" class="w-full p-2 border rounded bg-white"></div>
-                    <div><label class="block font-semibold mb-1">Available Sizes (comma-separated)</label><input type="text" id="p-size" placeholder="S, M, L, XL" class="w-full p-2 border rounded bg-white"></div>
-                </div>
-
-                <!-- Volume Discounts (5,10,15,20,30,40,50,60,70,80,90,100) -->
-                <div class="bg-blue-50 p-3 rounded border space-y-2">
-                    <h4 class="font-bold text-brandNavy text-xs uppercase">Volume Discount Thresholds (₦)</h4>
-                    <div class="grid grid-cols-4 gap-2 text-xs">
-                        <div><label>5 Qty</label><input type="number" id="p-disc-5" class="w-full p-1.5 border rounded bg-white"></div>
-                        <div><label>10 Qty</label><input type="number" id="p-disc-10" class="w-full p-1.5 border rounded bg-white"></div>
-                        <div><label>15 Qty</label><input type="number" id="p-disc-15" class="w-full p-1.5 border rounded bg-white"></div>
-                        <div><label>20 Qty</label><input type="number" id="p-disc-20" class="w-full p-1.5 border rounded bg-white"></div>
-                        <div><label>30 Qty</label><input type="number" id="p-disc-30" class="w-full p-1.5 border rounded bg-white"></div>
-                        <div><label>40 Qty</label><input type="number" id="p-disc-40" class="w-full p-1.5 border rounded bg-white"></div>
-                        <div><label>50 Qty</label><input type="number" id="p-disc-50" class="w-full p-1.5 border rounded bg-white"></div>
-                        <div><label>100 Qty</label><input type="number" id="p-disc-100" class="w-full p-1.5 border rounded bg-white"></div>
+                <!-- 1. Basic Info -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block font-bold mb-1">Product Name *</label>
+                        <input type="text" id="p-name" required placeholder="e.g. Designer Handbag" class="w-full p-2.5 rounded border focus:ring-1 focus:ring-brandGold">
+                    </div>
+                    <div>
+                        <label class="block font-bold mb-1">SKU Code</label>
+                        <input type="text" id="p-sku" placeholder="e.g. FASH-HB-001" class="w-full p-2.5 rounded border">
                     </div>
                 </div>
 
-                <!-- Images 1 to 10 -->
-                <div class="bg-purple-50 p-3 rounded border space-y-2">
-                    <h4 class="font-bold text-brandNavy text-xs uppercase">Product Images (1 to 10 URLs)</h4>
-                    <div class="grid grid-cols-2 gap-2 text-xs">
-                        <input type="url" id="p-img-1" required placeholder="Photo 1 (Main) URL" class="p-1.5 border rounded bg-white">
-                        <input type="url" id="p-img-2" placeholder="Photo 2 URL" class="p-1.5 border rounded bg-white">
-                        <input type="url" id="p-img-3" placeholder="Photo 3 URL" class="p-1.5 border rounded bg-white">
-                        <input type="url" id="p-img-4" placeholder="Photo 4 URL" class="p-1.5 border rounded bg-white">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block font-bold mb-1">Category *</label>
+                        <select id="p-category" required class="w-full p-2.5 rounded border focus:ring-1 focus:ring-brandGold">
+                            <option value="">-- Select Category --</option>
+                            <option value="Kitchen Utensils">Kitchen Utensils</option>
+                            <option value="Kitchen Items">Kitchen Items</option>
+                            <option value="Kitchen Gadgets">Kitchen Gadgets</option>
+                            <option value="Home Appliance">Home Appliance</option>
+                            <option value="Home Gadgets">Home Gadgets</option>
+                            <option value="Fashion Items">Fashion Items</option>
+                            <option value="Fashion Accessories">Fashion Accessories</option>
+                            <option value="Jewellery">Jewellery</option>
+                            <option value="Beauty Items">Beauty Items</option>
+                            <option value="Interior Decor">Interior Decor</option>
+                            <option value="Lighting">Lighting</option>
+                            <option value="Furniture">Furniture</option>
+                            <option value="Phone Accessories">Phone Accessories</option>
+                            <option value="Power Bank">Power Bank</option>
+                            <option value="Babies & Kiddies">Babies & Kiddies</option>
+                            <option value="Back to School">Back to School</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block font-bold mb-1">Product Price (₦) *</label>
+                        <input type="number" id="p-price" required placeholder="e.g. 15000" class="w-full p-2.5 rounded border focus:ring-1 focus:ring-brandGold font-bold text-green-700">
                     </div>
                 </div>
 
-                <div class="flex justify-end space-x-2 pt-2 border-t">
-                    <button type="button" onclick="closeProductModal()" class="px-4 py-2 bg-gray-200 rounded font-bold">Cancel</button>
-                    <button type="submit" class="px-6 py-2 bg-brandGold text-brandNavy rounded font-bold">Save Product</button>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block font-bold mb-1">Total Stock Quantity *</label>
+                        <input type="number" id="p-qty" required placeholder="e.g. 50" class="w-full p-2.5 rounded border">
+                    </div>
+                </div>
+
+                <!-- 2. Additional Information & Tags -->
+                <div class="bg-gray-50 p-4 rounded-xl border space-y-3">
+                    <h4 class="font-bold text-brandNavy flex items-center space-x-2">
+                        <i class="fa-solid fa-circle-info text-brandGold"></i>
+                        <span>Additional Information & Tags</span>
+                    </h4>
+                    <div>
+                        <label class="block font-semibold mb-1">Additional Information / Description</label>
+                        <textarea id="p-add-info" rows="3" placeholder="Enter product specs, material, care instructions or description..." class="w-full p-2 bg-white rounded border"></textarea>
+                    </div>
+                    <div>
+                        <label class="block font-semibold mb-1">Product Tags (comma-separated)</label>
+                        <input type="text" id="p-tags" placeholder="e.g. Hot Deal, Best Seller, New Arrival, Premium, Fashion" class="w-full p-2 bg-white rounded border">
+                    </div>
+                </div>
+
+                <!-- 3. Shipping & Delivery Note (Permanent Defaults) -->
+                <div class="bg-emerald-50/70 p-4 rounded-xl border border-emerald-200 space-y-3">
+                    <h4 class="font-bold text-brandNavy flex items-center space-x-2">
+                        <i class="fa-solid fa-truck-fast text-emerald-600"></i>
+                        <span>Shipping & Delivery Note (Permanent)</span>
+                    </h4>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                            <label class="block font-semibold text-gray-700 mb-1">Within Lagos Delivery *</label>
+                            <input type="text" id="p-shipping-lagos" value="within Lagos 24 hours" required class="w-full p-2 bg-white rounded border font-semibold text-emerald-800">
+                        </div>
+                        <div>
+                            <label class="block font-semibold text-gray-700 mb-1">Outside Lagos Delivery *</label>
+                            <input type="text" id="p-shipping-outside" value="outside Lagos 3-5days" required class="w-full p-2 bg-white rounded border font-semibold text-emerald-800">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4. Social Share Options (Permanent Channels) -->
+                <div class="bg-indigo-50/70 p-4 rounded-xl border border-indigo-200 space-y-3">
+                    <h4 class="font-bold text-brandNavy flex items-center space-x-2">
+                        <i class="fa-solid fa-share-nodes text-indigo-600"></i>
+                        <span>Share Platforms (Permanent)</span>
+                    </h4>
+                    <p class="text-[11px] text-gray-500">Select active share channels for customer sharing on storefront:</p>
+                    <div class="flex flex-wrap gap-3">
+                        <label class="inline-flex items-center bg-white px-3 py-1.5 rounded border shadow-sm cursor-pointer">
+                            <input type="checkbox" id="share-whatsapp" checked class="rounded text-brandGold focus:ring-brandGold">
+                            <span class="ml-2 font-semibold text-green-600 text-xs"><i class="fa-brands fa-whatsapp"></i> WhatsApp</span>
+                        </label>
+                        <label class="inline-flex items-center bg-white px-3 py-1.5 rounded border shadow-sm cursor-pointer">
+                            <input type="checkbox" id="share-tiktok" checked class="rounded text-brandGold focus:ring-brandGold">
+                            <span class="ml-2 font-semibold text-gray-900 text-xs"><i class="fa-brands fa-tiktok"></i> TikTok</span>
+                        </label>
+                        <label class="inline-flex items-center bg-white px-3 py-1.5 rounded border shadow-sm cursor-pointer">
+                            <input type="checkbox" id="share-instagram" checked class="rounded text-brandGold focus:ring-brandGold">
+                            <span class="ml-2 font-semibold text-pink-600 text-xs"><i class="fa-brands fa-instagram"></i> Instagram</span>
+                        </label>
+                        <label class="inline-flex items-center bg-white px-3 py-1.5 rounded border shadow-sm cursor-pointer">
+                            <input type="checkbox" id="share-facebook" checked class="rounded text-brandGold focus:ring-brandGold">
+                            <span class="ml-2 font-semibold text-blue-600 text-xs"><i class="fa-brands fa-facebook"></i> Facebook</span>
+                        </label>
+                        <label class="inline-flex items-center bg-white px-3 py-1.5 rounded border shadow-sm cursor-pointer">
+                            <input type="checkbox" id="share-telegram" checked class="rounded text-brandGold focus:ring-brandGold">
+                            <span class="ml-2 font-semibold text-sky-500 text-xs"><i class="fa-brands fa-telegram"></i> Telegram</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- 5. Related Products Link / URL -->
+                <div class="bg-amber-50/80 p-4 rounded-xl border border-amber-200 space-y-3">
+                    <h4 class="font-bold text-brandNavy flex items-center space-x-2">
+                        <i class="fa-solid fa-link text-brandGold"></i>
+                        <span>Related Product Link / Name</span>
+                    </h4>
+                    <p class="text-[11px] text-gray-500">Type or paste the product name, page link, or URL (separate multiple items with a comma):</p>
+                    <input type="text" id="p-related-input" placeholder="e.g. product.html?id=101, Luxury Handbag" class="w-full p-2.5 bg-white rounded border text-xs focus:ring-1 focus:ring-brandGold">
+                </div>
+
+                <!-- 6. Variants (with Price & Qty for Size and Color) -->
+                <div class="bg-gray-50 p-4 rounded-xl border space-y-3">
+                    <h4 class="font-bold text-brandNavy">Variants (Color & Size with Price & Qty)</h4>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                            <label class="block font-semibold mb-1">Available Colors</label>
+                            <input type="text" id="p-color" placeholder="e.g. Red, Black, Gold" class="w-full p-2 bg-white rounded border mb-2">
+                            <div class="grid grid-cols-2 gap-2">
+                                <div>
+                                    <label class="block text-[11px] font-semibold text-gray-600 mb-1">Colour Price (₦)</label>
+                                    <input type="number" id="p-color-price" placeholder="0" class="w-full p-2 bg-white rounded border text-xs">
+                                </div>
+                                <div>
+                                    <label class="block font-semibold text-[11px] font-semibold text-gray-600 mb-1">Colour Qty</label>
+                                    <input type="number" id="p-color-qty" placeholder="0" class="w-full p-2 bg-white rounded border text-xs">
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block font-semibold mb-1">Available Sizes</label>
+                            <input type="text" id="p-size" placeholder="e.g. Medium, Large, XL" class="w-full p-2 bg-white rounded border mb-2">
+                            <div class="grid grid-cols-2 gap-2">
+                                <div>
+                                    <label class="block text-[11px] font-semibold text-gray-600 mb-1">Size Price (₦)</label>
+                                    <input type="number" id="p-size-price" placeholder="0" class="w-full p-2 bg-white rounded border text-xs">
+                                </div>
+                                <div>
+                                    <label class="block font-semibold text-[11px] font-semibold text-gray-600 mb-1">Size Qty</label>
+                                    <input type="number" id="p-size-qty" placeholder="0" class="w-full p-2 bg-white rounded border text-xs">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 7. Pricing Tier (OPTIONAL) -->
+                <div class="bg-amber-50/60 p-4 rounded-xl border border-amber-200 space-y-3">
+                    <h4 class="font-bold text-brandNavy">Pricing Tiers (Wholesale & Piece - Optional)</h4>
+                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                        <div>
+                            <label class="block font-semibold mb-1">Piece Price (₦)</label>
+                            <input type="number" id="p-price-single" placeholder="0" class="w-full p-2 bg-white rounded border">
+                        </div>
+                        <div>
+                            <label class="block font-semibold mb-1">Piece Qty</label>
+                            <input type="number" id="p-qty-single" placeholder="0" class="w-full p-2 bg-white rounded border">
+                        </div>
+                        <div>
+                            <label class="block font-semibold mb-1">Half Dozen Price (₦)</label>
+                            <input type="number" id="p-price-halfdozen" placeholder="0" class="w-full p-2 bg-white rounded border">
+                        </div>
+                        <div>
+                            <label class="block font-semibold mb-1">Dozen Price (₦)</label>
+                            <input type="number" id="p-price-dozen" placeholder="0" class="w-full p-2 bg-white rounded border">
+                        </div>
+                        <div>
+                            <label class="block font-semibold mb-1">Half Carton Price (₦)</label>
+                            <input type="number" id="p-price-halfcarton" placeholder="0" class="w-full p-2 bg-white rounded border">
+                        </div>
+                        <div>
+                            <label class="block font-semibold mb-1">Half Carton Qty</label>
+                            <input type="number" id="p-qty-halfcarton" placeholder="0" class="w-full p-2 bg-white rounded border">
+                        </div>
+                        <div>
+                            <label class="block font-semibold mb-1">Per Carton Price (₦)</label>
+                            <input type="number" id="p-price-carton" placeholder="0" class="w-full p-2 bg-white rounded border">
+                        </div>
+                        <div>
+                            <label class="block font-semibold mb-1">Qty on Carton</label>
+                            <input type="text" id="p-carton-note" placeholder="e.g. 50 pcs" class="w-full p-2 bg-white rounded border">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 8. Volume Discounts (OPTIONAL - including 15 Qty) -->
+                <div class="bg-blue-50/60 p-4 rounded-xl border border-blue-200 space-y-3">
+                    <h4 class="font-bold text-brandNavy flex items-center space-x-2">
+                        <i class="fa-solid fa-tags text-brandGold"></i>
+                        <span>Volume Discounts Tiers (Optional)</span>
+                    </h4>
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                        <div>
+                            <label class="block text-xs font-semibold mb-1">5 Qty Price (₦)</label>
+                            <input type="number" id="p-disc-5" placeholder="0" class="w-full p-2 bg-white rounded border">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold mb-1">10 Qty Price (₦)</label>
+                            <input type="number" id="p-disc-10" placeholder="0" class="w-full p-2 bg-white rounded border">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold mb-1">15 Qty Price (₦)</label>
+                            <input type="number" id="p-disc-15" placeholder="0" class="w-full p-2 bg-white rounded border">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold mb-1">20 Qty Price (₦)</label>
+                            <input type="number" id="p-disc-20" placeholder="0" class="w-full p-2 bg-white rounded border">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold mb-1">30 Qty Price (₦)</label>
+                            <input type="number" id="p-disc-30" placeholder="0" class="w-full p-2 bg-white rounded border">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold mb-1">50 Qty Price (₦)</label>
+                            <input type="number" id="p-disc-50" placeholder="0" class="w-full p-2 bg-white rounded border">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold mb-1">100 Qty Price (₦)</label>
+                            <input type="number" id="p-disc-100" placeholder="0" class="w-full p-2 bg-white rounded border">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 9. Images Inputs (1 to 10) -->
+                <div class="bg-purple-50/60 p-4 rounded-xl border border-purple-200 space-y-3">
+                    <div class="flex justify-between items-center">
+                        <h4 class="font-bold text-brandNavy flex items-center space-x-2">
+                            <i class="fa-solid fa-images text-brandGold"></i>
+                            <span>Product Images (1 to 10 Photos)</span>
+                        </h4>
+                        <span class="text-[11px] text-gray-500 font-normal">Fill only available spaces</span>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-bold text-brandNavy mb-1">Photo 1 (Main Display) *</label>
+                            <input type="url" id="p-img-1" required placeholder="https://..." class="w-full p-2 bg-white rounded border text-xs">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-700 mb-1">Photo 2 (Optional)</label>
+                            <input type="url" id="p-img-2" placeholder="https://..." class="w-full p-2 bg-white rounded border text-xs">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-700 mb-1">Photo 3 (Optional)</label>
+                            <input type="url" id="p-img-3" placeholder="https://..." class="w-full p-2 bg-white rounded border text-xs">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-700 mb-1">Photo 4 (Optional)</label>
+                            <input type="url" id="p-img-4" placeholder="https://..." class="w-full p-2 bg-white rounded border text-xs">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-700 mb-1">Photo 5 (Optional)</label>
+                            <input type="url" id="p-img-5" placeholder="https://..." class="w-full p-2 bg-white rounded border text-xs">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-700 mb-1">Photo 6 (Optional)</label>
+                            <input type="url" id="p-img-6" placeholder="https://..." class="w-full p-2 bg-white rounded border text-xs">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-700 mb-1">Photo 7 (Optional)</label>
+                            <input type="url" id="p-img-7" placeholder="https://..." class="w-full p-2 bg-white rounded border text-xs">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-700 mb-1">Photo 8 (Optional)</label>
+                            <input type="url" id="p-img-8" placeholder="https://..." class="w-full p-2 bg-white rounded border text-xs">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-700 mb-1">Photo 9 (Optional)</label>
+                            <input type="url" id="p-img-9" placeholder="https://..." class="w-full p-2 bg-white rounded border text-xs">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-700 mb-1">Photo 10 (Optional)</label>
+                            <input type="url" id="p-img-10" placeholder="https://..." class="w-full p-2 bg-white rounded border text-xs">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pt-4 border-t flex justify-end space-x-3">
+                    <button type="button" onclick="closeProductModal()" class="px-4 py-2 rounded bg-gray-200 font-bold">Cancel</button>
+                    <button type="submit" class="px-6 py-2 rounded bg-brandGold text-brandNavy font-bold hover:bg-brandGoldHover shadow">Save Product</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- ADMIN NOTE MODAL -->
+    <!-- ADD / EDIT ADMIN NOTE MODAL -->
     <div id="note-modal" class="fixed inset-0 z-50 bg-black/60 hidden flex items-center justify-center p-4">
-        <div class="bg-white w-full max-w-md rounded-2xl shadow-2xl p-6 space-y-4">
-            <h3 class="font-bold text-lg text-brandNavy">Add Admin Note</h3>
-            <form onsubmit="saveNote(event)" class="space-y-3 text-xs">
+        <div class="bg-white w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden flex flex-col">
+            <div class="bg-brandNavy text-white p-4 px-6 flex items-center justify-between">
+                <h3 class="font-bold text-lg text-brandGold" id="note-modal-title">+ Add Admin Note</h3>
+                <button onclick="closeNoteModal()" class="text-gray-300 hover:text-white text-xl"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <form id="note-form" onsubmit="saveAdminNoteRecord(event)" class="p-6 space-y-4 text-xs sm:text-sm">
                 <input type="hidden" id="note-id">
-                <input type="text" id="note-title" required placeholder="Note Title" class="w-full p-2.5 border rounded">
-                <textarea id="note-content" required rows="3" placeholder="Content..." class="w-full p-2.5 border rounded"></textarea>
-                <div class="flex justify-end gap-2">
-                    <button type="button" onclick="closeNoteModal()" class="px-3 py-1.5 bg-gray-200 rounded font-bold">Cancel</button>
-                    <button type="submit" class="px-4 py-1.5 bg-brandGold text-brandNavy rounded font-bold">Save</button>
+                <div>
+                    <label class="block font-bold mb-1">Note Title *</label>
+                    <input type="text" id="note-title" required placeholder="e.g. Restock kitchen utensils" class="w-full p-2.5 rounded border focus:ring-1 focus:ring-brandGold">
+                </div>
+                <div>
+                    <label class="block font-bold mb-1">Content / Details *</label>
+                    <textarea id="note-content" required rows="4" placeholder="Type reminder details here..." class="w-full p-2.5 rounded border focus:ring-1 focus:ring-brandGold"></textarea>
+                </div>
+                <div>
+                    <label class="block font-bold mb-1">Priority / Tag</label>
+                    <select id="note-priority" class="w-full p-2.5 rounded border focus:ring-1 focus:ring-brandGold">
+                        <option value="Normal">Normal</option>
+                        <option value="Important">Important</option>
+                        <option value="Urgent">Urgent</option>
+                    </select>
+                </div>
+                <div class="pt-3 border-t flex justify-end space-x-3">
+                    <button type="button" onclick="closeNoteModal()" class="px-4 py-2 rounded bg-gray-200 font-bold">Cancel</button>
+                    <button type="submit" class="px-6 py-2 rounded bg-brandGold text-brandNavy font-bold hover:bg-brandGoldHover shadow">Save Note</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <script>
-        const ADMIN_CREDENTIALS = { email: 'deeflexconsult@gmail.com', password: 'nbsf-05-0696' };
-        let products = JSON.parse(localStorage.getItem('fv_products')) || [];
-        let orders = JSON.parse(localStorage.getItem('fv_orders')) || [];
-        let adminNotes = JSON.parse(localStorage.getItem('fv_admin_notes')) || [];
+    <!-- ORDER DETAILS POPUP MODAL -->
+    <div id="order-details-modal" class="fixed inset-0 z-50 bg-black/70 hidden flex items-center justify-center p-4">
+        <div class="bg-white max-w-2xl w-full rounded-2xl overflow-hidden shadow-2xl flex flex-col max-h-[90vh]">
+            <div class="bg-brandNavy text-white p-4 px-6 flex items-center justify-between">
+                <div>
+                    <h3 class="font-bold text-lg text-brandGold" id="order-modal-number">Order Details</h3>
+                    <p class="text-xs text-gray-300">Complete customer order summary</p>
+                </div>
+                <button onclick="closeOrderDetailsModal()" class="text-gray-300 hover:text-white text-xl"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            
+            <div id="order-modal-content" class="p-6 overflow-y-auto space-y-5 custom-scrollbar text-xs sm:text-sm">
+                <!-- Dynamically populated -->
+            </div>
 
+            <div class="p-4 bg-gray-50 border-t flex justify-end">
+                <button onclick="closeOrderDetailsModal()" class="px-5 py-2 bg-brandNavy text-white font-bold rounded-lg text-xs">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- PROOF OF PAYMENT POPUP MODAL -->
+    <div id="proof-modal" class="fixed inset-0 z-50 bg-black/80 hidden flex items-center justify-center p-4">
+        <div class="bg-white max-w-md w-full rounded-2xl overflow-hidden shadow-2xl p-4 space-y-3 text-center">
+            <h3 class="font-bold text-brandNavy text-base">Proof of Payment Preview</h3>
+            <div class="bg-gray-100 p-2 rounded-lg border h-64 flex items-center justify-center">
+                <img id="proof-img" src="" alt="Proof" class="max-h-full max-w-full object-contain rounded">
+            </div>
+            <button onclick="document.getElementById('proof-modal').classList.add('hidden')" class="w-full bg-brandNavy text-white py-2 rounded-lg font-bold">Close Preview</button>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- JAVASCRIPT LOGIC & DATA STATE             -->
+    <!-- ========================================== -->
+    <script>
+        // Official Admin Credentials
+        const ADMIN_CREDENTIALS = {
+            email: 'deeflexconsult@gmail.com',
+            password: 'nbsf-05-0696'
+        };
+
+        // Supabase Configuration
+        const SUPABASE_URL = 'https://pflulqqwxjqcierurzbj.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_iqo26JVy_vJyGBKYN--phA_BB0YQmFs';
+        let supabaseClient = null;
+
+        if (window.supabase && SUPABASE_URL && SUPABASE_KEY) {
+            try {
+                supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+            } catch (err) {
+                console.error('Supabase initialization error:', err);
+            }
+        }
+
+        // Sample Initial Products
+        const initialProducts = [
+            {
+                id: 101,
+                name: 'Luxury Leather Handbag',
+                sku: 'FV-HB-102',
+                category: 'Fashion Accessories',
+                price: 15000,
+                qty: 4,
+                color: 'Black, Gold',
+                colorPrice: 16000,
+                colorQty: 4,
+                size: 'Medium',
+                sizePrice: 15000,
+                sizeQty: 4,
+                additionalInfo: 'Handcrafted genuine leather with interior zipper compartment.',
+                tags: ['Hot Deal', 'New Arrival', 'Fashion'],
+                shippingLagos: 'within Lagos 24 hours',
+                shippingOutside: 'outside Lagos 3-5days',
+                shares: ['WhatsApp', 'TikTok', 'Instagram', 'Facebook', 'Telegram'],
+                relatedProducts: ['Non-Stick Cookware Set'],
+                priceSingle: 15000,
+                qtySingle: 1,
+                priceHalfDozen: 80000,
+                priceDozen: 150000,
+                priceHalfCarton: 280000,
+                qtyHalfCarton: 6,
+                priceCarton: 500000,
+                cartonNote: '40 pcs per carton',
+                disc5: 14000,
+                disc10: 13500,
+                disc15: 13000,
+                disc20: 12500,
+                disc30: 12000,
+                disc50: 11000,
+                disc100: 10000,
+                images: ['https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=500']
+            },
+            {
+                id: 102,
+                name: 'Non-Stick Cookware Set',
+                sku: 'FV-KT-55',
+                category: 'Kitchen Utensils',
+                price: 32000,
+                qty: 18,
+                color: 'Deep Blue',
+                colorPrice: 34000,
+                colorQty: 18,
+                size: 'Standard Set',
+                sizePrice: 32000,
+                sizeQty: 18,
+                additionalInfo: 'Heavy-duty non-stick aluminium alloy pans with glass lids.',
+                tags: ['Best Seller', 'Kitchen Essential'],
+                shippingLagos: 'within Lagos 24 hours',
+                shippingOutside: 'outside Lagos 3-5days',
+                shares: ['WhatsApp', 'TikTok', 'Instagram', 'Facebook', 'Telegram'],
+                relatedProducts: ['Luxury Leather Handbag'],
+                priceSingle: 32000,
+                qtySingle: 1,
+                priceHalfDozen: 180000,
+                priceDozen: 350000,
+                priceHalfCarton: 650000,
+                qtyHalfCarton: 5,
+                priceCarton: 1200000,
+                cartonNote: '10 sets per carton',
+                disc5: 30000,
+                disc10: 29000,
+                disc15: 28500,
+                disc20: 28000,
+                disc30: 27000,
+                disc50: 25000,
+                disc100: 23000,
+                images: ['https://images.unsplash.com/photo-1584992236310-6edddc08acff?w=500']
+            }
+        ];
+
+        const initialOrders = [
+            {
+                id: 'ORD-9021',
+                date: '2026-10-25T10:30:00.000Z',
+                customerName: 'Mrs. Funke Adebayo',
+                phone: '08031234567',
+                email: 'funke.adebayo@gmail.com',
+                billingAddress: '89, Agege Motor Road, Lagos',
+                shippingAddress: '23, Subuola Street, Dopemu, Agege, Lagos',
+                orderNote: 'Please call before delivery.',
+                shipmentMethod: 'waybill',
+                itemsList: [
+                    {
+                        name: 'Luxury Leather Handbag',
+                        qty: 2,
+                        color: 'Black',
+                        size: 'Medium',
+                        selection: 'Piece',
+                        price: 15000,
+                        total: 30000,
+                        image: 'https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=500'
+                    }
+                ],
+                total: 30000,
+                proofImg: 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=500',
+                status: 'Pending Confirmation'
+            }
+        ];
+
+        const initialAdminNotes = [
+            {
+                id: 1,
+                title: 'Restock Alert Reminder',
+                content: 'Check inventory for non-stick cookware and luxury handbags before weekend orders dispatch.',
+                priority: 'Important',
+                date: '2026-10-26T08:00:00.000Z'
+            }
+        ];
+
+        // State Initialization
+        let products = JSON.parse(localStorage.getItem('fv_products')) || initialProducts;
+        let orders = JSON.parse(localStorage.getItem('fv_orders')) || initialOrders;
+        let adminNotes = JSON.parse(localStorage.getItem('fv_admin_notes')) || initialAdminNotes;
+
+        // Cloud Sync Functions
+        async function fetchFromCloud() {
+            if (!supabaseClient) return;
+            try {
+                const { data, error } = await supabaseClient.from('store_state').select('*');
+                if (error) {
+                    console.error('Fetch error:', error);
+                    return;
+                }
+                if (data && data.length > 0) {
+                    data.forEach(row => {
+                        if (row.key === 'products' && row.payload) products = row.payload;
+                        if (row.key === 'orders' && row.payload) orders = row.payload;
+                        if (row.key === 'admin_notes' && row.payload) adminNotes = row.payload;
+                    });
+                    localStorage.setItem('fv_products', JSON.stringify(products));
+                    localStorage.setItem('fv_orders', JSON.stringify(orders));
+                    localStorage.setItem('fv_admin_notes', JSON.stringify(adminNotes));
+                    updateDashboardCounts();
+                    renderProducts();
+                    renderOrders();
+                    renderLowStock();
+                    renderRecords();
+                    renderAdminNotes();
+                } else {
+                    await saveStateToCloud();
+                }
+            } catch (err) {
+                console.error('Cloud fetch exception:', err);
+            }
+        }
+
+        async function saveStateToCloud() {
+            if (!supabaseClient) return;
+            try {
+                await supabaseClient.from('store_state').upsert([
+                    { key: 'products', payload: products },
+                    { key: 'orders', payload: orders },
+                    { key: 'admin_notes', payload: adminNotes }
+                ]);
+            } catch (err) {
+                console.error('Cloud save error:', err);
+            }
+        }
+
+        function subscribeToRealtime() {
+            if (!supabaseClient) return;
+            supabaseClient
+                .channel('public:store_state')
+                .on('postgres_changes', { event: '*', schema: 'public', table: 'store_state' }, payload => {
+                    fetchFromCloud();
+                })
+                .subscribe();
+        }
+
+        // Auto Check Admin Session on Page Load
         window.addEventListener('DOMContentLoaded', () => {
-            if (localStorage.getItem('fv_admin_logged_in') === 'true') {
+            const isLoggedIn = localStorage.getItem('fv_admin_logged_in');
+            if (isLoggedIn === 'true') {
                 showAdminDashboard();
+            }
+            if (supabaseClient) {
+                fetchFromCloud();
+                subscribeToRealtime();
             }
         });
 
+        function saveState() {
+            localStorage.setItem('fv_products', JSON.stringify(products));
+            localStorage.setItem('fv_orders', JSON.stringify(orders));
+            localStorage.setItem('fv_admin_notes', JSON.stringify(adminNotes));
+            updateDashboardCounts();
+            saveStateToCloud();
+        }
+
+        // Authentication Handler
         function handleLogin(e) {
             e.preventDefault();
-            if (document.getElementById('login-email').value === ADMIN_CREDENTIALS.email && document.getElementById('login-password').value === ADMIN_CREDENTIALS.password) {
+            const emailInput = document.getElementById('login-email').value.trim();
+            const passwordInput = document.getElementById('login-password').value.trim();
+            const errorDiv = document.getElementById('login-error');
+
+            if (emailInput === ADMIN_CREDENTIALS.email && passwordInput === ADMIN_CREDENTIALS.password) {
+                errorDiv.classList.add('hidden');
                 localStorage.setItem('fv_admin_logged_in', 'true');
                 showAdminDashboard();
             } else {
-                document.getElementById('login-error').classList.remove('hidden');
+                errorDiv.classList.remove('hidden');
+                document.getElementById('login-password').value = '';
+                document.getElementById('login-password').focus();
             }
         }
 
@@ -313,140 +1046,803 @@
             document.getElementById('login-view').classList.add('hidden');
             document.getElementById('admin-app').classList.remove('hidden');
             document.getElementById('admin-app').classList.add('flex');
-            initAdmin();
+            initApp();
         }
 
         function handleLogout() {
             localStorage.removeItem('fv_admin_logged_in');
-            window.location.reload();
+            document.getElementById('admin-app').classList.add('hidden');
+            document.getElementById('admin-app').classList.remove('flex');
+            document.getElementById('login-view').classList.remove('hidden');
         }
 
+        // Mobile Sidebar Drawer Toggle
         function toggleSidebar(forceState) {
-            document.getElementById('sidebar').classList.toggle('-translate-x-full', forceState);
-            document.getElementById('mobile-backdrop').classList.toggle('hidden', forceState === false);
+            const sidebar = document.getElementById('sidebar');
+            const backdrop = document.getElementById('mobile-backdrop');
+            
+            if (forceState === false) {
+                sidebar.classList.add('-translate-x-full');
+                backdrop.classList.add('hidden');
+            } else {
+                sidebar.classList.toggle('-translate-x-full');
+                backdrop.classList.toggle('hidden');
+            }
         }
 
-        function navigateTo(section) {
-            document.querySelectorAll('.content-view').forEach(v => v.classList.add('hidden'));
-            document.getElementById(`view-${section}`).classList.remove('hidden');
-            if (section === 'products') renderProducts();
-            if (section === 'orders') renderOrders();
-            if (section === 'records') renderRecords();
-            if (section === 'admin-notes') renderAdminNotes();
-            if (section === 'low-stock') renderLowStock();
+        // View Navigation Handler
+        function navigateTo(sectionId) {
+            document.querySelectorAll('.content-view').forEach(view => view.classList.add('hidden'));
+            
+            const targetView = document.getElementById(`view-${sectionId}`);
+            if (targetView) targetView.classList.remove('hidden');
+
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('bg-brandGold', 'text-brandNavy', 'font-bold');
+                btn.classList.add('text-gray-300', 'font-semibold');
+            });
+
+            const activeNavBtn = document.getElementById(`nav-${sectionId}`);
+            if (activeNavBtn) {
+                activeNavBtn.classList.add('bg-brandGold', 'text-brandNavy', 'font-bold');
+                activeNavBtn.classList.remove('text-gray-300');
+            }
+
+            toggleSidebar(false);
+
+            if (sectionId === 'products') renderProducts();
+            if (sectionId === 'orders') renderOrders();
+            if (sectionId === 'low-stock') renderLowStock();
+            if (sectionId === 'records') renderRecords();
+            if (sectionId === 'admin-notes') renderAdminNotes();
         }
 
-        function initAdmin() {
-            document.getElementById('dash-prod-count').innerText = `${products.length} Items active`;
-            document.getElementById('dash-order-count').innerText = `${orders.length} Orders active`;
+        // App Initialization
+        function initApp() {
+            let updatedOrders = false;
+            orders = orders.map(ord => {
+                if (!ord.date) {
+                    updatedOrders = true;
+                    return { ...ord, date: new Date().toISOString() };
+                }
+                return ord;
+            });
+            if (updatedOrders) {
+                localStorage.setItem('fv_orders', JSON.stringify(orders));
+            }
+
+            updateDashboardCounts();
             renderProducts();
             renderOrders();
+            renderLowStock();
+            renderRecords();
+            renderAdminNotes();
+            if (supabaseClient) fetchFromCloud();
         }
 
+        function updateDashboardCounts() {
+            document.getElementById('dash-prod-count').innerText = `${products.length} Items active`;
+            document.getElementById('dash-order-count').innerText = `${orders.length} Orders active`;
+            const lowCount = products.filter(p => p.qty <= 5).length;
+            document.getElementById('dash-lowstock-count').innerText = `${lowCount} Items low`;
+            const recordCountBadge = document.getElementById('dash-record-count');
+            if (recordCountBadge) recordCountBadge.innerText = `${orders.length} Total records logged`;
+            const dashNotesCount = document.getElementById('dash-notes-count');
+            if (dashNotesCount) dashNotesCount.innerText = `${adminNotes.length} Notes active`;
+        }
+
+        // Product Rendering & Operations
         function renderProducts() {
             const container = document.getElementById('products-list');
-            container.innerHTML = products.map(p => `
-                <div class="bg-white p-4 rounded-xl border shadow-sm flex flex-col justify-between">
-                    <div>
-                        <img src="${p.images?.[0] || p.image}" class="w-full h-36 object-cover rounded mb-2">
-                        <h4 class="font-bold text-brandNavy text-sm">${p.name}</h4>
-                        <p class="text-xs text-green-700 font-extrabold mt-1">₦${Number(p.price).toLocaleString()} (Stock: ${p.qty})</p>
+            const query = document.getElementById('prod-search').value.toLowerCase();
+            
+            const filtered = products.filter(p => {
+                const tagMatch = p.tags ? p.tags.some(t => t.toLowerCase().includes(query)) : false;
+                return p.name.toLowerCase().includes(query) || 
+                       p.category.toLowerCase().includes(query) || 
+                       (p.sku && p.sku.toLowerCase().includes(query)) ||
+                       tagMatch;
+            });
+
+            if (filtered.length === 0) {
+                container.innerHTML = `<div class="col-span-full p-8 text-center text-gray-500 font-semibold">No products found. Tap "+ Add Product" to create one.</div>`;
+                return;
+            }
+
+            container.innerHTML = filtered.map(p => {
+                const primaryImage = (p.images && p.images.length > 0) ? p.images[0] : (p.image || 'https://via.placeholder.com/300');
+                const photoCount = p.images ? p.images.length : (p.image ? 1 : 0);
+                const itemPrice = p.price || 0;
+
+                const volumeBadges = [];
+                if(p.disc5) volumeBadges.push(`5+: ₦${Number(p.disc5).toLocaleString()}`);
+                if(p.disc10) volumeBadges.push(`10+: ₦${Number(p.disc10).toLocaleString()}`);
+                if(p.disc15) volumeBadges.push(`15+: ₦${Number(p.disc15).toLocaleString()}`);
+                if(p.disc20) volumeBadges.push(`20+: ₦${Number(p.disc20).toLocaleString()}`);
+                if(p.disc30) volumeBadges.push(`30+: ₦${Number(p.disc30).toLocaleString()}`);
+                if(p.disc50) volumeBadges.push(`50+: ₦${Number(p.disc50).toLocaleString()}`);
+                if(p.disc100) volumeBadges.push(`100+: ₦${Number(p.disc100).toLocaleString()}`);
+
+                const shareIconsMap = {
+                    'WhatsApp': '<i class="fa-brands fa-whatsapp text-green-600" title="WhatsApp"></i>',
+                    'TikTok': '<i class="fa-brands fa-tiktok text-gray-900" title="TikTok"></i>',
+                    'Instagram': '<i class="fa-brands fa-instagram text-pink-600" title="Instagram"></i>',
+                    'Facebook': '<i class="fa-brands fa-facebook text-blue-600" title="Facebook"></i>',
+                    'Telegram': '<i class="fa-brands fa-telegram text-sky-500" title="Telegram"></i>'
+                };
+
+                const activeShareIcons = (p.shares || []).map(s => shareIconsMap[s] || '').join(' ');
+
+                return `
+                <div class="bg-white rounded-xl shadow-sm border overflow-hidden flex flex-col justify-between">
+                    <div class="relative h-44 bg-gray-100">
+                        <img src="${primaryImage}" class="w-full h-full object-cover">
+                        <span class="absolute top-2 right-2 bg-brandNavy text-brandGold text-[10px] font-bold px-2 py-1 rounded shadow">
+                            ${p.category}
+                        </span>
+                        ${photoCount > 0 ? `
+                            <span class="absolute bottom-2 left-2 bg-black/70 text-white text-[10px] font-semibold px-2 py-0.5 rounded-full flex items-center space-x-1">
+                                <i class="fa-solid fa-camera"></i>
+                                <span>${photoCount} photo${photoCount > 1 ? 's' : ''}</span>
+                            </span>
+                        ` : ''}
                     </div>
-                    <div class="pt-3 mt-3 border-t flex justify-end gap-2 text-xs">
-                        <button onclick="openProductModal(${p.id})" class="bg-brandNavy text-white px-3 py-1 rounded font-bold">Edit</button>
-                        <button onclick="deleteProduct(${p.id})" class="bg-red-100 text-red-600 px-3 py-1 rounded font-bold">Delete</button>
+                    
+                    <div class="p-4 flex-1 space-y-2.5">
+                        <div class="flex justify-between items-start">
+                            <h3 class="font-bold text-brandNavy text-base">${p.name}</h3>
+                            <span class="text-xs font-bold ${p.qty <= 5 ? 'text-red-500' : 'text-green-600'}">Qty: ${p.qty}</span>
+                        </div>
+                        
+                        <div class="flex justify-between items-center">
+                            <p class="text-xs text-gray-500">SKU: ${p.sku || 'N/A'}</p>
+                            <span class="text-sm font-black text-green-700 bg-green-50 px-2 py-0.5 rounded border border-green-200">₦${Number(itemPrice).toLocaleString()}</span>
+                        </div>
+
+                        <!-- Tags Display -->
+                        ${p.tags && p.tags.length > 0 ? `
+                            <div class="flex flex-wrap gap-1">
+                                ${p.tags.map(t => `<span class="bg-amber-100 text-amber-800 text-[10px] font-bold px-2 py-0.5 rounded-full">${t}</span>`).join('')}
+                            </div>
+                        ` : ''}
+
+                        <!-- Pricing & Specs -->
+                        <div class="text-xs space-y-1 text-gray-700 bg-gray-50 p-2.5 rounded border">
+                            ${p.color ? `<p><strong>Color:</strong> ${p.color}${p.colorPrice ? '(₦' + Number(p.colorPrice).toLocaleString() + ', Qty: ' + (p.colorQty || 0) + ')' : ''}</p>` : ''}
+                            ${p.size ? `<p><strong>Size:</strong> ${p.size}${p.sizePrice ? '(₦' + Number(p.sizePrice).toLocaleString() + ', Qty: ' + (p.sizeQty || 0) + ')' : ''}</p>` : ''}
+                            ${p.priceHalfCarton ? `<p><strong>Half Carton Price:</strong> ₦${Number(p.priceHalfCarton).toLocaleString()}${p.qtyHalfCarton !== undefined && p.qtyHalfCarton !== '' ? ' (Qty: ' + p.qtyHalfCarton + ')' : ''}</p>` : ''}
+                            ${p.priceCarton ? `<p><strong>Carton Price:</strong> ₦${Number(p.priceCarton).toLocaleString()} (${p.cartonNote || ''})</p>` : ''}
+                            
+                            ${volumeBadges.length > 0 ? `
+                                <div class="pt-1 mt-1 border-t">
+                                    <p class="font-bold text-[10px] text-brandNavy uppercase mb-1">Volume Discounts:</p>
+                                    <div class="flex flex-wrap gap-1">
+                                        ${volumeBadges.map(b => `<span class="bg-blue-50 text-blue-800 text-[10px] px-1.5 py-0.5 rounded font-semibold border border-blue-200">${b}</span>`).join('')}
+                                    </div>
+                                </div>
+                            ` : ''}
+                        </div>
+
+                        <!-- Related Products Display Badge -->
+                        ${p.relatedProducts && p.relatedProducts.length > 0 ? `
+                            <div class="bg-amber-50/80 p-2 rounded border border-amber-200 text-[11px] space-y-1">
+                                <span class="font-bold text-brandNavy flex items-center space-x-1">
+                                    <i class="fa-solid fa-link text-brandGold"></i>
+                                    <span>Related Products (${p.relatedProducts.length}):</span>
+                                </span>
+                                <div class="flex flex-wrap gap-1 mt-1">
+                                    ${p.relatedProducts.map(rel => `<span class="bg-white px-2 py-0.5 border rounded text-[10px] font-medium text-gray-700 shadow-sm">${rel}</span>`).join('')}
+                                </div>
+                            </div>
+                        ` : ''}
+
+                        <!-- Shipping Notes & Shares -->
+                        <div class="bg-emerald-50/60 p-2 rounded border border-emerald-200 text-[11px] space-y-1 text-emerald-900">
+                            <p><i class="fa-solid fa-truck-fast"></i> <strong>Lagos:</strong> ${p.shippingLagos || 'within Lagos 24 hours'}</p>
+                            <p><i class="fa-solid fa-plane"></i> <strong>Outside Lagos:</strong> ${p.shippingOutside || 'outside Lagos 3-5days'}</p>
+                        </div>
+
+                        ${p.additionalInfo ? `
+                            <p class="text-[11px] text-gray-600 bg-gray-100 p-2 rounded italic">"${p.additionalInfo}"</p>
+                        ` : ''}
+
+                        <div class="flex items-center justify-between text-xs pt-1 border-t">
+                            <span class="text-[11px] font-bold text-gray-500 uppercase">Share On:</span>
+                            <div class="space-x-2 text-sm">
+                                ${activeShareIcons || '<span class="text-xs text-gray-400">None</span>'}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="p-3 bg-gray-50 border-t flex justify-end space-x-2">
+                        <button onclick="openProductModal(${p.id})" class="text-xs bg-brandNavy hover:bg-brandNavyDark text-white px-3 py-1.5 rounded font-bold transition">
+                            <i class="fa-solid fa-pen-to-square"></i> Edit
+                        </button>
+                        <button onclick="deleteProduct(${p.id})" class="text-xs bg-red-100 hover:bg-red-200 text-red-600 px-3 py-1.5 rounded font-bold transition">
+                            <i class="fa-solid fa-trash"></i> Delete
+                        </button>
                     </div>
                 </div>
-            `).join('');
+            `}).join('');
         }
 
-        function openProductModal(id = null) {
-            const p = id ? products.find(x => x.id === id) : null;
-            document.getElementById('modal-title').innerText = p ? 'Edit Product' : 'Add Product';
-            document.getElementById('p-id').value = p ? p.id : '';
-            document.getElementById('p-name').value = p ? p.name : '';
-            document.getElementById('p-sku').value = p ? p.sku || '' : '';
-            document.getElementById('p-category').value = p ? p.category : 'Kitchen Utensils';
-            document.getElementById('p-price').value = p ? p.price : '';
-            document.getElementById('p-qty').value = p ? p.qty : '';
-            document.getElementById('p-color').value = p ? p.color || '' : '';
-            document.getElementById('p-size').value = p ? p.size || '' : '';
-            document.getElementById('p-img-1').value = p?.images?.[0] || p?.image || '';
-            document.getElementById('product-modal').classList.remove('hidden');
+        // Product Modal Handlers (Add or Edit Product)
+        function openProductModal(editId = null) {
+            const modal = document.getElementById('product-modal');
+            const form = document.getElementById('product-form');
+            const title = document.getElementById('modal-title');
+            const relatedInput = document.getElementById('p-related-input');
+
+            const prod = editId ? products.find(p => p.id === editId) : null;
+
+            if (prod) {
+                title.innerText = '✎ Edit Product Details';
+                document.getElementById('p-id').value = prod.id;
+                document.getElementById('p-name').value = prod.name || '';
+                document.getElementById('p-sku').value = prod.sku || '';
+                document.getElementById('p-category').value = prod.category || '';
+                document.getElementById('p-price').value = prod.price || '';
+                document.getElementById('p-qty').value = prod.qty || 0;
+                document.getElementById('p-color').value = prod.color || '';
+                document.getElementById('p-color-price').value = prod.colorPrice || '';
+                document.getElementById('p-color-qty').value = prod.colorQty || '';
+                document.getElementById('p-size').value = prod.size || '';
+                document.getElementById('p-size-price').value = prod.sizePrice || '';
+                document.getElementById('p-size-qty').value = prod.sizeQty || '';
+                document.getElementById('p-add-info').value = prod.additionalInfo || '';
+                document.getElementById('p-tags').value = (prod.tags || []).join(', ');
+                document.getElementById('p-shipping-lagos').value = prod.shippingLagos || 'within Lagos 24 hours';
+                document.getElementById('p-shipping-outside').value = prod.shippingOutside || 'outside Lagos 3-5days';
+                
+                document.getElementById('p-price-single').value = prod.priceSingle || '';
+                document.getElementById('p-qty-single').value = prod.qtySingle !== undefined ? prod.qtySingle : '';
+                document.getElementById('p-price-halfdozen').value = prod.priceHalfDozen || '';
+                document.getElementById('p-price-dozen').value = prod.priceDozen || '';
+                document.getElementById('p-price-halfcarton').value = prod.priceHalfCarton || '';
+                document.getElementById('p-qty-halfcarton').value = prod.qtyHalfCarton !== undefined ? prod.qtyHalfCarton : '';
+                document.getElementById('p-price-carton').value = prod.priceCarton || '';
+                document.getElementById('p-carton-note').value = prod.cartonNote || '';
+
+                document.getElementById('p-disc-5').value = prod.disc5 || '';
+                document.getElementById('p-disc-10').value = prod.disc10 || '';
+                document.getElementById('p-disc-15').value = prod.disc15 || '';
+                document.getElementById('p-disc-20').value = prod.disc20 || '';
+                document.getElementById('p-disc-30').value = prod.disc30 || '';
+                document.getElementById('p-disc-50').value = prod.disc50 || '';
+                document.getElementById('p-disc-100').value = prod.disc100 || '';
+
+                for (let i = 1; i <= 10; i++) {
+                    const imgVal = (prod.images && prod.images[i - 1]) ? prod.images[i - 1] : '';
+                    document.getElementById(`p-img-${i}`).value = imgVal;
+                }
+
+                const shares = prod.shares || [];
+                document.getElementById('share-whatsapp').checked = shares.includes('WhatsApp');
+                document.getElementById('share-tiktok').checked = shares.includes('TikTok');
+                document.getElementById('share-instagram').checked = shares.includes('Instagram');
+                document.getElementById('share-facebook').checked = shares.includes('Facebook');
+                document.getElementById('share-telegram').checked = shares.includes('Telegram');
+
+                const related = prod.relatedProducts || [];
+                relatedInput.value = related.join(', ');
+
+            } else {
+                title.innerText = '+ Add New Product';
+                form.reset();
+                document.getElementById('p-id').value = '';
+                document.getElementById('p-shipping-lagos').value = 'within Lagos 24 hours';
+                document.getElementById('p-shipping-outside').value = 'outside Lagos 3-5days';
+                if(relatedInput) relatedInput.value = '';
+            }
+
+            modal.classList.remove('hidden');
         }
 
-        function closeProductModal() { document.getElementById('product-modal').classList.add('hidden'); }
+        function closeProductModal() {
+            document.getElementById('product-modal').classList.add('hidden');
+        }
 
         function saveProduct(e) {
             e.preventDefault();
-            const id = document.getElementById('p-id').value;
-            const data = {
-                id: id ? Number(id) : Date.now(),
+
+            const editId = document.getElementById('p-id').value;
+            const mainPrice = Number(document.getElementById('p-price').value) || 0;
+
+            const uploadedImages = [];
+            for (let i = 1; i <= 10; i++) {
+                const imgVal = document.getElementById(`p-img-${i}`).value.trim();
+                if (imgVal) uploadedImages.push(imgVal);
+            }
+
+            const relatedInputValue = document.getElementById('p-related-input').value;
+            const selectedRelated = relatedInputValue ? relatedInputValue.split(',').map(s => s.trim()).filter(s => s !== '') : [];
+
+            const tagsInput = document.getElementById('p-tags').value;
+            const tagsArray = tagsInput ? tagsInput.split(',').map(t => t.trim()).filter(t => t !== '') : [];
+
+            const shares = [];
+            if(document.getElementById('share-whatsapp').checked) shares.push('WhatsApp');
+            if(document.getElementById('share-tiktok').checked) shares.push('TikTok');
+            if(document.getElementById('share-instagram').checked) shares.push('Instagram');
+            if(document.getElementById('share-facebook').checked) shares.push('Facebook');
+            if(document.getElementById('share-telegram').checked) shares.push('Telegram');
+
+            const prodData = {
+                id: editId ? Number(editId) : Date.now(),
                 name: document.getElementById('p-name').value,
                 sku: document.getElementById('p-sku').value,
                 category: document.getElementById('p-category').value,
-                price: Number(document.getElementById('p-price').value),
+                price: mainPrice,
                 qty: Number(document.getElementById('p-qty').value),
                 color: document.getElementById('p-color').value,
+                colorPrice: Number(document.getElementById('p-color-price').value) || 0,
+                colorQty: Number(document.getElementById('p-color-qty').value) || 0,
                 size: document.getElementById('p-size').value,
-                images: [document.getElementById('p-img-1').value],
+                sizePrice: Number(document.getElementById('p-size-price').value) || 0,
+                sizeQty: Number(document.getElementById('p-size-qty').value) || 0,
+                additionalInfo: document.getElementById('p-add-info').value,
+                tags: tagsArray,
+                shippingLagos: document.getElementById('p-shipping-lagos').value || 'within Lagos 24 hours',
+                shippingOutside: document.getElementById('p-shipping-outside').value || 'outside Lagos 3-5days',
+                shares: shares,
+                relatedProducts: selectedRelated,
+                priceSingle: Number(document.getElementById('p-price-single').value) || 0,
+                qtySingle: document.getElementById('p-qty-single').value !== '' ? Number(document.getElementById('p-qty-single').value) : '',
+                priceHalfDozen: Number(document.getElementById('p-price-halfdozen').value) || 0,
+                priceDozen: Number(document.getElementById('p-price-dozen').value) || 0,
+                priceHalfCarton: Number(document.getElementById('p-price-halfcarton').value) || 0,
+                qtyHalfCarton: document.getElementById('p-qty-halfcarton').value !== '' ? Number(document.getElementById('p-qty-halfcarton').value) : '',
+                priceCarton: Number(document.getElementById('p-price-carton').value) || 0,
+                cartonNote: document.getElementById('p-carton-note').value,
                 disc5: Number(document.getElementById('p-disc-5').value) || 0,
                 disc10: Number(document.getElementById('p-disc-10').value) || 0,
                 disc15: Number(document.getElementById('p-disc-15').value) || 0,
                 disc20: Number(document.getElementById('p-disc-20').value) || 0,
                 disc30: Number(document.getElementById('p-disc-30').value) || 0,
-                disc40: Number(document.getElementById('p-disc-40')?.value) || 0,
                 disc50: Number(document.getElementById('p-disc-50').value) || 0,
-                disc100: Number(document.getElementById('p-disc-100').value) || 0
+                disc100: Number(document.getElementById('p-disc-100').value) || 0,
+                images: uploadedImages.length > 0 ? uploadedImages : ['https://via.placeholder.com/300'],
             };
 
-            if (id) {
-                const idx = products.findIndex(x => x.id === Number(id));
-                if (idx !== -1) products[idx] = data;
+            if (editId) {
+                const index = products.findIndex(p => p.id === Number(editId));
+                if (index !== -1) products[index] = prodData;
             } else {
-                products.push(data);
+                products.push(prodData);
             }
 
-            localStorage.setItem('fv_products', JSON.stringify(products));
+            saveState();
             closeProductModal();
             renderProducts();
-            initAdmin();
+            
+            alert(editId ? `Product updated successfully!` : `New product created successfully!`);
         }
 
         function deleteProduct(id) {
-            if (confirm('Delete product?')) {
-                products = products.filter(x => x.id !== id);
-                localStorage.setItem('fv_products', JSON.stringify(products));
+            if (confirm('Are you sure you want to delete this product?')) {
+                products = products.filter(p => p.id !== id);
+                saveState();
                 renderProducts();
             }
         }
 
+        // Order Handlers
         function renderOrders() {
-            document.getElementById('orders-list').innerHTML = orders.map(o => `
-                <div class="bg-white p-4 rounded-xl border shadow-sm flex justify-between items-center text-xs">
-                    <div><strong>Order #${o.id}</strong> - ${o.customerName} (${o.phone})</div>
-                    <div class="font-bold text-green-700">₦${Number(o.total).toLocaleString()}</div>
+            const container = document.getElementById('orders-list');
+            if (orders.length === 0) {
+                container.innerHTML = `<div class="p-8 text-center text-gray-500 font-semibold bg-white rounded-xl shadow-sm">No active orders found.</div>`;
+                return;
+            }
+
+            container.innerHTML = orders.map(o => {
+                const orderDateStr = o.date ? new Date(o.date).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : 'N/A';
+                return `
+                <div onclick="openOrderDetailsModal('${o.id}')" class="bg-white p-5 rounded-xl shadow-md border border-gray-200 space-y-3 cursor-pointer hover:border-brandGold transition">
+                    <div class="flex flex-wrap justify-between items-center border-b pb-2 gap-2">
+                        <div>
+                            <span class="font-black text-brandNavy text-base">Order #${o.id}</span>
+                            <span class="text-xs text-gray-500 ml-2">Customer: <strong>${o.customerName}</strong> (${o.phone})</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <span class="bg-gray-100 text-gray-700 text-[10px] font-semibold px-2 py-0.5 rounded"><i class="fa-regular fa-calendar"></i> ${orderDateStr}</span>
+                            <span class="bg-blue-100 text-blue-800 text-[10px] font-bold px-2 py-0.5 rounded uppercase">Method: ${o.shipmentMethod || 'Pickup'}</span>
+                            <span class="bg-yellow-100 text-yellow-800 text-xs font-bold px-2.5 py-1 rounded-full">${o.status}</span>
+                        </div>
+                    </div>
+
+                    <div class="text-xs sm:text-sm text-gray-700 flex justify-between items-center">
+                        <div>
+                            <p><strong>Total Amount:</strong> <span class="font-extrabold text-brandNavy">₦${Number(o.total).toLocaleString()}</span></p>
+                        </div>
+                        <button class="bg-brandNavy text-brandGold font-bold px-3 py-1.5 rounded text-xs">View Details</button>
+                    </div>
+                </div>
+            `}).join('');
+        }
+
+        // Records View Rendering
+        function renderRecords() {
+            const container = document.getElementById('records-table-body');
+            const countBadge = document.getElementById('record-count-badge');
+            const searchInput = document.getElementById('record-search');
+            const query = searchInput ? searchInput.value.toLowerCase() : '';
+
+            const filteredOrders = orders.filter(o => {
+                const customerMatch = o.customerName && o.customerName.toLowerCase().includes(query);
+                const idMatch = o.id && o.id.toLowerCase().includes(query);
+                const itemMatch = o.itemsList && o.itemsList.some(item => item.name && item.name.toLowerCase().includes(query));
+                return customerMatch || idMatch || itemMatch;
+            });
+
+            if (countBadge) countBadge.innerText = `${filteredOrders.length} Records`;
+
+            if (filteredOrders.length === 0) {
+                container.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="p-8 text-center text-gray-500 font-semibold">No store records found.</td>
+                    </tr>
+                `;
+                return;
+            }
+
+            container.innerHTML = filteredOrders.map(o => {
+                const orderDateStr = o.date ? new Date(o.date).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : 'N/A';
+                const itemsSummary = (o.itemsList || []).map(i => `${i.name} (x${i.qty})`).join(', ') || 'Standard Order';
+                
+                return `
+                    <tr class="hover:bg-gray-50 transition">
+                        <td class="p-3.5 font-bold text-brandNavy">
+                            <div>#${o.id}</div>
+                            <div class="text-[10px] text-gray-400 font-normal">${orderDateStr}</div>
+                        </td>
+                        <td class="p-3.5">
+                            <div class="font-semibold text-gray-800">${o.customerName}</div>
+                            <div class="text-[11px] text-gray-500">${o.phone}</div>
+                        </td>
+                        <td class="p-3.5 text-xs text-gray-600 max-w-xs truncate" title="${itemsSummary}">${itemsSummary}</td>
+                        <td class="p-3.5 font-extrabold text-green-700">₦${Number(o.total).toLocaleString()}</td>
+                        <td class="p-3.5 text-center">
+                            <button onclick="openOrderDetailsModal('${o.id}')" class="bg-brandNavy hover:bg-brandNavyDark text-white font-bold px-3 py-1.5 rounded text-xs shadow">
+                                View
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        // Admin Notes Handlers
+        function renderAdminNotes() {
+            const container = document.getElementById('admin-notes-list');
+            const searchInput = document.getElementById('note-search');
+            const query = searchInput ? searchInput.value.toLowerCase() : '';
+
+            const filtered = adminNotes.filter(n => n.title.toLowerCase().includes(query) || n.content.toLowerCase().includes(query));
+
+            if (filtered.length === 0) {
+                container.innerHTML = `<div class="col-span-full p-8 text-center text-gray-500 font-semibold bg-white rounded-xl shadow-sm">No admin notes found. Tap "+ Add New Note" to create one.</div>`;
+                return;
+            }
+
+            container.innerHTML = filtered.map(n => {
+                const dateStr = n.date ? new Date(n.date).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : '';
+                const priorityColor = n.priority === 'Urgent' ? 'bg-red-100 text-red-800 border-red-300' : (n.priority === 'Important' ? 'bg-amber-100 text-amber-800 border-amber-300' : 'bg-blue-100 text-blue-800 border-blue-300');
+
+                return `
+                    <div class="bg-white p-5 rounded-xl shadow-md border space-y-3 flex flex-col justify-between">
+                        <div class="space-y-2">
+                            <div class="flex justify-between items-start gap-2">
+                                <h3 class="font-bold text-brandNavy text-base">${n.title}</h3>
+                                <span class="text-[10px] font-bold px-2 py-0.5 rounded border ${priorityColor}">${n.priority || 'Normal'}</span>
+                            </div>
+                            <p class="text-xs text-gray-700 whitespace-pre-wrap">${n.content}</p>
+                        </div>
+                        <div class="pt-3 border-t flex justify-between items-center text-[11px] text-gray-400">
+                            <span>${dateStr}</span>
+                            <div class="space-x-2">
+                                <button onclick="openNoteModal(${n.id})" class="text-brandNavy font-bold hover:underline">Edit</button>
+                                <button onclick="deleteAdminNote(${n.id})" class="text-red-600 font-bold hover:underline">Delete</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function openNoteModal(editId = null) {
+            const modal = document.getElementById('note-modal');
+            const form = document.getElementById('note-form');
+            const title = document.getElementById('note-modal-title');
+
+            const note = editId ? adminNotes.find(n => n.id === editId) : null;
+
+            if (note) {
+                title.innerText = '✎ Edit Admin Note';
+                document.getElementById('note-id').value = note.id;
+                document.getElementById('note-title').value = note.title || '';
+                document.getElementById('note-content').value = note.content || '';
+                document.getElementById('note-priority').value = note.priority || 'Normal';
+            } else {
+                title.innerText = '+ Add Admin Note';
+                form.reset();
+                document.getElementById('note-id').value = '';
+            }
+
+            modal.classList.remove('hidden');
+        }
+
+        function closeNoteModal() {
+            document.getElementById('note-modal').classList.add('hidden');
+        }
+
+        function saveAdminNoteRecord(e) {
+            e.preventDefault();
+            const editId = document.getElementById('note-id').value;
+            const noteData = {
+                id: editId ? Number(editId) : Date.now(),
+                title: document.getElementById('note-title').value.trim(),
+                content: document.getElementById('note-content').value.trim(),
+                priority: document.getElementById('note-priority').value,
+                date: new Date().toISOString()
+            };
+
+            if (editId) {
+                const index = adminNotes.findIndex(n => n.id === Number(editId));
+                if (index !== -1) adminNotes[index] = noteData;
+            } else {
+                adminNotes.push(noteData);
+            }
+
+            saveState();
+            closeNoteModal();
+            renderAdminNotes();
+            alert(editId ? "Note updated successfully!" : "New admin note created successfully!");
+        }
+
+        function deleteAdminNote(id) {
+            if (confirm("Are you sure you want to delete this note?")) {
+                adminNotes = adminNotes.filter(n => n.id !== id);
+                saveState();
+                renderAdminNotes();
+            }
+        }
+
+        // Export / Import Backup Functions
+        function exportAppData() {
+            const backupData = {
+                products: products,
+                orders: orders,
+                adminNotes: adminNotes,
+                exportDate: new Date().toISOString()
+            };
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(backupData, null, 2));
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", `Fash_Store_Backup_${new Date().toISOString().slice(0, 10)}.json`);
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
+        }
+
+        function importAppData(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                try {
+                    const parsedData = JSON.parse(event.target.result);
+                    if (parsedData.products && Array.isArray(parsedData.products)) {
+                        products = parsedData.products;
+                    }
+                    if (parsedData.orders && Array.isArray(parsedData.orders)) {
+                        orders = parsedData.orders;
+                    }
+                    if (parsedData.adminNotes && Array.isArray(parsedData.adminNotes)) {
+                        adminNotes = parsedData.adminNotes;
+                    }
+                    saveState();
+                    initApp();
+                    alert("Data imported successfully! Your store data has been updated.");
+                } catch (err) {
+                    alert("Invalid JSON backup file. Please select a valid store backup file.");
+                }
+                e.target.value = '';
+            };
+            reader.readAsText(file);
+        }
+
+        function exportRecordsToCSV() {
+            if (orders.length === 0) {
+                alert("No records available to export.");
+                return;
+            }
+
+            let csvContent = "data:text/csv;charset=utf-8,Order ID,Date,Customer Name,Phone,Shipment Method,Total Amount,Status\r\n";
+            orders.forEach(o => {
+                const row = [
+                    o.id,
+                    `"${o.date || ''}"`,
+                    `"${o.customerName || ''}"`,
+                    `"${o.phone || ''}"`,
+                    `"${o.shipmentMethod || ''}"`,
+                    o.total,
+                    `"${o.status || ''}"`
+                ];
+                csvContent += row.join(",") + "\r\n";
+            });
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", `Fash_Store_Records_${new Date().toISOString().slice(0, 10)}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function openOrderDetailsModal(orderId) {
+            const order = orders.find(o => o.id === orderId);
+            if (!order) return;
+
+            document.getElementById('order-modal-number').innerText = `Order #${order.id} Details`;
+            const content = document.getElementById('order-modal-content');
+
+            let itemsHtml = '';
+            if (order.itemsList && Array.isArray(order.itemsList)) {
+                itemsHtml = order.itemsList.map(item => `
+                    <div class="flex items-center space-x-3 bg-gray-50 p-3 rounded-xl border">
+                        <img src="${item.image || 'https://via.placeholder.com/100'}" class="w-16 h-16 object-cover rounded-lg border">
+                        <div class="flex-1 space-y-1 text-xs">
+                            <h5 class="font-bold text-brandNavy text-sm">${item.name}</h5>
+                            <p class="text-gray-600"><strong>Qty:</strong> ${item.qty} | <strong>Colour:</strong> ${item.color || 'N/A'} | <strong>Size:</strong> ${item.size || 'N/A'}</p>
+                            <p class="text-gray-600"><strong>Selection:</strong> ${item.selection || 'Standard'} | <strong>Price:</strong> ₦${Number(item.price).toLocaleString()}</p>
+                        </div>
+                        <div class="text-right font-black text-green-700 text-sm">
+                            ₦${Number(item.total || order.total).toLocaleString()}
+                        </div>
+                    </div>
+                `).join('');
+            } else {
+                itemsHtml = `<p class="text-xs text-gray-700 bg-gray-50 p-3 rounded border">${order.items || 'No items description'}</p>`;
+            }
+
+            const formattedOrderDate = order.date ? new Date(order.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : 'N/A';
+            const proofImageSource = order.receipt || order.proofImg || 'https://via.placeholder.com/300';
+
+            content.innerHTML = `
+                <!-- Order Number & Status -->
+                <div class="flex justify-between items-center bg-brandNavy text-white p-3 rounded-xl">
+                    <div>
+                        <span class="text-[10px] text-gray-300 uppercase font-bold">Order Number & Date (Admin Stamped)</span>
+                        <h4 class="font-black text-brandGold text-base">#${order.id} <span class="text-xs text-gray-200 font-normal">(${formattedOrderDate})</span></h4>
+                    </div>
+                    <div>
+                        <span class="text-[10px] text-gray-300 uppercase font-bold">Status</span>
+                        <p class="font-bold text-yellow-300 text-xs" id="order-status-text-${order.id}">${order.status}</p>
+                    </div>
+                </div>
+
+                <!-- Billing & Shipping Details -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="bg-gray-50 p-3.5 rounded-xl border space-y-1.5">
+                        <h4 class="font-bold text-brandNavy text-xs uppercase flex items-center space-x-1 border-b pb-1">
+                            <i class="fa-solid fa-address-card text-brandGold"></i>
+                            <span>Billing Details</span>
+                        </h4>
+                        <p><strong>Name:</strong> ${order.customerName}</p>
+                        <p><strong>Phone:</strong> ${order.phone}</p>
+                        <p><strong>Email:</strong> ${order.email || 'N/A'}</p>
+                        <p><strong>Billing Address:</strong> ${order.billingAddress || order.address || 'N/A'}</p>
+                    </div>
+
+                    <div class="bg-emerald-50/70 p-3.5 rounded-xl border border-emerald-200 space-y-1.5">
+                        <h4 class="font-bold text-brandNavy text-xs uppercase flex items-center space-x-1 border-b pb-1 border-emerald-200">
+                            <i class="fa-solid fa-truck text-emerald-600"></i>
+                            <span>Shipping Details</span>
+                        </h4>
+                        <p><strong>Shipping Address:</strong> ${order.shippingAddress || order.address || 'Same as billing address'}</p>
+                        <p><strong>Shipment Method:</strong> <span class="bg-emerald-200 text-emerald-900 px-2 py-0.5 rounded font-bold uppercase text-[10px]">${order.shipmentMethod || 'Pickup'}</span></p>
+                    </div>
+                </div>
+
+                <!-- Order Note (Optional) -->
+                ${order.orderNote ? `
+                    <div class="bg-amber-50 p-3 rounded-xl border border-amber-200 text-xs space-y-1">
+                        <h5 class="font-bold text-brandNavy uppercase flex items-center space-x-1">
+                            <i class="fa-solid fa-note-sticky text-brandGold"></i>
+                            <span>Customer Note (Optional)</span>
+                        </h5>
+                        <p class="text-gray-700 italic">"${order.orderNote}"</p>
+                    </div>
+                ` : ''}
+
+                <!-- Items Purchased -->
+                <div class="space-y-2">
+                    <h4 class="font-bold text-brandNavy text-xs uppercase flex items-center space-x-1">
+                        <i class="fa-solid fa-bag-shopping text-brandGold"></i>
+                        <span>What Customer Bought</span>
+                    </h4>
+                    <div class="space-y-2">
+                        ${itemsHtml}
+                    </div>
+                </div>
+
+                <!-- Proof of Payment & Total -->
+                <div class="bg-blue-50/70 p-4 rounded-xl border border-blue-200 flex flex-wrap justify-between items-center gap-3">
+                    <div>
+                        <span class="text-xs text-gray-500 uppercase font-semibold">Total Order Amount</span>
+                        <h4 class="text-xl font-black text-brandNavy">₦${Number(order.total).toLocaleString()}</h4>
+                    </div>
+                    <div class="flex flex-wrap items-center gap-2">
+                        <button onclick="viewProof('${proofImageSource}')" class="bg-brandNavy text-brandGold font-bold px-3 py-2 rounded-lg text-xs flex items-center space-x-1.5 shadow">
+                            <i class="fa-solid fa-file-invoice"></i>
+                            <span>View Proof</span>
+                        </button>
+                        <button onclick="updateOrderStatus('${order.id}')" class="bg-green-600 hover:bg-green-700 text-white font-bold px-3 py-2 rounded-lg text-xs">
+                            Mark Confirmed
+                        </button>
+                        <button onclick="deleteOrder('${order.id}'); closeOrderDetailsModal();" class="bg-red-500 hover:bg-red-600 text-white font-bold px-3 py-2 rounded-lg text-xs">
+                            Delete Order
+                        </button>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('order-details-modal').classList.remove('hidden');
+        }
+
+        function updateOrderStatus(orderId) {
+            const order = orders.find(o => o.id === orderId);
+            if (order) {
+                order.status = 'Confirmed & Processing';
+                saveState();
+                renderOrders();
+                renderRecords();
+                alert(`Order #${orderId} marked as Confirmed!`);
+                closeOrderDetailsModal();
+            }
+        }
+
+        function closeOrderDetailsModal() {
+            document.getElementById('order-details-modal').classList.add('hidden');
+        }
+
+        function viewProof(imgUrl) {
+            document.getElementById('proof-img').src = imgUrl || 'https://via.placeholder.com/300';
+            document.getElementById('proof-modal').classList.add('hidden');
+        }
+
+        function deleteOrder(id) {
+            if (confirm('Confirm deleting this order after verification?')) {
+                orders = orders.filter(o => o.id !== id);
+                saveState();
+                renderOrders();
+                renderRecords();
+            }
+        }
+
+        // Low Stock Handler
+        function renderLowStock() {
+            const container = document.getElementById('low-stock-list');
+            const lowItems = products.filter(p => p.qty <= 5);
+
+            if (lowItems.length === 0) {
+                container.innerHTML = `<div class="col-span-full p-8 text-center text-green-700 font-semibold bg-green-50 rounded-xl">All products have sufficient stock levels!</div>`;
+                return;
+            }
+
+            container.innerHTML = lowItems.map(p => `
+                <div class="bg-white p-4 rounded-xl shadow-sm border-l-4 border-red-500 flex items-center justify-between">
+                    <div>
+                        <h3 class="font-bold text-brandNavy text-sm">${p.name}</h3>
+                        <p class="text-xs text-gray-500">Category: ${p.category}</p>
+                        <span class="text-xs font-bold text-red-600 mt-1 inline-block">Stock Remaining: ${p.qty} pcs</span>
+                    </div>
+                    <button onclick="navigateTo('products')" class="test-xs bg-brandNavy text-white px-3 py-1.5 rounded font-bold">Restock</button>
                 </div>
             `).join('');
         }
-
-        function renderRecords() {
-            document.getElementById('records-table-body').innerHTML = `<table class="w-full text-xs"><thead><tr class="bg-brandNavy text-white"><th class="p-2">ID</th><th class="p-2">Customer</th><th class="p-2">Total</th></tr></thead><tbody>` + 
-                orders.map(o => `<tr class="border-b"><td class="p-2">#${o.id}</td><td class="p-2">${o.customerName}</td><td class="p-2 font-bold">₦${Number(o.total).toLocaleString()}</td></tr>`).join('') + `</tbody></table>`;
-        }
-
-        function renderAdminNotes() {
-            document.getElementById('admin-notes-list').innerHTML = adminNotes.map(n => `<div class="bg-white p-4 rounded border"><h4 class="font-bold">${n.title}</h4><p class="text-xs text-gray-600 mt-1">${n.content}</p></div>`).join('');
-        }
-
-        function renderLowStock() {
-            document.getElementById('low-stock-list').innerHTML = products.filter(p => p.qty <= 5).map(p => `<div class="bg-white p-3 rounded border border-red-300"><strong>${p.name}</strong> - Remaining: ${p.qty}</div>`).join('');
-        }
-
-        function openNoteModal() { document.getElementById('note-modal').classList.remove('hidden'); }
-        function closeNoteModal() { document.getElementById('note-modal').classList.add('hidden'); }
-        function saveNote(e) { e.preventDefault(); closeNoteModal(); }
-        function exportAppData() { alert('Backup exported successfully.'); }
     </script>
 </body>
 </html>
