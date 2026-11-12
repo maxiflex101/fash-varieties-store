@@ -151,8 +151,8 @@
                     </button>
 
                     <button onclick="navigateTo('records')" id="nav-records" class="nav-btn w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg font-semibold text-xs sm:text-sm text-gray-300 hover:bg-brandNavyDark hover:text-brandGold transition">
-                        <i class="fa-solid fa-book-bookmark w-5 text-center"></i>
-                        <span>RECORD</span>
+                        <i class="fa-solid fa-calendar-days w-5 text-center"></i>
+                        <span>CALENDAR REVENUE</span>
                     </button>
 
                     <button onclick="navigateTo('admin-notes')" id="nav-admin-notes" class="nav-btn w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg font-semibold text-xs sm:text-sm text-gray-300 hover:bg-brandNavyDark hover:text-brandGold transition">
@@ -207,15 +207,15 @@
                             </div>
                         </div>
 
-                        <!-- Record Tile -->
+                        <!-- Calendar Revenue Tile -->
                         <div onclick="navigateTo('records')" class="bg-white p-5 sm:p-6 rounded-xl shadow-md border-l-8 border-indigo-600 hover:shadow-lg transition cursor-pointer flex items-center justify-between">
                             <div>
-                                <h2 class="text-lg sm:text-xl font-bold text-brandNavy">RECORD</h2>
-                                <p class="text-xs text-gray-500 mt-1">Complete sales ledger & archives</p>
-                                <span id="dash-record-count" class="text-xs font-bold text-indigo-600 mt-2 inline-block">View all store logs</span>
+                                <h2 class="text-lg sm:text-xl font-bold text-brandNavy">CALENDAR REVENUE</h2>
+                                <p class="text-xs text-gray-500 mt-1">Daily income ledger & sales breakdown</p>
+                                <span id="dash-record-count" class="text-xs font-bold text-indigo-600 mt-2 inline-block">View daily revenue</span>
                             </div>
                             <div class="w-12 h-12 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center text-2xl">
-                                <i class="fa-solid fa-book-bookmark"></i>
+                                <i class="fa-solid fa-calendar-days"></i>
                             </div>
                         </div>
 
@@ -273,48 +273,33 @@
                     <div id="orders-list" class="space-y-4"></div>
                 </section>
 
-                <!-- 4. RECORDS VIEW -->
+                <!-- 4. CALENDAR REVENUE VIEW -->
                 <section id="view-records" class="content-view space-y-6 hidden">
                     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                         <div>
-                            <h1 class="text-xl sm:text-2xl font-bold text-brandNavy">Store Records & Sales History</h1>
-                            <p class="text-xs text-gray-500 mt-1">Complete archive of all completed and recorded transactions</p>
+                            <h1 class="text-xl sm:text-2xl font-bold text-brandNavy">Calendar Revenue & Daily Income</h1>
+                            <p class="text-xs text-gray-500 mt-1">Shows daily income breakdown with customer purchases and amounts (Persistent ledger)</p>
                         </div>
                         <div class="flex items-center space-x-2">
                             <span id="record-count-badge" class="bg-indigo-100 text-indigo-800 text-xs font-bold px-3 py-1.5 rounded-full">0 Records</span>
                         </div>
                     </div>
 
-                    <!-- Search / Filter bar for Records -->
+                    <!-- Search / Filter bar for Calendar Revenue -->
                     <div class="bg-white p-3 rounded-xl shadow-sm border flex flex-col sm:flex-row gap-3">
                         <div class="relative flex-1">
                             <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-gray-400 text-sm"></i>
-                            <input type="text" id="record-search" oninput="renderRecords()" placeholder="Search records by customer name, order ID or items..." class="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-brandGold">
+                            <input type="text" id="record-search" oninput="renderRecords()" placeholder="Search revenue records by date, customer name or items..." class="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-brandGold">
                         </div>
                         <button onclick="exportRecordsToCSV()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-4 py-2 rounded-lg text-xs flex items-center justify-center space-x-1.5 shadow">
                             <i class="fa-solid fa-download"></i>
-                            <span>Export Records</span>
+                            <span>Export Revenue CSV</span>
                         </button>
                     </div>
 
-                    <!-- Records Table / List -->
-                    <div class="bg-white rounded-xl shadow-md border overflow-hidden">
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-left text-xs sm:text-sm">
-                                <thead class="bg-brandNavy text-white uppercase text-[11px] font-bold">
-                                    <tr>
-                                        <th class="p-3.5">Order ID & Date</th>
-                                        <th class="p-3.5">Customer</th>
-                                        <th class="p-3.5">Items / Goods</th>
-                                        <th class="p-3.5">Total Amount</th>
-                                        <th class="p-3.5 text-center">Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="records-table-body" class="divide-y text-gray-700">
-                                    <!-- Populated dynamically -->
-                                </tbody>
-                            </table>
-                        </div>
+                    <!-- Calendar Revenue Ledger -->
+                    <div id="calendar-revenue-container" class="space-y-4">
+                        <!-- Populated dynamically by day -->
                     </div>
                 </section>
 
@@ -641,11 +626,11 @@
                     </div>
                 </div>
 
-                <!-- 8. Volume Discounts (OPTIONAL - including 15 Qty) -->
+                <!-- 8. Volume Discounts Tiers (5, 10, 15, 20, 30, 40, 50, 60, 70, 80, 90, 100) -->
                 <div class="bg-blue-50/60 p-4 rounded-xl border border-blue-200 space-y-3">
                     <h4 class="font-bold text-brandNavy flex items-center space-x-2">
                         <i class="fa-solid fa-tags text-brandGold"></i>
-                        <span>Volume Discounts Tiers (Optional)</span>
+                        <span>Volume Discounts Tiers (5, 10, 15, 20, 30, 40, 50, 60, 70, 80, 90, 100)</span>
                     </h4>
                     <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
                         <div>
@@ -669,8 +654,28 @@
                             <input type="number" id="p-disc-30" placeholder="0" class="w-full p-2 bg-white rounded border">
                         </div>
                         <div>
+                            <label class="block text-xs font-semibold mb-1">40 Qty Price (₦)</label>
+                            <input type="number" id="p-disc-40" placeholder="0" class="w-full p-2 bg-white rounded border">
+                        </div>
+                        <div>
                             <label class="block text-xs font-semibold mb-1">50 Qty Price (₦)</label>
                             <input type="number" id="p-disc-50" placeholder="0" class="w-full p-2 bg-white rounded border">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold mb-1">60 Qty Price (₦)</label>
+                            <input type="number" id="p-disc-60" placeholder="0" class="w-full p-2 bg-white rounded border">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold mb-1">70 Qty Price (₦)</label>
+                            <input type="number" id="p-disc-70" placeholder="0" class="w-full p-2 bg-white rounded border">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold mb-1">80 Qty Price (₦)</label>
+                            <input type="number" id="p-disc-80" placeholder="0" class="w-full p-2 bg-white rounded border">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold mb-1">90 Qty Price (₦)</label>
+                            <input type="number" id="p-disc-90" placeholder="0" class="w-full p-2 bg-white rounded border">
                         </div>
                         <div>
                             <label class="block text-xs font-semibold mb-1">100 Qty Price (₦)</label>
@@ -863,7 +868,12 @@
                 disc15: 13000,
                 disc20: 12500,
                 disc30: 12000,
+                disc40: 11500,
                 disc50: 11000,
+                disc60: 10800,
+                disc70: 10500,
+                disc80: 10300,
+                disc90: 10100,
                 disc100: 10000,
                 images: ['https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=500']
             },
@@ -899,7 +909,12 @@
                 disc15: 28500,
                 disc20: 28000,
                 disc30: 27000,
+                disc40: 26000,
                 disc50: 25000,
+                disc60: 24500,
+                disc70: 24000,
+                disc80: 23500,
+                disc90: 23200,
                 disc100: 23000,
                 images: ['https://images.unsplash.com/photo-1584992236310-6edddc08acff?w=500']
             }
@@ -930,7 +945,7 @@
                 ],
                 total: 30000,
                 proofImg: 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=500',
-                status: 'Pending Confirmation'
+                status: 'Confirmed & Processing'
             }
         ];
 
@@ -948,6 +963,9 @@
         let products = JSON.parse(localStorage.getItem('fv_products')) || initialProducts;
         let orders = JSON.parse(localStorage.getItem('fv_orders')) || initialOrders;
         let adminNotes = JSON.parse(localStorage.getItem('fv_admin_notes')) || initialAdminNotes;
+        
+        // Persistent Revenue Ledger (Ensures deleted confirmed orders remain in revenue)
+        let revenueLedger = JSON.parse(localStorage.getItem('fv_revenue_ledger')) || initialOrders.map(o => ({...o}));
 
         // Cloud Sync Functions
         async function fetchFromCloud() {
@@ -963,10 +981,12 @@
                         if (row.key === 'products' && row.payload) products = row.payload;
                         if (row.key === 'orders' && row.payload) orders = row.payload;
                         if (row.key === 'admin_notes' && row.payload) adminNotes = row.payload;
+                        if (row.key === 'revenue_ledger' && row.payload) revenueLedger = row.payload;
                     });
                     localStorage.setItem('fv_products', JSON.stringify(products));
                     localStorage.setItem('fv_orders', JSON.stringify(orders));
                     localStorage.setItem('fv_admin_notes', JSON.stringify(adminNotes));
+                    localStorage.setItem('fv_revenue_ledger', JSON.stringify(revenueLedger));
                     updateDashboardCounts();
                     renderProducts();
                     renderOrders();
@@ -987,7 +1007,8 @@
                 await supabaseClient.from('store_state').upsert([
                     { key: 'products', payload: products },
                     { key: 'orders', payload: orders },
-                    { key: 'admin_notes', payload: adminNotes }
+                    { key: 'admin_notes', payload: adminNotes },
+                    { key: 'revenue_ledger', payload: revenueLedger }
                 ]);
             } catch (err) {
                 console.error('Cloud save error:', err);
@@ -1020,6 +1041,7 @@
             localStorage.setItem('fv_products', JSON.stringify(products));
             localStorage.setItem('fv_orders', JSON.stringify(orders));
             localStorage.setItem('fv_admin_notes', JSON.stringify(adminNotes));
+            localStorage.setItem('fv_revenue_ledger', JSON.stringify(revenueLedger));
             updateDashboardCounts();
             saveStateToCloud();
         }
@@ -1111,6 +1133,12 @@
                 localStorage.setItem('fv_orders', JSON.stringify(orders));
             }
 
+            // Sync revenue ledger if empty
+            if (revenueLedger.length === 0 && orders.length > 0) {
+                revenueLedger = orders.map(o => ({...o}));
+                localStorage.setItem('fv_revenue_ledger', JSON.stringify(revenueLedger));
+            }
+
             updateDashboardCounts();
             renderProducts();
             renderOrders();
@@ -1126,7 +1154,7 @@
             const lowCount = products.filter(p => p.qty <= 5).length;
             document.getElementById('dash-lowstock-count').innerText = `${lowCount} Items low`;
             const recordCountBadge = document.getElementById('dash-record-count');
-            if (recordCountBadge) recordCountBadge.innerText = `${orders.length} Total records logged`;
+            if (recordCountBadge) recordCountBadge.innerText = `${revenueLedger.length} Revenue entries`;
             const dashNotesCount = document.getElementById('dash-notes-count');
             if (dashNotesCount) dashNotesCount.innerText = `${adminNotes.length} Notes active`;
         }
@@ -1160,7 +1188,12 @@
                 if(p.disc15) volumeBadges.push(`15+: ₦${Number(p.disc15).toLocaleString()}`);
                 if(p.disc20) volumeBadges.push(`20+: ₦${Number(p.disc20).toLocaleString()}`);
                 if(p.disc30) volumeBadges.push(`30+: ₦${Number(p.disc30).toLocaleString()}`);
+                if(p.disc40) volumeBadges.push(`40+: ₦${Number(p.disc40).toLocaleString()}`);
                 if(p.disc50) volumeBadges.push(`50+: ₦${Number(p.disc50).toLocaleString()}`);
+                if(p.disc60) volumeBadges.push(`60+: ₦${Number(p.disc60).toLocaleString()}`);
+                if(p.disc70) volumeBadges.push(`70+: ₦${Number(p.disc70).toLocaleString()}`);
+                if(p.disc80) volumeBadges.push(`80+: ₦${Number(p.disc80).toLocaleString()}`);
+                if(p.disc90) volumeBadges.push(`90+: ₦${Number(p.disc90).toLocaleString()}`);
                 if(p.disc100) volumeBadges.push(`100+: ₦${Number(p.disc100).toLocaleString()}`);
 
                 const shareIconsMap = {
@@ -1215,7 +1248,7 @@
                             
                             ${volumeBadges.length > 0 ? `
                                 <div class="pt-1 mt-1 border-t">
-                                    <p class="font-bold text-[10px] text-brandNavy uppercase mb-1">Volume Discounts:</p>
+                                    <p class="font-bold text-[10px] text-brandNavy uppercase mb-1">Volume Discounts (5-100):</p>
                                     <div class="flex flex-wrap gap-1">
                                         ${volumeBadges.map(b => `<span class="bg-blue-50 text-blue-800 text-[10px] px-1.5 py-0.5 rounded font-semibold border border-blue-200">${b}</span>`).join('')}
                                     </div>
@@ -1308,7 +1341,12 @@
                 document.getElementById('p-disc-15').value = prod.disc15 || '';
                 document.getElementById('p-disc-20').value = prod.disc20 || '';
                 document.getElementById('p-disc-30').value = prod.disc30 || '';
+                document.getElementById('p-disc-40').value = prod.disc40 || '';
                 document.getElementById('p-disc-50').value = prod.disc50 || '';
+                document.getElementById('p-disc-60').value = prod.disc60 || '';
+                document.getElementById('p-disc-70').value = prod.disc70 || '';
+                document.getElementById('p-disc-80').value = prod.disc80 || '';
+                document.getElementById('p-disc-90').value = prod.disc90 || '';
                 document.getElementById('p-disc-100').value = prod.disc100 || '';
 
                 for (let i = 1; i <= 10; i++) {
@@ -1399,7 +1437,12 @@
                 disc15: Number(document.getElementById('p-disc-15').value) || 0,
                 disc20: Number(document.getElementById('p-disc-20').value) || 0,
                 disc30: Number(document.getElementById('p-disc-30').value) || 0,
+                disc40: Number(document.getElementById('p-disc-40').value) || 0,
                 disc50: Number(document.getElementById('p-disc-50').value) || 0,
+                disc60: Number(document.getElementById('p-disc-60').value) || 0,
+                disc70: Number(document.getElementById('p-disc-70').value) || 0,
+                disc80: Number(document.getElementById('p-disc-80').value) || 0,
+                disc90: Number(document.getElementById('p-disc-90').value) || 0,
                 disc100: Number(document.getElementById('p-disc-100').value) || 0,
                 images: uploadedImages.length > 0 ? uploadedImages : ['https://via.placeholder.com/300'],
             };
@@ -1460,55 +1503,96 @@
             `}).join('');
         }
 
-        // Records View Rendering
+        // Calendar Revenue View Rendering
         function renderRecords() {
-            const container = document.getElementById('records-table-body');
+            const container = document.getElementById('calendar-revenue-container');
             const countBadge = document.getElementById('record-count-badge');
             const searchInput = document.getElementById('record-search');
             const query = searchInput ? searchInput.value.toLowerCase() : '';
 
-            const filteredOrders = orders.filter(o => {
+            // Filter revenue ledger based on query
+            const filteredLedger = revenueLedger.filter(o => {
                 const customerMatch = o.customerName && o.customerName.toLowerCase().includes(query);
                 const idMatch = o.id && o.id.toLowerCase().includes(query);
                 const itemMatch = o.itemsList && o.itemsList.some(item => item.name && item.name.toLowerCase().includes(query));
-                return customerMatch || idMatch || itemMatch;
+                const dateStr = o.date ? new Date(o.date).toLocaleDateString().toLowerCase() : '';
+                return customerMatch || idMatch || itemMatch || dateStr.includes(query);
             });
 
-            if (countBadge) countBadge.innerText = `${filteredOrders.length} Records`;
+            if (countBadge) countBadge.innerText = `${filteredLedger.length} Revenue Entries`;
 
-            if (filteredOrders.length === 0) {
+            if (filteredLedger.length === 0) {
                 container.innerHTML = `
-                    <tr>
-                        <td colspan="5" class="p-8 text-center text-gray-500 font-semibold">No store records found.</td>
-                    </tr>
+                    <div class="bg-white p-8 rounded-xl shadow-sm border text-center text-gray-500 font-semibold">
+                        No calendar revenue records found.
+                    </div>
                 `;
                 return;
             }
 
-            container.innerHTML = filteredOrders.map(o => {
-                const orderDateStr = o.date ? new Date(o.date).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : 'N/A';
-                const itemsSummary = (o.itemsList || []).map(i => `${i.name} (x${i.qty})`).join(', ') || 'Standard Order';
-                
-                return `
-                    <tr class="hover:bg-gray-50 transition">
-                        <td class="p-3.5 font-bold text-brandNavy">
-                            <div>#${o.id}</div>
-                            <div class="text-[10px] text-gray-400 font-normal">${orderDateStr}</div>
-                        </td>
-                        <td class="p-3.5">
-                            <div class="font-semibold text-gray-800">${o.customerName}</div>
-                            <div class="text-[11px] text-gray-500">${o.phone}</div>
-                        </td>
-                        <td class="p-3.5 text-xs text-gray-600 max-w-xs truncate" title="${itemsSummary}">${itemsSummary}</td>
-                        <td class="p-3.5 font-extrabold text-green-700">₦${Number(o.total).toLocaleString()}</td>
-                        <td class="p-3.5 text-center">
-                            <button onclick="openOrderDetailsModal('${o.id}')" class="bg-brandNavy hover:bg-brandNavyDark text-white font-bold px-3 py-1.5 rounded text-xs shadow">
-                                View
-                            </button>
-                        </td>
-                    </tr>
-                `;
-            }).join('');
+            // Group revenue entries by Date (YYYY-MM-DD or formatted day string)
+            const groupedByDate = {};
+            filteredLedger.forEach(o => {
+                const dateObj = o.date ? new Date(o.date) : new Date();
+                const dateKey = dateObj.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+                if (!groupedByDate[dateKey]) {
+                    groupedByDate[dateKey] = {
+                        dateString: dateKey,
+                        totalDayRevenue: 0,
+                        entries: []
+                    };
+                }
+                groupedByDate[dateKey].entries.push(o);
+                groupedByDate[dateKey].totalDayRevenue += Number(o.total || 0);
+            });
+
+            // Sort days descending (newest first)
+            const sortedDays = Object.values(groupedByDate).sort((a, b) => new Date(b.entries[0]?.date || 0) - new Date(a.entries[0]?.date || 0));
+
+            container.innerHTML = sortedDays.map(day => `
+                <div class="bg-white rounded-xl shadow-md border overflow-hidden">
+                    <div class="bg-brandNavy text-white p-3.5 px-5 flex flex-wrap justify-between items-center gap-2">
+                        <div class="flex items-center space-x-2">
+                            <i class="fa-solid fa-calendar-day text-brandGold text-lg"></i>
+                            <h3 class="font-bold text-base text-white">${day.dateString}</h3>
+                        </div>
+                        <div class="bg-brandGold text-brandNavy font-extrabold text-xs px-3 py-1 rounded-full shadow">
+                            Day Total: ₦${day.totalDayRevenue.toLocaleString()}
+                        </div>
+                    </div>
+
+                    <div class="p-4 space-y-3">
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-xs sm:text-sm">
+                                <thead class="bg-gray-100 text-gray-700 uppercase text-[10px] font-bold">
+                                    <tr>
+                                        <th class="p-2.5">Order ID</th>
+                                        <th class="p-2.5">Customer Name & Phone</th>
+                                        <th class="p-2.5">What Customer Bought</th>
+                                        <th class="p-2.5 text-right">Amount (₦)</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y text-gray-700">
+                                    ${day.entries.map(entry => {
+                                        const itemsPurchased = (entry.itemsList || []).map(i => `${i.name} (${i.selection || 'Piece'} x${i.qty})${i.color ? ' ['+i.color+']' : ''}`).join(', ') || 'Standard Purchase';
+                                        return `
+                                            <tr class="hover:bg-gray-50 transition">
+                                                <td class="p-2.5 font-bold text-brandNavy">#${entry.id}</td>
+                                                <td class="p-2.5">
+                                                    <div class="font-bold text-gray-800">${entry.customerName}</div>
+                                                    <div class="text-[11px] text-gray-500">${entry.phone}</div>
+                                                </td>
+                                                <td class="p-2.5 text-xs text-gray-600">${itemsPurchased}</td>
+                                                <td class="p-2.5 text-right font-extrabold text-green-700">₦${Number(entry.total).toLocaleString()}</td>
+                                            </tr>
+                                        `;
+                                    }).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
         }
 
         // Admin Notes Handlers
@@ -1613,6 +1697,7 @@
                 products: products,
                 orders: orders,
                 adminNotes: adminNotes,
+                revenueLedger: revenueLedger,
                 exportDate: new Date().toISOString()
             };
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(backupData, null, 2));
@@ -1641,6 +1726,9 @@
                     if (parsedData.adminNotes && Array.isArray(parsedData.adminNotes)) {
                         adminNotes = parsedData.adminNotes;
                     }
+                    if (parsedData.revenueLedger && Array.isArray(parsedData.revenueLedger)) {
+                        revenueLedger = parsedData.revenueLedger;
+                    }
                     saveState();
                     initApp();
                     alert("Data imported successfully! Your store data has been updated.");
@@ -1653,21 +1741,21 @@
         }
 
         function exportRecordsToCSV() {
-            if (orders.length === 0) {
-                alert("No records available to export.");
+            if (revenueLedger.length === 0) {
+                alert("No revenue records available to export.");
                 return;
             }
 
-            let csvContent = "data:text/csv;charset=utf-8,Order ID,Date,Customer Name,Phone,Shipment Method,Total Amount,Status\r\n";
-            orders.forEach(o => {
+            let csvContent = "data:text/csv;charset=utf-8,Order ID,Date,Customer Name,Phone,Total Amount,Items Summary\r\n";
+            revenueLedger.forEach(o => {
+                const itemsSummary = (o.itemsList || []).map(i => `${i.name} (x${i.qty})`).join('; ');
                 const row = [
                     o.id,
                     `"${o.date || ''}"`,
                     `"${o.customerName || ''}"`,
                     `"${o.phone || ''}"`,
-                    `"${o.shipmentMethod || ''}"`,
                     o.total,
-                    `"${o.status || ''}"`
+                    `"${itemsSummary}"`
                 ];
                 csvContent += row.join(",") + "\r\n";
             });
@@ -1675,7 +1763,7 @@
             const encodedUri = encodeURI(csvContent);
             const link = document.createElement("a");
             link.setAttribute("href", encodedUri);
-            link.setAttribute("download", `Fash_Store_Records_${new Date().toISOString().slice(0, 10)}.csv`);
+            link.setAttribute("download", `Fash_Store_Revenue_${new Date().toISOString().slice(0, 10)}.csv`);
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
@@ -1796,10 +1884,16 @@
             const order = orders.find(o => o.id === orderId);
             if (order) {
                 order.status = 'Confirmed & Processing';
+                
+                // Ensure confirmed order is permanently added to revenue ledger
+                if (!revenueLedger.some(r => r.id === order.id)) {
+                    revenueLedger.push({ ...order });
+                }
+
                 saveState();
                 renderOrders();
                 renderRecords();
-                alert(`Order #${orderId} marked as Confirmed!`);
+                alert(`Order #${orderId} marked as Confirmed and added to revenue!`);
                 closeOrderDetailsModal();
             }
         }
@@ -1810,15 +1904,17 @@
 
         function viewProof(imgUrl) {
             document.getElementById('proof-img').src = imgUrl || 'https://via.placeholder.com/300';
-            document.getElementById('proof-modal').classList.add('hidden');
+            document.getElementById('proof-modal').classList.remove('hidden');
         }
 
         function deleteOrder(id) {
-            if (confirm('Confirm deleting this order after verification?')) {
+            if (confirm('Confirm deleting this order after verification? (Note: Confirmed revenue will be preserved in Calendar Revenue).')) {
+                // Remove from active orders list, but do NOT remove from revenueLedger
                 orders = orders.filter(o => o.id !== id);
                 saveState();
                 renderOrders();
                 renderRecords();
+                alert("Order removed from active queue. Revenue remains safe in Calendar Revenue.");
             }
         }
 
