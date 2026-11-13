@@ -42,7 +42,7 @@
                 </div>
             </a>
             <div class="flex items-center gap-5">
-                <a href="#" onclick="openModal('wishlistModal'); return false;" class="relative hover:text-fashGold transition-colors"><i class="fa-regular fa-heart text-xl"></i><span id="wishlistCount" class="absolute -top-2 -right-2 bg-fashGold text-fashNavy text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">0</span></a>
+                <a href="wishlist.html" class="relative hover:text-fashGold transition-colors"><i class="fa-regular fa-heart text-xl"></i><span id="wishlistCount" class="absolute -top-2 -right-2 bg-fashGold text-fashNavy text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">0</span></a>
                 <a href="cart.html" class="relative hover:text-fashGold transition-colors"><i class="fa-solid fa-cart-shopping text-xl"></i><span id="cartCount" class="absolute -top-2 -right-2 bg-fashGold text-fashNavy text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">0</span></a>
             </div>
         </div>
@@ -57,15 +57,6 @@
         <!-- Products Grid -->
         <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-6" id="shopProductGrid"></div>
     </main>
-
-    <!-- WISHLIST MODAL -->
-    <div id="wishlistModal" class="fixed inset-0 bg-black/70 z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl max-w-lg w-full p-6 space-y-4 shadow-2xl relative border-2 border-fashGold max-h-[80vh] flex flex-col">
-            <button onclick="closeModal('wishlistModal')" class="absolute top-4 right-4 text-gray-400 hover:text-gray-800 text-lg"><i class="fa-solid fa-xmark"></i></button>
-            <h3 class="text-xl font-bold text-fashNavy border-b pb-2">Your Saved Wishlist</h3>
-            <div id="wishlistModalItems" class="overflow-y-auto space-y-3 flex-1 custom-scrollbar"></div>
-        </div>
-    </div>
 
     <footer class="bg-fashNavy text-white text-center py-4 text-xs mt-auto border-t-2 border-fashGold">
         2026 © FASH VARIETIES STORE. All rights reserved.
@@ -135,7 +126,6 @@
             renderShopTabs();
             renderShopProducts();
             updateCounts();
-            renderWishlistModal();
             if (supabaseClient) {
                 fetchStoreProducts();
                 subscribeToRealtime();
@@ -165,7 +155,7 @@
 
             grid.innerHTML = filtered.map(product => {
                 const primaryImg = (product.images && product.images.length > 0) ? product.images[0] : (product.image || 'https://via.placeholder.com/300');
-                const displayPrice = product.price || 0;
+                const displayPrice = product.priceSingle || product.price || 0;
                 const displayTag = (product.tags && product.tags.length > 0) ? product.tags[0] : (product.tag || product.category);
                 return `
                     <a href="product.html?id=${product.id}" class="bg-white rounded-xl overflow-hidden border border-gray-200 shadow-sm hover:shadow-md transition flex flex-col justify-between group cursor-pointer">
@@ -193,33 +183,6 @@
             if (cCount) cCount.innerText = totalItems;
             if (wCount) wCount.innerText = wishlist.length;
         }
-
-        function renderWishlistModal() {
-            productsData = JSON.parse(localStorage.getItem('fv_products')) || productsData;
-            const container = document.getElementById('wishlistModalItems');
-            if (!container) return;
-            if (wishlist.length === 0) {
-                container.innerHTML = `<p class="text-center text-gray-500 text-xs py-6">Your wishlist is currently empty.</p>`;
-                return;
-            }
-            const savedProducts = productsData.filter(p => wishlist.includes(p.id));
-            container.innerHTML = savedProducts.map(p => `
-                <div class="flex items-center justify-between gap-3 p-2 bg-gray-50 rounded-lg border">
-                    <img src="${p.images?.[0] || p.image}" class="w-12 h-12 object-contain rounded">
-                    <div class="flex-1">
-                        <h4 class="font-bold text-xs text-gray-800">${p.name}</h4>
-                        <p class="text-xs font-extrabold text-fashNavy">₦${Number(p.price).toLocaleString()}</p>
-                    </div>
-                    <a href="product.html?id=${p.id}" class="px-3 py-1 bg-fashNavy text-fashGold rounded text-xs font-bold">View</a>
-                </div>
-            `).join('');
-        }
-
-        function openModal(id) {
-            if (id === 'wishlistModal') renderWishlistModal();
-            document.getElementById(id).classList.remove('hidden');
-        }
-        function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
     </script>
 </body>
 </html>
