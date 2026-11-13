@@ -1,1 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="pageTitle">Product Details - FASH VARIETIES STORE</title>
+    <meta id="pageMetaDesc" name="description" content="Buy wholesale and retail products from Fash Varieties Store.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Supabase JS SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        fashNavy: '#0b1d3a',
+                        fashNavyDark: '#071226',
+                        fashGold: '#d4af37',
+                        fashGoldHover: '#b59328',
+                        fashAccentYellow: '#f5b014',
+                        fashLightBg: '#f8fafc'
+                    },
+                    fontFamily: { sans: ['Poppins', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+    <style>
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f1f1; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #d4af37; border-radius: 3px; }
+    </style>
+</head>
+<body class="bg-fashLightBg text-gray-800 font-sans min-h-screen flex flex-col pb-16">
+    <!-- Header -->
+    <header class="bg-fashNavy text-white sticky top-0 z-40 shadow-lg border-b-2 border-fashGold">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
+            <a href="index.html" class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full border-2 border-fashGold bg-fashNavy flex items-center justify-center font-bold text-fashGold shadow-md overflow-hidden">
+                    <img src="https://i.postimg.cc/wM5QvPLp/IMG-20260826-010246.jpg" alt="Logo" class="w-full h-full object-cover">
+                </div>
+                <div>
+                    <h1 class="font-bold text-lg leading-tight tracking-wide text-white">FASH VARIETIES STORE</h1>
+                    <p class="text-[10px] text-fashGold tracking-wider uppercase font-semibold">Wholesale & Retail</p>
+                </div>
+            </a>
+            <div class="flex items-center gap-5">
+                <a href="wishlist.html" class="relative hover:text-fashGold transition-colors"><i class="fa-regular fa-heart text-xl"></i><span id="wishlistCount" class="absolute -top-2 -right-2 bg-fashGold text-fashNavy text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">0</span></a>
+                <a href="cart.html" class="relative hover:text-fashGold transition-colors"><i class="fa-solid fa-cart-shopping text-xl"></i><span id="cartCount" class="absolute -top-2 -right-2 bg-fashGold text-fashNavy text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">0</span></a>
+            </div>
+        </div>
+    </header>
 
+    <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 space-y-8">
+        <a href="shop.html" class="text-sm font-semibold text-fashNavy hover:text-fashGold mb-2 inline-flex items-center gap-2">
+            <i class="fa-solid fa-arrow-left"></i> Back to Products
+        </a>
+
+        <div class="bg-white p-6 rounded-2xl shadow-lg border border-gray-200 grid grid-cols-1 md:grid-cols-2 gap-8">
+            <!-- Gallery Slider -->
+            <div>
+                <div id="mainImgContainer" class="relative rounded-xl overflow-hidden border border-gray-200 bg-gray-50 h-80 flex items-center justify-center cursor-grab select-none">
+                    <img id="detailMainImg" src="" alt="Product Image" class="h-full object-contain pointer-events-none">
+                    <span class="absolute top-2 right-2 bg-fashNavy/70 text-fashGold text-[10px] px-2 py-0.5 rounded-full font-bold">
+                        <i class="fa-solid fa-hand-pointer"></i> Swipe image
+                    </span>
+                    <div class="absolute bottom-2 bg-black/60 text-white text-[10px] px-2.5 py-0.5 rounded-full font-medium" id="imageIndexIndicator">1 / 1</div>
+                </div>
+                <div class="flex gap-2 mt-4 overflow-x-auto pb-2 custom-scrollbar" id="detailThumbnails"></div>
+            </div>
+
+            <!-- Product Information -->
+            <div class="space-y-5">
+                <h2 id="detailTitle" class="text-2xl font-bold text-fashNavy">Product Title</h2>
+                
+                <div class="flex items-center gap-3">
+                    <span id="detailPrice" class="text-2xl font-extrabold text-fashNavy">₦0</span>
+                    <span class="bg-green-100 text-green-700 text-xs px-2.5 py-0.5 rounded-full font-semibold" id="detailStockBadge">In Stock</span>
+                </div>
+
+                <div id="detailOptionsContainer" class="space-y-4"></div>
+
+                <div class="space-y-2 bg-fashLightBg p-3 rounded-lg border border-gray-200">
+                    <div class="flex items-center gap-3">
+                        <label class="text-xs font-semibold text-gray-700">QTY:</label>
+                        <div class="flex items-center border border-gray-300 rounded-lg bg-white overflow-hidden">
+                            <button onclick="adjustDetailQty(-1)" class="px-3 py-1 bg-gray-100 hover:bg-gray-200 font-bold">-</button>
+                            <input type="number" id="detailQty" value="1" min="1" onchange="updateProductVariant()" class="w-12 text-center text-sm font-bold border-none focus:outline-none">
+                            <button onclick="adjustDetailQty(1)" class="px-3 py-1 bg-gray-100 hover:bg-gray-200 font-bold">+</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex flex-col sm:flex-row gap-3 pt-2">
+                    <button onclick="addToCartFromDetail()" class="flex-1 bg-fashNavy text-fashGold hover:bg-fashGold hover:text-fashNavy font-bold py-3 px-6 rounded-xl shadow-md transition-all text-sm uppercase">
+                        ADD TO CART
+                    </button>
+                    <button onclick="addToWishlistFromDetail()" class="border border-gray-300 hover:border-red-500 text-gray-700 hover:text-red-500 font-semibold px-4 py-3 rounded-xl transition text-sm flex items-center justify-center gap-2">
+                        <i class="fa-regular fa-heart"></i> Add to Wishlist
+                    </button>
+                </div>
+
+                <div class="text-xs text-gray-500 space-y-1 border-t border-gray-200 pt-3">
+                    <p><strong>SKU:</strong> <span id="detailSKU">FASH-001</span></p>
+                    <p><strong>Category:</strong> <span id="detailCategory">Kitchen Utensils</span></p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-fashNavy text-white text-center py-4 text-xs mt-auto border-t-2 border-fashGold">
+        2026 © FASH VARIETIES STORE. All rights reserved.
+    </footer>
+
+    <script>
+        // Supabase Configuration
+        const SUPABASE_URL = 'https://pflulqqwxjqcierurzbj.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_iqo26JVy_vJyGBKYN--phA_BB0YQmFs';
+        let supabaseClient = null;
+
+        if (window.supabase && SUPABASE_URL && SUPABASE_KEY) {
+            try {
+                supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+            } catch (err) {
+                console.error('Supabase initialization error:', err);
+            }
+        }
+
+        let productsData = JSON.parse(localStorage.getItem('fv_products')) || [];
+        let cart = JSON.parse(localStorage.getItem('fv_cart')) || [];
+        let wishlist = JSON.parse(localStorage.getItem('fv_wishlist')) || [];
+        let currentProduct = null;
+        let activeImageIndex = 0;
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const productId = parseInt(urlParams.get('id'));
+
+        async function fetchStoreProducts() {
+            if (!supabaseClient) return;
+            try {
+                const { data, error } = await supabaseClient.from('store_state').select('*');
+                if (error) {
+                    console.error('Fetch error:', error);
+                    return;
+                }
+                if (data && data.length > 0) {
+                    data.forEach(row => {
+                        if (row.key === 'products' && row.payload) {
+                            productsData = row.payload;
+                            localStorage.setItem('fv_products', JSON.stringify(productsData));
+                        }
+                    });
+                    loadProductDetails();
+                }
+            } catch (err) {
+                console.error('Cloud fetch exception:', err);
+            }
+        }
+
+        function loadProductDetails() {
+            productsData = JSON.parse(localStorage.getItem('fv_products')) || productsData;
+            currentProduct = productsData.find(p => p.id === productId) || productsData[0];
+            if (currentProduct) {
+                document.getElementById('pageTitle').innerText = `${currentProduct.name} - FASH VARIETIES STORE`;
+                document.getElementById('pageMetaDesc').content = `Buy ${currentProduct.name} at wholesale and retail prices from Fash Varieties Store.`;
+                document.getElementById('detailTitle').innerText = currentProduct.name;
+                document.getElementById('detailSKU').innerText = currentProduct.sku || 'FASH-001';
+                document.getElementById('detailCategory').innerText = currentProduct.category;
+                
+                if(!currentProduct.images || currentProduct.images.length === 0) {
+                    currentProduct.images = [currentProduct.image || 'https://via.placeholder.com/300'];
+                }
+                updateImageGallery();
+                renderOptionDropdowns();
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            loadProductDetails();
+            updateCounts();
+            if (supabaseClient) {
+                fetchStoreProducts();
+            }
+        });
+
+        function updateImageGallery() {
+            if (!currentProduct || !currentProduct.images) return;
+            const mainImg = document.getElementById('detailMainImg');
+            const indicator = document.getElementById('imageIndexIndicator');
+            const thumbs = document.getElementById('detailThumbnails');
+
+            mainImg.src = currentProduct.images[activeImageIndex];
+            indicator.innerText = `${activeImageIndex + 1} / ${currentProduct.images.length}`;
+
+            thumbs.innerHTML = currentProduct.images.map((img, idx) => `
+                <img src="${img}" onclick="setImageIndex(${idx})" class="w-14 h-14 object-contain rounded-lg border-2 cursor-pointer ${idx === activeImageIndex ? 'border-fashGold bg-gray-100' : 'border-gray-200'}">
+            `).join('');
+        }
+
+        function setImageIndex(idx) {
+            activeImageIndex = idx;
+            updateImageGallery();
+        }
+
+        function renderOptionDropdowns() {
+            const container = document.getElementById('detailOptionsContainer');
+            if (!currentProduct) return;
+            let html = '';
+            if (currentProduct.sizes && currentProduct.sizes.length > 0) {
+                html += `
+                    <div class="space-y-1">
+                        <label class="block text-xs font-semibold text-gray-700 uppercase">Size *</label>
+                        <select id="detailSizeSelect" class="w-full border border-gray-300 rounded-lg p-2.5 text-sm bg-white font-medium">
+                            ${currentProduct.sizes.map(s => `<option value="${s.name || s}">${s.name || s}</option>`).join('')}
+                        </select>
+                    </div>
+                `;
+            }
+            container.innerHTML = html;
+            updateProductVariant();
+        }
+
+        function updateProductVariant() {
+            if (!currentProduct) return;
+            let unitPrice = currentProduct.priceSingle || currentProduct.price || 0;
+            document.getElementById('detailPrice').innerText = `₦${unitPrice.toLocaleString()}`;
+        }
+
+        function adjustDetailQty(delta) {
+            const input = document.getElementById('detailQty');
+            let val = (parseInt(input.value) || 1) + delta;
+            if (val < 1) val = 1;
+            input.value = val;
+        }
+
+        function addToCartFromDetail() {
+            if (!currentProduct) return;
+            const unitPrice = currentProduct.priceSingle || currentProduct.price || 0;
+            const qty = parseInt(document.getElementById('detailQty').value) || 1;
+
+            cart.push({
+                id: currentProduct.id,
+                name: currentProduct.name,
+                image: currentProduct.images[0],
+                size: "Standard",
+                color: "Default",
+                buyingSelection: "Piece",
+                unitPrice: unitPrice,
+                qty: qty,
+                subtotal: unitPrice * qty
+            });
+
+            localStorage.setItem('fv_cart', JSON.stringify(cart));
+            updateCounts();
+            alert('Product added to cart!');
+            window.location.href = "cart.html";
+        }
+
+        function addToWishlistFromDetail() {
+            if (!currentProduct) return;
+            if (!wishlist.includes(currentProduct.id)) {
+                wishlist.push(currentProduct.id);
+                localStorage.setItem('fv_wishlist', JSON.stringify(wishlist));
+                updateCounts();
+                alert('Added to wishlist!');
+            } else {
+                alert('Already in wishlist.');
+            }
+        }
+
+        function updateCounts() {
+            const totalItems = cart.reduce((sum, item) => sum + item.qty, 0);
+            const cCount = document.getElementById('cartCount');
+            const wCount = document.getElementById('wishlistCount');
+            if (cCount) cCount.innerText = totalItems;
+            if (wCount) wCount.innerText = wishlist.length;
+        }
+    </script>
+</body>
+</html>
