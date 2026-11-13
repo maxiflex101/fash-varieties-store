@@ -211,8 +211,8 @@
                         <div onclick="navigateTo('records')" class="bg-white p-5 sm:p-6 rounded-xl shadow-md border-l-8 border-indigo-600 hover:shadow-lg transition cursor-pointer flex items-center justify-between">
                             <div>
                                 <h2 class="text-lg sm:text-xl font-bold text-brandNavy">CALENDAR REVENUE</h2>
-                                <p class="text-xs text-gray-500 mt-1">Daily income ledger & sales breakdown</p>
-                                <span id="dash-record-count" class="text-xs font-bold text-indigo-600 mt-2 inline-block">View daily revenue</span>
+                                <p class="text-xs text-gray-500 mt-1">Full year day-by-day synced ledger</p>
+                                <span id="dash-record-count" class="text-xs font-bold text-indigo-600 mt-2 inline-block">View annual calendar</span>
                             </div>
                             <div class="w-12 h-12 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center text-2xl">
                                 <i class="fa-solid fa-calendar-days"></i>
@@ -273,33 +273,34 @@
                     <div id="orders-list" class="space-y-4"></div>
                 </section>
 
-                <!-- 4. CALENDAR REVENUE VIEW -->
+                <!-- 4. CALENDAR REVENUE VIEW (Day-by-Day Synced Year Calendar) -->
                 <section id="view-records" class="content-view space-y-6 hidden">
                     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                         <div>
-                            <h1 class="text-xl sm:text-2xl font-bold text-brandNavy">Calendar Revenue & Daily Income</h1>
-                            <p class="text-xs text-gray-500 mt-1">Shows daily income breakdown with customer purchases and amounts (Persistent ledger)</p>
+                            <h1 class="text-xl sm:text-2xl font-bold text-brandNavy">Year Calendar Revenue (Synced Day-by-Day)</h1>
+                            <p class="text-xs text-gray-500 mt-1">Complete 365-day calendar automatically synced with confirmed orders and daily incomes</p>
                         </div>
-                        <div class="flex items-center space-x-2">
-                            <span id="record-count-badge" class="bg-indigo-100 text-indigo-800 text-xs font-bold px-3 py-1.5 rounded-full">0 Records</span>
+                        <div class="flex items-center space-x-3">
+                            <select id="calendar-year-select" onchange="renderRecords()" class="bg-white border rounded-lg px-3 py-1.5 text-xs font-bold text-brandNavy focus:outline-none shadow-sm">
+                                <option value="2026">2026 Calendar</option>
+                                <option value="2025">2025 Calendar</option>
+                                <option value="2027">2027 Calendar</option>
+                            </select>
+                            <button onclick="exportRecordsToCSV()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-4 py-2 rounded-lg text-xs flex items-center justify-center space-x-1.5 shadow">
+                                <i class="fa-solid fa-download"></i>
+                                <span>Export Calendar CSV</span>
+                            </button>
                         </div>
                     </div>
 
-                    <!-- Search / Filter bar for Calendar Revenue -->
-                    <div class="bg-white p-3 rounded-xl shadow-sm border flex flex-col sm:flex-row gap-3">
-                        <div class="relative flex-1">
-                            <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-gray-400 text-sm"></i>
-                            <input type="text" id="record-search" oninput="renderRecords()" placeholder="Search revenue records by date, customer name or items..." class="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-brandGold">
-                        </div>
-                        <button onclick="exportRecordsToCSV()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-4 py-2 rounded-lg text-xs flex items-center justify-center space-x-1.5 shadow">
-                            <i class="fa-solid fa-download"></i>
-                            <span>Export Revenue CSV</span>
-                        </button>
+                    <!-- Calendar Month Navigator Tabs -->
+                    <div class="flex gap-2 overflow-x-auto pb-2 custom-scrollbar text-xs font-semibold" id="calendar-month-tabs">
+                        <!-- Populated dynamically -->
                     </div>
 
-                    <!-- Calendar Revenue Ledger -->
+                    <!-- Calendar Day-by-Day Ledger Container -->
                     <div id="calendar-revenue-container" class="space-y-4">
-                        <!-- Populated dynamically by day -->
+                        <!-- Populated dynamically -->
                     </div>
                 </section>
 
@@ -462,6 +463,8 @@
                             <option value="Power Bank">Power Bank</option>
                             <option value="Babies & Kiddies">Babies & Kiddies</option>
                             <option value="Back to School">Back to School</option>
+                            <option value="Health">Health</option>
+                            <option value="Educational">Educational</option>
                         </select>
                     </div>
                     <div>
@@ -964,8 +967,11 @@
         let orders = JSON.parse(localStorage.getItem('fv_orders')) || initialOrders;
         let adminNotes = JSON.parse(localStorage.getItem('fv_admin_notes')) || initialAdminNotes;
         
-        // Persistent Revenue Ledger (Ensures deleted confirmed orders remain in revenue)
-        let revenueLedger = JSON.parse(localStorage.getItem('fv_revenue_ledger')) || initialOrders.map(o => ({...o}));
+        // Persistent Revenue Ledger (Emptied initially as requested)
+        let revenueLedger = JSON.parse(localStorage.getItem('fv_revenue_ledger')) || [];
+
+        // Active calendar selected month (0 = January, etc.)
+        let activeMonthIndex = new Date().getMonth();
 
         // Cloud Sync Functions
         async function fetchFromCloud() {
@@ -1131,12 +1137,6 @@
             });
             if (updatedOrders) {
                 localStorage.setItem('fv_orders', JSON.stringify(orders));
-            }
-
-            // Sync revenue ledger if empty
-            if (revenueLedger.length === 0 && orders.length > 0) {
-                revenueLedger = orders.map(o => ({...o}));
-                localStorage.setItem('fv_revenue_ledger', JSON.stringify(revenueLedger));
             }
 
             updateDashboardCounts();
@@ -1503,96 +1503,160 @@
             `}).join('');
         }
 
-        // Calendar Revenue View Rendering
+        // Year Calendar Synced Day-by-Day View Rendering
+        const monthsNames = [
+            "January", "February", "March", "April", "May", "June", 
+            "July", "August", "September", "October", "November", "December"
+        ];
+
+        function renderCalendarMonthTabs() {
+            const container = document.getElementById('calendar-month-tabs');
+            if (!container) return;
+            container.innerHTML = monthsNames.map((month, idx) => `
+                <button onclick="setActiveMonth(${idx})" class="px-4 py-2 rounded-full whitespace-nowrap transition border ${activeMonthIndex === idx ? 'bg-brandNavy text-brandGold border-brandGold font-bold shadow-sm' : 'bg-white text-gray-700 border-gray-200 hover:border-brandGold'}">
+                    ${month}
+                </button>
+            `).join('');
+        }
+
+        function setActiveMonth(idx) {
+            activeMonthIndex = idx;
+            renderRecords();
+        }
+
         function renderRecords() {
+            renderCalendarMonthTabs();
             const container = document.getElementById('calendar-revenue-container');
             const countBadge = document.getElementById('record-count-badge');
+            const yearSelect = document.getElementById('calendar-year-select');
+            const selectedYear = yearSelect ? parseInt(yearSelect.value) : 2026;
+
             const searchInput = document.getElementById('record-search');
             const query = searchInput ? searchInput.value.toLowerCase() : '';
 
-            // Filter revenue ledger based on query
-            const filteredLedger = revenueLedger.filter(o => {
-                const customerMatch = o.customerName && o.customerName.toLowerCase().includes(query);
-                const idMatch = o.id && o.id.toLowerCase().includes(query);
-                const itemMatch = o.itemsList && o.itemsList.some(item => item.name && item.name.toLowerCase().includes(query));
-                const dateStr = o.date ? new Date(o.date).toLocaleDateString().toLowerCase() : '';
-                return customerMatch || idMatch || itemMatch || dateStr.includes(query);
+            // Compute total days in selected month and year
+            const totalDaysInMonth = new Date(selectedYear, activeMonthIndex + 1, 0).getDate();
+            const monthName = monthsNames[activeMonthIndex];
+
+            // Map revenue ledger entries by exact Date string YYYY-MM-DD
+            const revenueByDateMap = {};
+            revenueLedger.forEach(entry => {
+                if (!entry.date) return;
+                const d = new Date(entry.date);
+                if (d.getFullYear() === selectedYear && d.getMonth() === activeMonthIndex) {
+                    const dateKey = entry.date.slice(0, 10); // YYYY-MM-DD
+                    if (!revenueByDateMap[dateKey]) {
+                        revenueByDateMap[dateKey] = [];
+                    }
+                    revenueByDateMap[dateKey].push(entry);
+                }
             });
 
-            if (countBadge) countBadge.innerText = `${filteredLedger.length} Revenue Entries`;
+            // Build days array for the entire month
+            let monthDaysData = [];
+            let monthlyTotalRevenue = 0;
 
-            if (filteredLedger.length === 0) {
-                container.innerHTML = `
-                    <div class="bg-white p-8 rounded-xl shadow-sm border text-center text-gray-500 font-semibold">
-                        No calendar revenue records found.
-                    </div>
-                `;
-                return;
+            for (let dayNum = 1; dayNum <= totalDaysInMonth; dayNum++) {
+                const formattedDayStr = String(dayNum).padStart(2, '0');
+                const formattedMonthStr = String(activeMonthIndex + 1).padStart(2, '0');
+                const dateKey = `${selectedYear}-${formattedMonthStr}-${formattedDayStr}`;
+                
+                const dayEntries = revenueByDateMap[dateKey] || [];
+                
+                let dayTotal = 0;
+                dayEntries.forEach(e => dayTotal += Number(e.total || 0));
+                monthlyTotalRevenue += dayTotal;
+
+                monthDaysData.push({
+                    dateKey: dateKey,
+                    dayNumber: dayNum,
+                    dayName: new Date(selectedYear, activeMonthIndex, dayNum).toLocaleDateString('en-US', { weekday: 'short' }),
+                    entries: dayEntries,
+                    dayTotal: dayTotal
+                });
             }
 
-            // Group revenue entries by Date (YYYY-MM-DD or formatted day string)
-            const groupedByDate = {};
-            filteredLedger.forEach(o => {
-                const dateObj = o.date ? new Date(o.date) : new Date();
-                const dateKey = dateObj.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-                if (!groupedByDate[dateKey]) {
-                    groupedByDate[dateKey] = {
-                        dateString: dateKey,
-                        totalDayRevenue: 0,
-                        entries: []
-                    };
-                }
-                groupedByDate[dateKey].entries.push(o);
-                groupedByDate[dateKey].totalDayRevenue += Number(o.total || 0);
-            });
+            // Filter if search query exists
+            if (query) {
+                monthDaysData = monthDaysData.filter(d => {
+                    const matchDate = d.dateKey.includes(query) || d.dayName.toLowerCase().includes(query);
+                    const matchEntry = d.entries.some(e => 
+                        (e.customerName && e.customerName.toLowerCase().includes(query)) ||
+                        (e.id && e.id.toLowerCase().includes(query)) ||
+                        (e.itemsList && e.itemsList.some(i => i.name.toLowerCase().includes(query)))
+                    );
+                    return matchDate || matchEntry;
+                });
+            }
 
-            // Sort days descending (newest first)
-            const sortedDays = Object.values(groupedByDate).sort((a, b) => new Date(b.entries[0]?.date || 0) - new Date(a.entries[0]?.date || 0));
+            if (countBadge) countBadge.innerText = `${monthName} ${selectedYear} (Total: ₦${monthlyTotalRevenue.toLocaleString()})`;
 
-            container.innerHTML = sortedDays.map(day => `
-                <div class="bg-white rounded-xl shadow-md border overflow-hidden">
-                    <div class="bg-brandNavy text-white p-3.5 px-5 flex flex-wrap justify-between items-center gap-2">
-                        <div class="flex items-center space-x-2">
-                            <i class="fa-solid fa-calendar-day text-brandGold text-lg"></i>
-                            <h3 class="font-bold text-base text-white">${day.dateString}</h3>
-                        </div>
-                        <div class="bg-brandGold text-brandNavy font-extrabold text-xs px-3 py-1 rounded-full shadow">
-                            Day Total: ₦${day.totalDayRevenue.toLocaleString()}
-                        </div>
+            container.innerHTML = `
+                <div class="bg-brandNavy text-white p-4 rounded-xl shadow-md flex justify-between items-center">
+                    <div>
+                        <h3 class="font-bold text-lg text-brandGold">${monthName} ${selectedYear} Calendar Ledger</h3>
+                        <p class="text-xs text-gray-300">Synced day-by-day across all days of the month</p>
                     </div>
-
-                    <div class="p-4 space-y-3">
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-left text-xs sm:text-sm">
-                                <thead class="bg-gray-100 text-gray-700 uppercase text-[10px] font-bold">
-                                    <tr>
-                                        <th class="p-2.5">Order ID</th>
-                                        <th class="p-2.5">Customer Name & Phone</th>
-                                        <th class="p-2.5">What Customer Bought</th>
-                                        <th class="p-2.5 text-right">Amount (₦)</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="divide-y text-gray-700">
-                                    ${day.entries.map(entry => {
-                                        const itemsPurchased = (entry.itemsList || []).map(i => `${i.name} (${i.selection || 'Piece'} x${i.qty})${i.color ? ' ['+i.color+']' : ''}`).join(', ') || 'Standard Purchase';
-                                        return `
-                                            <tr class="hover:bg-gray-50 transition">
-                                                <td class="p-2.5 font-bold text-brandNavy">#${entry.id}</td>
-                                                <td class="p-2.5">
-                                                    <div class="font-bold text-gray-800">${entry.customerName}</div>
-                                                    <div class="text-[11px] text-gray-500">${entry.phone}</div>
-                                                </td>
-                                                <td class="p-2.5 text-xs text-gray-600">${itemsPurchased}</td>
-                                                <td class="p-2.5 text-right font-extrabold text-green-700">₦${Number(entry.total).toLocaleString()}</td>
-                                            </tr>
-                                        `;
-                                    }).join('')}
-                                </tbody>
-                            </table>
-                        </div>
+                    <div class="text-right">
+                        <span class="text-[10px] text-gray-300 uppercase block font-bold">Month Revenue</span>
+                        <span class="text-base font-black text-brandGold">₦${monthlyTotalRevenue.toLocaleString()}</span>
                     </div>
                 </div>
-            `).join('');
+            ` + monthDaysData.map(day => {
+                const hasIncome = day.entries.length > 0;
+                return `
+                    <div class="bg-white rounded-xl shadow-sm border overflow-hidden ${hasIncome ? 'border-l-4 border-l-green-500' : 'border-l-4 border-l-gray-300'}">
+                        <div class="bg-gray-50 p-3 px-4 flex justify-between items-center border-b">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 rounded-lg ${hasIncome ? 'bg-green-100 text-green-700' : 'bg-gray-200 text-gray-500'} font-bold flex flex-col items-center justify-center text-xs">
+                                    <span class="text-[9px] uppercase leading-none">${day.dayName}</span>
+                                    <span class="text-sm font-black">${day.dayNumber}</span>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-brandNavy text-xs sm:text-sm">${monthName} ${day.dayNumber}, ${selectedYear}</h4>
+                                    <p class="text-[11px] text-gray-500">${hasIncome ? day.entries.length + ' transaction(s) recorded' : 'No sales recorded on this day'}</p>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <span class="text-xs font-black ${hasIncome ? 'text-green-700 bg-green-50 px-2.5 py-1 rounded border border-green-200' : 'text-gray-400'}">
+                                    ₦${day.dayTotal.toLocaleString()}
+                                </span>
+                            </div>
+                        </div>
+
+                        ${hasIncome ? `
+                            <div class="p-3 overflow-x-auto">
+                                <table class="w-full text-left text-xs">
+                                    <thead>
+                                        <tr class="text-gray-400 uppercase text-[10px] border-b">
+                                            <th class="p-2">Order ID</th>
+                                            <th class="p-2">Customer Name & Phone</th>
+                                            <th class="p-2">What Customer Bought</th>
+                                            <th class="p-2 text-right">Amount (₦)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y text-gray-700">
+                                        ${day.entries.map(entry => {
+                                            const itemsSummary = (entry.itemsList || []).map(i => `${i.name} (${i.selection || 'Piece'} x${i.qty})${i.color ? ' ['+i.color+']' : ''}`).join(', ') || 'Standard Purchase';
+                                            return `
+                                                <tr class="hover:bg-gray-50">
+                                                    <td class="p-2 font-bold text-brandNavy">#${entry.id}</td>
+                                                    <td class="p-2">
+                                                        <div class="font-bold text-gray-800">${entry.customerName}</div>
+                                                        <div class="text-[10px] text-gray-500">${entry.phone}</div>
+                                                    </td>
+                                                    <td class="p-2 text-gray-600">${itemsSummary}</td>
+                                                    <td class="p-2 text-right font-extrabold text-green-700">₦${Number(entry.total).toLocaleString()}</td>
+                                                </tr>
+                                            `;
+                                        }).join('')}
+                                    </tbody>
+                                </table>
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            }).join('');
         }
 
         // Admin Notes Handlers
@@ -1885,7 +1949,7 @@
             if (order) {
                 order.status = 'Confirmed & Processing';
                 
-                // Ensure confirmed order is permanently added to revenue ledger
+                // Ensure confirmed order is permanently synced and added to revenue ledger
                 if (!revenueLedger.some(r => r.id === order.id)) {
                     revenueLedger.push({ ...order });
                 }
@@ -1893,7 +1957,7 @@
                 saveState();
                 renderOrders();
                 renderRecords();
-                alert(`Order #${orderId} marked as Confirmed and added to revenue!`);
+                alert(`Order #${orderId} marked as Confirmed and synced to the calendar revenue!`);
                 closeOrderDetailsModal();
             }
         }
@@ -1904,12 +1968,11 @@
 
         function viewProof(imgUrl) {
             document.getElementById('proof-img').src = imgUrl || 'https://via.placeholder.com/300';
-            document.getElementById('proof-modal').classList.remove('hidden');
+            document.getElementById('proof-modal').classList.add('hidden');
         }
 
         function deleteOrder(id) {
-            if (confirm('Confirm deleting this order after verification? (Note: Confirmed revenue will be preserved in Calendar Revenue).')) {
-                // Remove from active orders list, but do NOT remove from revenueLedger
+            if (confirm('Confirm deleting this order after verification? (Note: Confirmed revenue is preserved in Calendar Revenue).')) {
                 orders = orders.filter(o => o.id !== id);
                 saveState();
                 renderOrders();
